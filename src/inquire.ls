@@ -1,16 +1,23 @@
 class Inquire
 
+  # Bound constructor allows us to call `Inquire()` rather than `new Inquire()`.
   (key, val) ~>
-    @query = if key instanceof Inquire
-      Q = key
-      "(#{Q.query})"
+    # Check what we got here.
+    # If it's an Inquire, just wrap it in parens.
+    @inquiry = if key instanceof Inquire
+      I = key
+      "(#{I.inquiry})"
+    # Otherwise, if we've got a key and a val, assume they're strings
+    # (or can be made into strings), and make an equality predicate.
     else if key and val
       "#{key}=#{val}"
+    # Otherwise, just make the inquiry an empty string.
     else
       ''
 
+  # Wrapper for relational operators.
   _relHelper: (key, val, op) ->
-    @query = "#{key}#{op}#{val}"
+    @inquiry = "#{key}#{op}#{val}"
     this
 
   # Relational operators.
@@ -21,12 +28,15 @@ class Inquire
   lt: (key, val) -> @_relHelper key, val, '<'
   lte: (key, val) -> @_relHelper key, val, '<='
 
+  # Wrapper for and/or.
   _boolHelper: (key, val, op) ->
+    # If we got an Inquire, just wrap it in parens and concat it with the op.
     if key instanceof Inquire
-      Q = key
-      @query = "#{@query}#{op}(#{Q.query})"
+      I = key
+      @inquiry = "#{@inquiry}#{op}(#{I.inquiry})"
+    # Otherwise, assume we got a key/val pair, and concat it with the op.
     else
-      @query = "#{@query}#{op}#{key}=#{val}"
+      @inquiry = "#{@inquiry}#{op}#{key}=#{val}"
     this
 
   # Boolean predicates.
@@ -34,20 +44,23 @@ class Inquire
   or: (key, val) -> @_boolHelper key, val, ';'
 
   # Negation.
-  not: (Q) ->
-    if Q instanceof Inquire
-      @query = "!(#{Q.query})"
+  not: (I) ->
+    # If we got an Inquire (which only makes sense), wrap it in parens.
+    if I instanceof Inquire
+      @inquiry = "!(#{I.inquiry})"
     # TODO: Should probably handle other cases here.
     this
 
-  toString: -> "?#{@query}"
+  # Make our Inquire actually look like a query string.
+  toString: -> "?#{@inquiry}"
 
-  # Static methods.
-  Inquire.eq = (key, val) -> Inquire!.eq key, val
-  Inquire.neq = (key, val) -> Inquire!.neq key, val
-  Inquire.gt = (key, val) -> Inquire!.gt key, val
-  Inquire.gte = (key, val) -> Inquire!.gte key, val
-  Inquire.lt = (key, val) -> Inquire!.lt key, val
-  Inquire.lte = (key, val) -> Inquire!.lte key, val
+# Static methods.
+# We can do stuff like `Inquire.gt \a, 10` along with `Inquire!.gt \a, 10`.
+Inquire.eq = (key, val) -> Inquire!.eq key, val
+Inquire.neq = (key, val) -> Inquire!.neq key, val
+Inquire.gt = (key, val) -> Inquire!.gt key, val
+Inquire.gte = (key, val) -> Inquire!.gte key, val
+Inquire.lt = (key, val) -> Inquire!.lt key, val
+Inquire.lte = (key, val) -> Inquire!.lte key, val
 
 module.exports = Inquire
