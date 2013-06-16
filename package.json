@@ -1,28 +1,31 @@
 {
-  "name": "enquire",
-  "description": "Generate advanced URL query strings.",
+  "name": "inquire",
   "version": "0.0.1",
-  "homepage": "https://github.com/concordusapps/enquire",
-  "author": {
-    "name": "Concordus Applications"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/concordusapps/enquire.git"
-  },
-  "bugs": {
-    "url": "https://github.com/concordusapps/enquire/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/concordusapps/enquire/blob/master/LICENSE"
-    }
-  ],
+  "description": "Generate advanced URL query strings.",
   "keywords": [
     "armet",
     "query",
-    "strings",
+    "string",
     "url"
-  ]
+  ],
+  "homepage": "https://github.com/concordusapps/inquire",
+  "bugs": {
+    "url": "https://github.com/concordusapps/inquire/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Concordus Applications"
+  },
+  "contributors": [
+    "Hardy Jones <jones3.hardy@gmail.com> (https://github.com/joneshf)"
+  ],
+  "main": "lib/inquire.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/concordusapps/inquire.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-livescript": "~0.5.0"
+  }
 }

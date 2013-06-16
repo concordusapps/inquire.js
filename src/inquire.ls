@@ -1,6 +1,6 @@
-class Enquire
+class Inquire
 
-  (key, val) ->
+  (key, val) ~>
     @query = if key and val then "#{key}=#{val}" else ''
 
   eq: (key, val) ->
@@ -15,11 +15,12 @@ class Enquire
     @query = "#{@query};#{key}=#{val}"
     this
 
-  not: ->
-    @query = "!(#{@query})"
+  not: (Q) ->
+    if Q instanceof Inquire
+      @query = "!(#{Q.query})"
     this
 
   toString: ->
     "?#{@query}"
 
-module.exports = Enquire
+module.exports = Inquire
