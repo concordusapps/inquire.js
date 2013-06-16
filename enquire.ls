@@ -1,33 +1,25 @@
 class Enquire
 
-  (@query) ->
+  (key, val) ->
+    @query = if key and val then "#{key}=#{val}" else ''
 
   eq: (key, val) ->
     @query = "#{key}=#{val}"
-
     this
 
   and: (key, val) ->
-    @query = if @query
-      "#{@query}&#{key}=#{val}"
-    else
-      "#{key}=#{val}"
-
+    @query = "#{@query}&#{key}=#{val}"
     this
 
   or: (key, val) ->
-    @query = if @query
-      "#{@query};#{key}=#{val}"
-    else
-      "#{key}=#{val}"
-
+    @query = "#{@query};#{key}=#{val}"
     this
 
-  not: (key, val) ->
-    @query += "!#{key}=#{val}"
+  not: ->
+    @query = "!(#{@query})"
     this
 
   toString: ->
-    @query
+    "?#{@query}"
 
 module.exports = Enquire
