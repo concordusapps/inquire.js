@@ -36,23 +36,25 @@ LiveScript:
 
 ```livescript
 I = require \inquire
-query = I! (I!.eq \color, \red .and I!.gt \width, 30)
-.or I!.lte \sides, 12
-.or (I \shape, \square .and (I!.neq \color, \black .or \user, \bob))
+query = I(I \color, \red .and I.gt \width, 30)
+  ..or I.lte \sides, 12
+  ..or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
 url = "/api/shape/#{query}"
-# url => /api/shape?(color=red&width>30);(sides<=12);(shape=square&(color!=black;user=bob))
+# url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
 
 Javascript:
 
 ```javascript
 I = require('inquire');
-query = I()(I().eq('color', 'red').and(I().gt('width', 30)))
-.or(I().lte('sides', 12))
-.or(I('shape', 'square').and(I().neq('color', 'black').or('user', 'bob')));
+query = (I('color', 'red').and(I.gt('width', 30)))
+.or(I.lte('sides', 12))
+.or(I('shape', 'square').and(I.neq('color', 'black').or('user', 'bob')));
 url = "/api/shape/" + query;
-// url => /api/shape?(color=red&width>30);(sides<=12);(shape=square&(color!=black;user=bob))
+// url => /api/shape??(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
+
+Note: At this time, inquire does not optimize away parens.
 
 ## Usage
 
@@ -93,10 +95,18 @@ Creates a `key<val` predicate.
 Creates a `key<=val` predicate.
 
 ##### and(key, val)
-Conjoins the current query with a new `key=val` predicate.
+If `key` is an `inquire` then it wraps the `inquire` in parens
+and conjoins it with the current `inquire`.
+
+Otherwise, assumes `key` is a string and `val` has a `toString` function,
+then conjoins the current query with a new `key=val` predicate.
 
 ##### or(key, val)
-Disjoins the current query with a new `key=val` predicate.
+If `key` is an `inquire` then it wraps the `inquire` in parens
+and disjoins it with the current `inquire`.
+
+Otherwise, assumes `key` is a string and `val` has a `toString` function,
+then disjoins the current query with a new `key=val` predicate.
 
 ##### not(query)
 Negates the supplied query.
