@@ -1,34 +1,53 @@
 class Inquire
 
   (key, val) ~>
-    @query = if key and val then "#{key}=#{val}" else ''
+    @query = if key instanceof Inquire
+      Q = key
+      "(#{Q.query})"
+    else if key and val
+      "#{key}=#{val}"
+    else
+      ''
 
-  _eqHelper: (key, val, op) ->
+  _relHelper: (key, val, op) ->
     @query = "#{key}#{op}#{val}"
     this
 
-  # Equality operators.
-  eq: (key, val) -> @_eqHelper key, val, '='
-  neq: (key, val) -> @_eqHelper key, val, '!='
-  gt: (key, val) -> @_eqHelper key, val, '>'
-  gte: (key, val) -> @_eqHelper key, val, '>='
-  lt: (key, val) -> @_eqHelper key, val, '<'
-  lte: (key, val) -> @_eqHelper key, val, '<='
+  # Relational operators.
+  eq: (key, val) -> @_relHelper key, val, '='
+  neq: (key, val) -> @_relHelper key, val, '!='
+  gt: (key, val) -> @_relHelper key, val, '>'
+  gte: (key, val) -> @_relHelper key, val, '>='
+  lt: (key, val) -> @_relHelper key, val, '<'
+  lte: (key, val) -> @_relHelper key, val, '<='
 
-  and: (key, val) ->
-    @query = "#{@query}&#{key}=#{val}"
+  _boolHelper: (key, val, op) ->
+    if key instanceof Inquire
+      Q = key
+      @query = "#{@query}#{op}(#{Q.query})"
+    else
+      @query = "#{@query}#{op}#{key}=#{val}"
     this
 
-  or: (key, val) ->
-    @query = "#{@query};#{key}=#{val}"
-    this
+  # Boolean predicates.
+  and: (key, val) -> @_boolHelper key, val, '&'
+  or: (key, val) -> @_boolHelper key, val, ';'
 
+  # Negation.
   not: (Q) ->
     if Q instanceof Inquire
       @query = "!(#{Q.query})"
+    # TODO: Should probably handle other cases here.
     this
 
-  toString: ->
-    "?#{@query}"
+  toString: -> "?#{@query}"
+
+  # Static methods.
+  Inquire.eq = (key, val) -> Inquire!.eq key, val
+  Inquire.neq = (key, val) -> Inquire!.neq key, val
+  Inquire.gt = (key, val) -> Inquire!.gt key, val
+  Inquire.gte = (key, val) -> Inquire!.gte key, val
+  Inquire.lt = (key, val) -> Inquire!.lt key, val
+  Inquire.lte = (key, val) -> Inquire!.lte key, val
 
 module.exports = Inquire
