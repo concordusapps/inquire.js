@@ -3,6 +3,14 @@
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
 
+## Installation
+
+Inquire is available on the npm registry: [inquire][inquire]
+
+You can install it with npm.
+
+    npm install inquire
+
 ## The Problem
 
 Currently, query strings only conjoin predicates together with equality.
@@ -59,6 +67,9 @@ Note: At this time, inquire does not optimize away parens.
 ## Usage
 
 The inquire class can be used to create a new predicate defaulting to equality.
+There are multiple ways to create an `inquire`.
+
+Passing just the key, value pair.
 
 LiveScript:
 
@@ -71,10 +82,99 @@ Javascript:
 
 ```javascript
 I = require('inquire');
-I('key', 'value'); // ?key=value
+I('key', 'value'); //=> ?key=value
 ```
 
-### Predicates
+Passing an another `inquire`, which will end up wrapping it in parens.
+
+LiveScript:
+
+```livescript
+I = require \inquire
+I I \key, \value #=> ?(key=value)
+```
+
+Javascript:
+
+```javascript
+I = require('inquire');
+I(I('key', 'value')); //=> ?(key=value)
+```
+You can pass in an object, or an array of `inquire`'s.
+Both of these conjoin their values by default and wrap in parens.
+
+LiveScript:
+
+```livescript
+I = require \inquire
+I {key1: \value1, key2: \value2} #=> ?(key1=value1&key2=value2)
+I [I(\key1, \value1), I(\key2, \value2)] #=> ?(key1=value1&key2=value2)
+```
+
+Javascript:
+
+```javascript
+I = require('inquire');
+I({key1: 'value1', key2: 'value2'}); #=> ?(key1=value1&key2=value2)
+I([I('key1', 'value1'), I('key2', 'value2')]); #=> ?(key1=value1&key2=value2)
+```
+
+You can change the default relation by calling a different operator.
+
+LiveScript:
+
+```livescript
+I = require \inquire
+I.gte \key, \value #=> key>=value
+```
+
+Javascript:
+
+```javascript
+I = require('inquire');
+I.gte('key', 'value'); //=> key>=value
+```
+
+The `and` and `or` predicates work in much the same way,
+but require an already created `inquire`.
+
+LiveScript:
+
+```livescript
+I = require \inquire
+I \key1, \value1 .and \key2, \value2 #=> ?key1=value1&(key2=value2)
+I \key1, \value1 .or \key2, \value2 #=> ?key1=value1;(key2=value2)
+```
+
+Javascript:
+
+```javascript
+I = require('inquire');
+I('key1', 'value1').and('key2', 'value2'); #=> ?key1=value1&(key2=value2)
+I('key1', 'value1').or('key2', 'value2'); #=> ?key1=value1;(key2=value2)
+```
+
+`and` and `or` also take objects, arrays, and `inquire`'s.
+The semantics is similar to the constructor taking these types,
+and conjoining or disjoining it to the previous `inquire` with the proper operator.
+
+The `not` predicate takes an `inquire` and negates the whole thing.
+
+LiveScript:
+
+```livescript
+I = require \inquire
+I!.not I \key, \value #=> ?!(key=value)
+```
+
+Javascript:
+
+```javascript
+I = require('inquire');
+I().not(I('key', 'value')) #=> ?!(key=value)
+```
+
+### Functions
 
 ##### eq(key, val)
 Creates a `key=val` predicate.
@@ -111,8 +211,9 @@ then disjoins the current query with a new `key=val` predicate.
 ##### not(query)
 Negates the supplied query.
 
-##### toString()
-Returns the entire querystring.
+##### generate()
+Returns a formatted querystring.
 
 
 [armet]: http://armet.github.io/
+[inquire]: https://npmjs.org/package/inquire
