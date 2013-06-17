@@ -12,8 +12,10 @@ class Inquire
     # (or can be made into strings), and make an equality predicate.
     # Otherwise, just make the inquiry an empty string.
     @inquiry = match key
-    | (instanceof Inquire)  => "(#{key.inquiry})"
+    | is-type 'Array'       => key.join '&'
+    | is-type 'Object'      => ["#{k}=#{v}" for k, v of key].join '&'
     | is-type 'String'      => "#{key}=#{val}"
+    | (instanceof Inquire)  => "(#{key.inquiry})"
     | otherwise             => ''
 
   # Wrapper for relational operators.
@@ -30,13 +32,15 @@ class Inquire
   lte: (key, val) -> @_relHelper key, val, '<='
 
   # Wrapper for and/or.
-  _boolHelper: (key, val, op) ->
-    # If we got an Inquire, just wrap it in parens and concat it with the op.
-    # Otherwise, assume we got a key/val pair, and concat it with the op.
+  _boolHelper: (key, val, pred) ->
+    # If we got an Inquire, just wrap it in parens and concat it with the pred.
+    # Otherwise, assume we got a key/val pair, and concat it with the pred.
     @inquiry += match key
-    | is-type 'Array'       => key.join op
-    | (instanceof Inquire)  => "#{op}(#{key.inquiry})"
-    | otherwise             => "#{op}#{key}=#{val}"
+    | is-type 'Array'       => key.join pred
+    | is-type 'Object'      => ["#{k}=#{v}" for k, v of key].join pred
+    | is-type 'String'      => "#{pred}#{key}=#{val}"
+    | (instanceof Inquire)  => "#{pred}(#{key.inquiry})"
+    | otherwise             => ''
     this
 
   # Boolean predicates.
