@@ -47,11 +47,11 @@ Javascript:
 
 ```javascript
 I = require('inquire');
-query = (I('color', 'red').and(I.gt('width', 30)))
+query = I(I('color', 'red').and(I.gt('width', 30)))
 .or(I.lte('sides', 12))
 .or(I('shape', 'square').and(I.neq('color', 'black').or('user', 'bob')));
 url = "/api/shape/" + query;
-// url => /api/shape??(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
+// url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
 
 Note: At this time, inquire does not optimize away parens.
@@ -115,4 +115,4 @@ Negates the supplied query.
 Returns the entire querystring.
 
 
-[armet]: https://github.com/armet
+[armet]: http://armet.github.io/
