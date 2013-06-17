@@ -115,8 +115,8 @@ Javascript:
 
 ```javascript
 I = require('inquire');
-I({key1: 'value1', key2: 'value2'}); #=> ?(key1=value1&key2=value2)
-I([I('key1', 'value1'), I('key2', 'value2')]); #=> ?(key1=value1&key2=value2)
+I({key1: 'value1', key2: 'value2'}); //=> ?(key1=value1&key2=value2)
+I([I('key1', 'value1'), I('key2', 'value2')]); //=> ?(key1=value1&key2=value2)
 ```
 
 You can change the default relation by calling a different operator.
@@ -150,8 +150,8 @@ Javascript:
 
 ```javascript
 I = require('inquire');
-I('key1', 'value1').and('key2', 'value2'); #=> ?key1=value1&(key2=value2)
-I('key1', 'value1').or('key2', 'value2'); #=> ?key1=value1;(key2=value2)
+I('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&(key2=value2)
+I('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;(key2=value2)
 ```
 
 `and` and `or` also take objects, arrays, and `inquire`'s.
@@ -171,7 +171,7 @@ Javascript:
 
 ```javascript
 I = require('inquire');
-I().not(I('key', 'value')) #=> ?!(key=value)
+I().not(I('key', 'value')) //=> ?!(key=value)
 ```
 
 ### Functions
