@@ -1,19 +1,20 @@
+'use strict'
+
+{foldr1, is-type} = require \prelude-ls
+
 class Inquire
 
   # Bound constructor allows us to call `Inquire()` rather than `new Inquire()`.
   (key, val) ~>
     # Check what we got here.
     # If it's an Inquire, just wrap it in parens.
-    @inquiry = if key instanceof Inquire
-      I = key
-      "(#{I.inquiry})"
     # Otherwise, if we've got a key and a val, assume they're strings
     # (or can be made into strings), and make an equality predicate.
-    else if key and val
-      "#{key}=#{val}"
     # Otherwise, just make the inquiry an empty string.
-    else
-      ''
+    @inquiry = match key
+    | (instanceof Inquire)  => "(#{key.inquiry})"
+    | is-type 'String'      => "#{key}=#{val}"
+    | otherwise             => ''
 
   # Wrapper for relational operators.
   _relHelper: (key, val, op) ->
@@ -31,12 +32,11 @@ class Inquire
   # Wrapper for and/or.
   _boolHelper: (key, val, op) ->
     # If we got an Inquire, just wrap it in parens and concat it with the op.
-    if key instanceof Inquire
-      I = key
-      @inquiry = "#{@inquiry}#{op}(#{I.inquiry})"
     # Otherwise, assume we got a key/val pair, and concat it with the op.
-    else
-      @inquiry = "#{@inquiry}#{op}#{key}=#{val}"
+    @inquiry += match key
+    | is-type 'Array'       => key.join op
+    | (instanceof Inquire)  => "#{op}(#{key.inquiry})"
+    | otherwise             => "#{op}#{key}=#{val}"
     this
 
   # Boolean predicates.
@@ -52,7 +52,9 @@ class Inquire
     this
 
   # Make our Inquire actually look like a query string.
-  toString: -> "?#{@inquiry}"
+  generate: -> "?#{@inquiry}"
+
+  toString: -> @inquiry
 
 # Static methods.
 # We can do stuff like `Inquire.gt \a, 10` along with `Inquire!.gt \a, 10`.
