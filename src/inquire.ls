@@ -4,18 +4,21 @@
 
 class Inquire
 
+  inquiry: null
+
   # Bound constructor allows us to call `Inquire()` rather than `new Inquire()`.
   (key, val) ~>
     # Check what we got here.
     # If it's an Inquire, just wrap it in parens.
-    # Otherwise, if we've got a key and a val, assume they're strings
-    # (or can be made into strings), and make an equality predicate.
+    # For arrays, conjoin everything, and wrap it in parens.
+    # For strings, just make it equal.
+    # For objects, conjoin each key/val pair, and wrap it in parens.
     # Otherwise, just make the inquiry an empty string.
     @inquiry = match key
-    | is-type 'Array'       => key.join '&'
-    | is-type 'Object'      => ["#{k}=#{v}" for k, v of key].join '&'
+    | (instanceof Inquire)  => "(#{key})"
+    | is-type 'Array'       => "(#{key.join '&'})"
     | is-type 'String'      => "#{key}=#{val}"
-    | (instanceof Inquire)  => "(#{key.inquiry})"
+    | is-type 'Object'      => "(#{["#{k}=#{v}" for k, v of key].join '&'})"
     | otherwise             => ''
 
   # Wrapper for relational operators.
@@ -36,10 +39,10 @@ class Inquire
     # If we got an Inquire, just wrap it in parens and concat it with the pred.
     # Otherwise, assume we got a key/val pair, and concat it with the pred.
     @inquiry += match key
-    | is-type 'Array'       => key.join pred
-    | is-type 'Object'      => ["#{k}=#{v}" for k, v of key].join pred
+    | (instanceof Inquire)  => "#{pred}(#{key})"
+    | is-type 'Array'       => "#{pred}(#{key.join pred})"
     | is-type 'String'      => "#{pred}#{key}=#{val}"
-    | (instanceof Inquire)  => "#{pred}(#{key.inquiry})"
+    | is-type 'Object'      => "#{pred}(#{[k+'='+v for k, v of key].join pred})"
     | otherwise             => ''
     this
 
