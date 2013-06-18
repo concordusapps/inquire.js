@@ -47,10 +47,9 @@ Inquire allows you do the same query without trying to man-handle the string.
 LiveScript:
 
 ```livescript
-I = require \inquire
-query = I(I \color, \red .and I.gt \width, 30)
-  ..or I.lte \sides, 12
-  ..or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
+query = inquire(inquire \color, \red .and inquire.gt \width, 30)
+  ..or inquire.lte \sides, 12
+  ..or (inquire \shape, \square .and (inquire.neq \color, \black .or \user, \bob))
 url = "/api/shape/#{query}"
 # url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
@@ -58,10 +57,9 @@ url = "/api/shape/#{query}"
 Javascript:
 
 ```javascript
-I = require('inquire');
-query = I(I('color', 'red').and(I.gt('width', 30)))
-.or(I.lte('sides', 12))
-.or(I('shape', 'square').and(I.neq('color', 'black').or('user', 'bob')));
+query = inquire(inquire('color', 'red').and(inquire.gt('width', 30)))
+.or(inquire.lte('sides', 12))
+.or(inquire('shape', 'square').and(inquire.neq('color', 'black').or('user', 'bob')));
 url = "/api/shape/" + query;
 // url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
@@ -78,15 +76,13 @@ Passing just the key, value pair.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I \key, \value #=> ?key=value
+inquire \key, \value #=> ?key=value
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I('key', 'value'); //=> ?key=value
+inquire('key', 'value'); //=> ?key=value
 ```
 
 Passing an another `inquire`, which will end up wrapping it in parens.
@@ -94,15 +90,13 @@ Passing an another `inquire`, which will end up wrapping it in parens.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I I \key, \value #=> ?(key=value)
+inquire inquire \key, \value #=> ?(key=value)
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I(I('key', 'value')); //=> ?(key=value)
+inquire(inquire('key', 'value')); //=> ?(key=value)
 ```
 You can pass in an object, or an array of `inquire`'s.
 Both of these conjoin their values by default and wrap in parens.
@@ -110,17 +104,15 @@ Both of these conjoin their values by default and wrap in parens.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I {key1: \value1, key2: \value2} #=> ?(key1=value1&key2=value2)
-I [I(\key1, \value1), I(\key2, \value2)] #=> ?(key1=value1&key2=value2)
+inquire {key1: \value1, key2: \value2} #=> ?(key1=value1&key2=value2)
+inquire [inquire(\key1, \value1), inquire(\key2, \value2)] #=> ?(key1=value1&key2=value2)
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I({key1: 'value1', key2: 'value2'}); //=> ?(key1=value1&key2=value2)
-I([I('key1', 'value1'), I('key2', 'value2')]); //=> ?(key1=value1&key2=value2)
+inquire({key1: 'value1', key2: 'value2'}); //=> ?(key1=value1&key2=value2)
+inquire([inquire('key1', 'value1'), inquire('key2', 'value2')]); //=> ?(key1=value1&key2=value2)
 ```
 
 You can change the default relation by calling a different operator.
@@ -128,15 +120,13 @@ You can change the default relation by calling a different operator.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I.gte \key, \value #=> key>=value
+inquire.gte \key, \value #=> key>=value
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I.gte('key', 'value'); //=> key>=value
+inquire.gte('key', 'value'); //=> key>=value
 ```
 
 The `and` and `or` predicates work in much the same way,
@@ -145,17 +135,15 @@ but require an already created `inquire`.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I \key1, \value1 .and \key2, \value2 #=> ?key1=value1&(key2=value2)
-I \key1, \value1 .or \key2, \value2 #=> ?key1=value1;(key2=value2)
+inquire \key1, \value1 .and \key2, \value2 #=> ?key1=value1&(key2=value2)
+inquire \key1, \value1 .or \key2, \value2 #=> ?key1=value1;(key2=value2)
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&(key2=value2)
-I('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;(key2=value2)
+inquire('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&(key2=value2)
+inquire('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;(key2=value2)
 ```
 
 `and` and `or` also take objects, arrays, and `inquire`'s.
@@ -167,15 +155,13 @@ The `not` predicate takes an `inquire` and negates the whole thing.
 LiveScript:
 
 ```livescript
-I = require \inquire
-I!.not I \key, \value #=> ?!(key=value)
+inquire!.not inquire \key, \value #=> ?!(key=value)
 ```
 
 Javascript:
 
 ```javascript
-I = require('inquire');
-I().not(I('key', 'value')) //=> ?!(key=value)
+inquire().not(inquire('key', 'value')) //=> ?!(key=value)
 ```
 
 ### Functions
