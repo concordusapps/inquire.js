@@ -9,6 +9,7 @@ class Inquire
   # Bound constructor allows us to call `Inquire()` rather than `new Inquire()`.
   (key, val) ~>
     @_relHelper key, val, '='
+
   _relHelper: (key, val, op) ->
     # Check what we got here.
     # If it's an Inquire, just wrap it in parens.
@@ -23,11 +24,6 @@ class Inquire
     | is-type 'Object'      => "(#{["#{k}#{op}#{v}" for k, v of key].join '&'})"
     | otherwise             => ''
     this
-
-  # # Wrapper for relational operators.
-  # _relHelper: (key, val, op) ->
-  #   @inquiry = "#{key}#{op}#{val}"
-  #   this
 
   # Relational operators.
   eq: (key, val) -> @_relHelper key, val, '='
@@ -59,6 +55,8 @@ class Inquire
     if I instanceof Inquire
       @inquiry = "!(#{I.inquiry})"
     # TODO: Should probably handle other cases here.
+    #       Should be able to take all the same inputs as the others,
+    #       and just wrap them in parens.
     this
 
   # Make our Inquire actually look like a query string.
