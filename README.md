@@ -11,6 +11,10 @@ You can install it with npm.
 
     npm install inquire
 
+Run the tests.
+
+    npm test
+
 ## The Problem
 
 Currently, query strings only conjoin predicates together with equality.

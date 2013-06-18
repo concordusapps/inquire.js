@@ -8,6 +8,8 @@ class Inquire
 
   # Bound constructor allows us to call `Inquire()` rather than `new Inquire()`.
   (key, val) ~>
+    @_relHelper key, val, '='
+  _relHelper: (key, val, op) ->
     # Check what we got here.
     # If it's an Inquire, just wrap it in parens.
     # For arrays, conjoin everything, and wrap it in parens.
@@ -17,14 +19,15 @@ class Inquire
     @inquiry = match key
     | (instanceof Inquire)  => "(#{key})"
     | is-type 'Array'       => "(#{key.join '&'})"
-    | is-type 'String'      => "#{key}=#{val}"
-    | is-type 'Object'      => "(#{["#{k}=#{v}" for k, v of key].join '&'})"
+    | is-type 'String'      => "#{key}#{op}#{val}"
+    | is-type 'Object'      => "(#{["#{k}#{op}#{v}" for k, v of key].join '&'})"
     | otherwise             => ''
-
-  # Wrapper for relational operators.
-  _relHelper: (key, val, op) ->
-    @inquiry = "#{key}#{op}#{val}"
     this
+
+  # # Wrapper for relational operators.
+  # _relHelper: (key, val, op) ->
+  #   @inquiry = "#{key}#{op}#{val}"
+  #   this
 
   # Relational operators.
   eq: (key, val) -> @_relHelper key, val, '='
