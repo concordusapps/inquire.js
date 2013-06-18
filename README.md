@@ -1,4 +1,4 @@
-# Inquire
+# Inquire [![Build Status](https://travis-ci.org/concordusapps/inquire.png?branch=master)](https://travis-ci.org/concordusapps/inquire)
 
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
