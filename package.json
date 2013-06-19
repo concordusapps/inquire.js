@@ -1,6 +1,6 @@
 {
   "name": "inquire",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generate advanced URL query strings.",
   "keywords": [
     "armet",
@@ -34,5 +34,8 @@
     "LiveScript": "~1.1.1",
     "mocha": "~1.11.0",
     "prelude-ls": "~1.0.0"
+  },
+  "engines": {
+    "node": ">=0.8.22"
   }
 }
