@@ -1,7 +1,5 @@
 'use strict'
 
-{is-type} = require \prelude-ls
-
 class Inquire
 
   inquiry: null
@@ -18,11 +16,11 @@ class Inquire
     # For objects, conjoin each key/val pair, and wrap it in parens.
     # Otherwise, just make the inquiry an empty string.
     @inquiry = match key
-    | (instanceof Inquire)  => "(#{key})"
-    | is-type 'Array'       => "(#{key.join '&'})"
-    | is-type 'String'      => "#{key}#{op}#{val}"
-    | is-type 'Object'      => "(#{["#{k}#{op}#{v}" for k, v of key].join '&'})"
-    | otherwise             => ''
+    | (instanceof Inquire)        => "(#{key})"
+    | (('Array' ==) . (typeof!))  => "(#{key.join '&'})"
+    | (('String' ==) . (typeof!)) => "#{key}#{op}#{val}"
+    | (('Object' ==) . (typeof!)) => "(#{[k+op+v for k, v of key].join '&'})"
+    | otherwise                   => ''
     this
 
   # Relational operators.
@@ -38,11 +36,11 @@ class Inquire
     # If we got an Inquire, just wrap it in parens and concat it with the pred.
     # Otherwise, assume we got a key/val pair, and concat it with the pred.
     @inquiry += match key
-    | (instanceof Inquire)  => "#{pred}(#{key})"
-    | is-type 'Array'       => "#{pred}(#{key.join pred})"
-    | is-type 'String'      => "#{pred}#{key}=#{val}"
-    | is-type 'Object'      => "#{pred}(#{[k+'='+v for k, v of key].join pred})"
-    | otherwise             => ''
+    | (instanceof Inquire)        => "#{pred}(#{key})"
+    | (('Array' ==) . (typeof!))  => "#{pred}(#{key.join pred})"
+    | (('String' ==) . (typeof!)) => "#{pred}#{key}=#{val}"
+    | (('Object' ==) . (typeof!)) => "#{pred}(#{[k+'='+v for k, v of key].join pred})"
+    | otherwise                   => ''
     this
 
   # Boolean predicates.
