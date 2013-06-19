@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.5
+#### 06/19/13
+- Massive cleanup.
+- Exports for browser and node.
+
 ### 0.0.4
 #### 06/19/13
 - Removed dependency (`prelude-ls`).
