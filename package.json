@@ -27,6 +27,9 @@
   "scripts": {
     "test": "mocha -R spec --compilers ls:LiveScript ./test/*.ls"
   },
+  "dependencies": {
+    "prelude-ls": "~1.0.0"
+  },
   "devDependencies": {
     "chai": "~1.7.0",
     "grunt": "~0.4.1",

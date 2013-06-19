@@ -1,6 +1,6 @@
 'use strict'
 
-{foldr1, is-type} = require \prelude-ls
+{is-type} = require \prelude-ls
 
 class Inquire
 
