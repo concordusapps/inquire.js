@@ -28,30 +28,29 @@ class Inquire
 
       Returns this Allows for chaining of inquire's.
   */
-  _analyze: (key, val, { bool= \&, cat= '', op= \= } = {}) ->
+  _analyze: (key, val, {bool=\& cat='' op=\=} = {}) ->
     # Check what we got here.
-    #
     @inquiry += match key
-    | (instanceof Inquire)      => "#{cat}(#{key})"
-    | (is 'Array') . (typeof!)  => "#{cat}(#{key.join bool})"
-    | (is 'String') . (typeof!) => "#{cat}#{key}#{op}#{val}"
-    | (is 'Object') . (typeof!) => "#{cat}(#{[k+op+v for k, v of key].join bool})"
+    | (instanceof Inquire)      => "#cat(#key)"
+    | (is 'Array') . (typeof!)  => "#cat(#{key.join bool})"
+    | (is 'String') . (typeof!) => "#cat#key#op#val"
+    | (is 'Object') . (typeof!) => "#cat(#{[k+op+v for k, v of key].join bool})"
     | otherwise                 => ''
     this
 
   /*  Relational operators.
   */
-  eq: (key, val) -> @_analyze key, val, { op: \= }
-  neq: (key, val) -> @_analyze key, val, { op: \!= }
-  gt: (key, val) -> @_analyze key, val, { op: \> }
-  gte: (key, val) -> @_analyze key, val, { op: \>= }
-  lt: (key, val) -> @_analyze key, val, { op: \< }
-  lte: (key, val) -> @_analyze key, val, { op: \<= }
+  eq: (key, val) -> @_analyze key, val, {op: \=}
+  neq: (key, val) -> @_analyze key, val, {op: \!=}
+  gt: (key, val) -> @_analyze key, val, {op: \>}
+  gte: (key, val) -> @_analyze key, val, {op: \>=}
+  lt: (key, val) -> @_analyze key, val, {op: \<}
+  lte: (key, val) -> @_analyze key, val, {op: \<=}
 
   /*  Boolean predicates.
   */
-  and: (key, val) -> @_analyze key, val, { cat: \&, bool: \& }
-  or: (key, val) -> @_analyze key, val, { cat: \;, bool: \; }
+  and: (key, val) -> @_analyze key, val, {cat: \& bool: \&}
+  or: (key, val) -> @_analyze key, val, {cat: \; bool: \;}
 
   /*  Negation.
   */
@@ -87,4 +86,10 @@ Inquire.gte = (key, val) -> Inquire!.gte key, val
 Inquire.lt = (key, val) -> Inquire!.lt key, val
 Inquire.lte = (key, val) -> Inquire!.lte key, val
 
-module.exports = Inquire
+/*  Exporting inquire.  */
+if module?exports
+  module.exports = Inquire
+else
+  @Inquire = Inquire
+if typeof define is 'function'
+  define \Inquire [] -> Inquire

@@ -1,6 +1,5 @@
 # Inquire
 [![Build Status](https://travis-ci.org/concordusapps/inquire.png?branch=master)](https://travis-ci.org/concordusapps/inquire)
-[![Dependency Status](https://david-dm.org/concordusapps/inquire.png)](https://david-dm.org/concordusapps/inquire)
 [![devDependency Status](https://david-dm.org/concordusapps/inquire/dev-status.png)](https://david-dm.org/concordusapps/inquire#info=devDependencies)
 
 Inquire allows you to generate advanced query strings.
