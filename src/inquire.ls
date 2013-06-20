@@ -29,6 +29,15 @@ class Inquire
       Returns this Allows for chaining of inquire's.
   */
   _analyze: (key, val, {bool=\& cat='' op=\=} = {}) ->
+    # If this is the first thing going into the inquire,
+    # then we don't need to concat it with anything.
+    # We have to wrap this in a bound call and call it
+    # because `match` doesn't know what to do with `this`.
+    cat = (~>
+      match @inquiry, cat
+      | '', (isnt \&!)  => ''
+      | '', _           => \!
+      | otherwise       => cat)!
     # Check what we got here.
     @inquiry += match key
     | (instanceof Inquire)      => "#cat(#key)"
@@ -51,17 +60,7 @@ class Inquire
   */
   and: (key, val) -> @_analyze key, val, {cat: \& bool: \&}
   or: (key, val) -> @_analyze key, val, {cat: \; bool: \;}
-
-  /*  Negation.
-  */
-  not: (I) ->
-    # If we got an Inquire (which only makes sense), wrap it in parens.
-    if I instanceof Inquire
-      @inquiry = "!(#{I.inquiry})"
-    # TODO: Should probably handle other cases here.
-    #       Should be able to take all the same inputs as the others,
-    #       and just wrap them in parens.
-    this
+  not: (key) -> @_analyze key, null, {cat: \&!}
 
   /*  Make our Inquire actually look like a query string.
   */
@@ -85,6 +84,9 @@ Inquire.gt = (key, val) -> Inquire!.gt key, val
 Inquire.gte = (key, val) -> Inquire!.gte key, val
 Inquire.lt = (key, val) -> Inquire!.lt key, val
 Inquire.lte = (key, val) -> Inquire!.lte key, val
+Inquire.and = (key, val) -> Inquire!.and key, val
+Inquire.or = (key, val) -> Inquire!.or key, val
+Inquire.not = (key) -> Inquire!.not key
 
 /*  Exporting inquire.  */
 if module?exports

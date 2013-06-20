@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.6
+#### 06/20/13
+- `not` parsed the same as other functions.
+- More tests.
+- Fixed a bug where boolean operators were being prepended in some cases.
+
 ### 0.0.5
 #### 06/19/13
 - Massive cleanup.

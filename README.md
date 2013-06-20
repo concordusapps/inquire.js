@@ -148,22 +148,28 @@ inquire('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&(key2=value2)
 inquire('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;(key2=value2)
 ```
 
-`and` and `or` also take objects, arrays, and `inquire`'s.
-The semantics is similar to the constructor taking these types,
+`Inquire` supports three boolean operators `and`, `or`, and `not`.
+These operators also take objects, arrays, and `inquire`'s.
+In addition, `and` and `or` take `key`, `value` strings and construct the proper query.
+The semantics for `and` and `or` are similar to the constructor taking these types,
 and conjoining or disjoining it to the previous `inquire` with the proper operator.
+For `not`, the argument is analyzed then wrapped in parens and negated.
 
-The `not` predicate takes an `inquire` and negates the whole thing.
+__NOTE__: `not` doesn't take `key`, `value` strings.
+Currently, this will produce a querystring, but it will not have the valid semantics.
+Something like `?!(key=undefined)`.
+
 
 LiveScript:
 
 ```livescript
-inquire!.not inquire \key, \value #=> ?!(key=value)
+inquire.not inquire \key, \value #=> ?!(key=value)
 ```
 
 Javascript:
 
 ```javascript
-inquire().not(inquire('key', 'value')) //=> ?!(key=value)
+inquire.not(inquire('key', 'value')) //=> ?!(key=value)
 ```
 
 ### Functions
