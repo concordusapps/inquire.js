@@ -29,9 +29,12 @@ class Inquire
       Returns this Allows for chaining of inquire's.
   */
   _analyze: (key, val, {arity=\2 bool=\& cat='' op=\=} = {}) ->
-    match arity
-    | \1  => @_unary ...
-    | \2  => @_binary ...
+    # Figure out our path, based on what the key is.
+    match key
+    | (instanceof Inquire)      => @_unary key, null, {arity: \1 op: ''}
+    | (is 'Array') . (typeof!)  => for k in key => @_unary k, null, {arity: \1 op: ''}
+    | (is 'String') . (typeof!) => @_binary ...
+    | (is 'Object') . (typeof!) => for k, v of key => @_analyze k, v
     this
 
   _binary: (key, val, options) ->
@@ -48,6 +51,7 @@ class Inquire
         left: @inquiry
         right: @_analyze key
 
+  # Helper to check if an object is empty.
   _empty: (object) ->
     for key of object
      return false
