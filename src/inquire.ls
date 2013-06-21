@@ -33,11 +33,11 @@ class Inquire
     # then we don't need to concat it with anything.
     # We have to wrap this in a bound call and call it
     # because `match` doesn't know what to do with `this`.
-    cat = (~>
+    cat = do ~>
       match @inquiry, cat
       | '', (isnt \&!)  => ''
       | '', _           => \!
-      | otherwise       => cat)!
+      | otherwise       => cat
     # Check what we got here.
     @inquiry += match key
     | (instanceof Inquire)      => "#cat(#key)"
