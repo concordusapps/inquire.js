@@ -11,7 +11,7 @@ class Inquire
       Javascript
       `Inquire()` rather than `new Inquire()`
   */
-  (key, val) ~> @eq key, val
+  (key, val) ~> @eq key, val, {arity: \2 op: \=}
 
   /*  Helper function to choose the correct string to create.
       `key` Determines the route to take depending on one of these types:
@@ -28,11 +28,11 @@ class Inquire
 
       Returns this Allows for chaining of inquire's.
   */
-  _analyze: (key, val, {arity=\2 bool=\& cat='' op=\=} = {}) ->
+  _analyze: (key, val, {arity=\2 op=\=} = {}) ->
     # Figure out our path, based on what the key is.
     match key
     | (instanceof Inquire)      => @_unary key, null, {arity: \1 op: ''}
-    | (is 'Array') . (typeof!)  => for k in key => @_unary k, null, {arity: \1 op: ''}
+    # | (is 'Array') . (typeof!)  => for k in key => @_unary k, null, {arity: \1 op: ''}
     | (is 'String') . (typeof!) => @_binary ...
     | (is 'Object') . (typeof!) => for k, v of key => @_analyze k, v
     this
@@ -94,7 +94,7 @@ class Inquire
     else if @_empty I
       ''
     else match I.arity
-    | \1 => "#{I.op}(#{@_genHelper I.value})"
+    | \1 => "#{I.op}(#{@_genHelper I.value.inquiry})"
     | \2 => "#{@_genHelper I.left}#{I.op}#{@_genHelper I.right}"
 
   toString: -> @_genHelper @inquiry
