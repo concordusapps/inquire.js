@@ -31,7 +31,7 @@ class Inquire
   _analyze: (key, val, {arity=\2 op=\=} = {}) ->
     # Figure out our path, based on what the key is.
     match key
-    | (instanceof Inquire)      => @_unary key, null, {arity: \1 op: ''}
+    | (instanceof Inquire)      => @_handleInquire ...
     | (is 'Array') . (typeof!)  => @_handleArray ...
     | (is 'String') . (typeof!) => @_binary ...
     | (is 'Object') . (typeof!) => @_handleObject ...
@@ -47,13 +47,32 @@ class Inquire
     else
       @inquiry =
         arity: options.arity
-        op: \&
+        op: if options.op isnt \= then options.op else \&
         left: @inquiry
         right: (new Inquire ...).inquiry
 
   _handleArray: (array, null, options) ->
+    # Create a new inquire
+    i = Inquire!
+    # Stuff the inquires from the arry into it.
     for item in array
-      @_unary item, null, {arity: \1 op: ''}
+      i.and item
+    # Now put that inquire into our inquire.
+    if @_empty @inquiry
+      @_unary i, null, {arity: \1 op: ''}
+    else
+      @_binary @inquiry, i, options
+
+  _handleInquire: (inquire, null, options) ->
+    # We have our new inquire.
+    # Put that into our inquire.
+    if @_empty @inquiry
+      @inquiry =
+        arity: \1
+        op: ''
+        value: inquire
+    else
+      @_binary inquire, null, options
 
   _handleObject: (object, null, options) ->
     # Create a new inquire.

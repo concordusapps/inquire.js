@@ -15,9 +15,9 @@ describe \inquire, ->
       assert.strictEqual query.generate!, '?(key=value)'
 
   describe 'given an array of inquire objects with "?key1=val1" and "?key2=val2"', ->
-    test 'it should generate a "?(key1=val1&key2=val2)" query string', ->
+    test 'it should generate a "??((key1=val1)&(key2=val2))" query string', ->
       query = I [I(\key1, \val1), I(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1=val1&key2=val2)'
+      assert.strictEqual query.generate!, '?((key1=val1)&(key2=val2))'
 
   describe 'given an object of key, value pairs', ->
     test 'it should conjoin them with equality', ->
@@ -82,97 +82,97 @@ describe \inquire, ->
   describe 'given a different relational operator with an array of inquire', ->
     test 'it should conjoin them with "=" for eq', ->
       query = I [I.eq(\key1, \val1), I.eq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1=val1&key2=val2)'
+      assert.strictEqual query.generate!, '?((key1=val1)&(key2=val2))'
 
     test 'it should conjoin them with "!=" for neq', ->
       query = I [I.neq(\key1, \val1), I.neq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1!=val1&key2!=val2)'
+      assert.strictEqual query.generate!, '?((key1!=val1)&(key2!=val2))'
 
     test 'it should conjoin them with ">" for gt', ->
       query = I [I.gt(\key1, \val1), I.gt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>val1&key2>val2)'
+      assert.strictEqual query.generate!, '?((key1>val1)&(key2>val2))'
 
     test 'it should conjoin them with ">=" for gte', ->
       query = I [I.gte(\key1, \val1), I.gte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>=val1&key2>=val2)'
+      assert.strictEqual query.generate!, '?((key1>=val1)&(key2>=val2))'
 
     test 'it should conjoin them with "<" for lt', ->
       query = I [I.lt(\key1, \val1), I.lt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<val1&key2<val2)'
+      assert.strictEqual query.generate!, '?((key1<val1)&(key2<val2))'
 
     test 'it should conjoin them with "<=" for lte', ->
       query = I [I.lte(\key1, \val1), I.lte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<=val1&key2<=val2)'
+      assert.strictEqual query.generate!, '?((key1<=val1)&(key2<=val2))'
 
   describe 'given different boolean and relational operators with keys and vals', ->
     test 'it should conjoin them with "=" for and/eq', ->
       query = I.and [I.eq(\key1, \val1), I.eq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1=val1&key2=val2)'
+      assert.strictEqual query.generate!, '?((key1=val1)&(key2=val2))'
 
     test 'it should conjoin them with "!=" for and/neq', ->
       query = I.and [I.neq(\key1, \val1), I.neq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1!=val1&key2!=val2)'
+      assert.strictEqual query.generate!, '?((key1!=val1)&(key2!=val2))'
 
     test 'it should conjoin them with ">" for and/gt', ->
       query = I.and [I.gt(\key1, \val1), I.gt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>val1&key2>val2)'
+      assert.strictEqual query.generate!, '?((key1>val1)&(key2>val2))'
 
     test 'it should conjoin them with ">=" for and/gte', ->
       query = I.and [I.gte(\key1, \val1), I.gte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>=val1&key2>=val2)'
+      assert.strictEqual query.generate!, '?((key1>=val1)&(key2>=val2))'
 
     test 'it should conjoin them with "<" for and/lt', ->
       query = I.and [I.lt(\key1, \val1), I.lt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<val1&key2<val2)'
+      assert.strictEqual query.generate!, '?((key1<val1)&(key2<val2))'
 
     test 'it should conjoin them with "<=" for and/lte', ->
       query = I.and [I.lte(\key1, \val1), I.lte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<=val1&key2<=val2)'
+      assert.strictEqual query.generate!, '?((key1<=val1)&(key2<=val2))'
 
     test 'it should disjoin them with "=" for or/eq', ->
       query = I.or [I.eq(\key1, \val1), I.eq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1=val1;key2=val2)'
+      assert.strictEqual query.generate!, '?((key1=val1);(key2=val2))'
 
     test 'it should disjoin them with "!=" for or/neq', ->
       query = I.or [I.neq(\key1, \val1), I.neq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1!=val1;key2!=val2)'
+      assert.strictEqual query.generate!, '?((key1!=val1);(key2!=val2))'
 
     test 'it should disjoin them with ">" for or/gt', ->
       query = I.or [I.gt(\key1, \val1), I.gt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>val1;key2>val2)'
+      assert.strictEqual query.generate!, '?((key1>val1);(key2>val2))'
 
     test 'it should disjoin them with ">=" for or/gte', ->
       query = I.or [I.gte(\key1, \val1), I.gte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1>=val1;key2>=val2)'
+      assert.strictEqual query.generate!, '?((key1>=val1);(key2>=val2))'
 
     test 'it should disjoin them with "<" for or/lt', ->
       query = I.or [I.lt(\key1, \val1), I.lt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<val1;key2<val2)'
+      assert.strictEqual query.generate!, '?((key1<val1);(key2<val2))'
 
     test 'it should disjoin them with "<=" for or/lte', ->
       query = I.or [I.lte(\key1, \val1), I.lte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1<=val1;key2<=val2)'
+      assert.strictEqual query.generate!, '?((key1<=val1);(key2<=val2))'
 
     test 'it should negate the conjunct of them with "=" for not/eq', ->
       query = I.not [I.eq(\key1, \val1), I.eq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1=val1&key2=val2)'
+      assert.strictEqual query.generate!, '?!((key1=val1)&(key2=val2))'
 
     test 'it should negate the conjunct of them with "!=" for not/neq', ->
       query = I.not [I.neq(\key1, \val1), I.neq(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1!=val1&key2!=val2)'
+      assert.strictEqual query.generate!, '?!((key1!=val1)&(key2!=val2))'
 
     test 'it should negate the conjunct of them with ">" for not/gt', ->
       query = I.not [I.gt(\key1, \val1), I.gt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1>val1&key2>val2)'
+      assert.strictEqual query.generate!, '?!((key1>val1)&(key2>val2))'
 
     test 'it should negate the conjunct of them with ">=" for not/gte', ->
       query = I.not [I.gte(\key1, \val1), I.gte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1>=val1&key2>=val2)'
+      assert.strictEqual query.generate!, '?!((key1>=val1)&(key2>=val2))'
 
     test 'it should negate the conjunct of them with "<" for not/lt', ->
       query = I.not [I.lt(\key1, \val1), I.lt(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1<val1&key2<val2)'
+      assert.strictEqual query.generate!, '?!((key1<val1)&(key2<val2))'
 
     test 'it should negate the conjunct of them with "<=" for not/lte', ->
       query = I.not [I.lte(\key1, \val1), I.lte(\key2, \val2)]
-      assert.strictEqual query.generate!, '?!(key1<=val1&key2<=val2)'
+      assert.strictEqual query.generate!, '?!((key1<=val1)&(key2<=val2))'
