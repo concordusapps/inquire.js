@@ -11,7 +11,7 @@ class Inquire
       Javascript
       `Inquire()` rather than `new Inquire()`
   */
-  (key, val) ~> @eq key, val, {arity: \2 op: \=}
+  (key, val) ~> @eq key, val
 
   /*  Helper function to choose the correct string to create.
       `key` Determines the route to take depending on one of these types:
@@ -32,9 +32,9 @@ class Inquire
     # Figure out our path, based on what the key is.
     match key
     | (instanceof Inquire)      => @_unary key, null, {arity: \1 op: ''}
-    # | (is 'Array') . (typeof!)  => for k in key => @_unary k, null, {arity: \1 op: ''}
+    | (is 'Array') . (typeof!)  => @_handleArray ...
     | (is 'String') . (typeof!) => @_binary ...
-    | (is 'Object') . (typeof!) => for k, v of key => @_analyze k, v
+    | (is 'Object') . (typeof!) => @_handleObject ...
     this
 
   _binary: (key, val, options) ->
@@ -47,9 +47,25 @@ class Inquire
     else
       @inquiry =
         arity: options.arity
-        op: options.op
+        op: \&
         left: @inquiry
-        right: @_analyze key
+        right: (new Inquire ...).inquiry
+
+  _handleArray: (array, null, options) ->
+    for item in array
+      @_unary item, null, {arity: \1 op: ''}
+
+  _handleObject: (object, null, options) ->
+    # Create a new inquire.
+    i = Inquire!
+    # Stuff the keys and values into it.
+    for key, val of object
+      i.eq key, val
+    # Now put that inquire into our inquire.
+    if @_empty @inquiry
+      @_unary i, null, {arity: \1 op: ''}
+    else
+      @_binary @inquiry, i, options
 
   # Helper to check if an object is empty.
   _empty: (object) ->
@@ -80,13 +96,15 @@ class Inquire
 
   /*  Boolean predicates.
   */
-  and: (key, val) -> @_analyze key, val, {arity: \2 bool: \& cat: \&}
-  or: (key, val) -> @_analyze key, val, {arity: \2 bool: \; cat: \;}
-  not: (key) -> @_analyze key, null, {arity: \1 cat: \&!}
+  and: (key, val) -> @_analyze key, val, {arity: \2 op: \&}
+  or: (key, val) -> @_analyze key, val, {arity: \2 op: \;}
+  not: (key) -> @_analyze key, null, {arity: \1 op: \!}
 
   /*  Make our Inquire actually look like a query string.
   */
-  generate: -> "?#{@_genHelper @inquiry}"
+  generate: ->
+    # console.log 'were going to make a qs from: ' @inquiry
+    "?#{@_genHelper @inquiry}"
 
   _genHelper: (I) ->
     if typeof! I is 'String'
