@@ -107,14 +107,14 @@ LiveScript:
 
 ```livescript
 inquire {key1: \value1, key2: \value2} #=> ?(key1=value1&key2=value2)
-inquire [inquire(\key1, \value1), inquire(\key2, \value2)] #=> ?(key1=value1&key2=value2)
+inquire [inquire(\key1, \value1), inquire(\key2, \value2)] #=> ?((key1=value1)&(key2=value2))
 ```
 
 Javascript:
 
 ```javascript
 inquire({key1: 'value1', key2: 'value2'}); //=> ?(key1=value1&key2=value2)
-inquire([inquire('key1', 'value1'), inquire('key2', 'value2')]); //=> ?(key1=value1&key2=value2)
+inquire([inquire('key1', 'value1'), inquire('key2', 'value2')]); //=> ?((key1=value1)&(key2=value2))
 ```
 
 You can change the default relation by calling a different operator.
@@ -137,15 +137,15 @@ but require an already created `inquire`.
 LiveScript:
 
 ```livescript
-inquire \key1, \value1 .and \key2, \value2 #=> ?key1=value1&(key2=value2)
-inquire \key1, \value1 .or \key2, \value2 #=> ?key1=value1;(key2=value2)
+inquire \key1, \value1 .and \key2, \value2 #=> ?key1=value1&key2=value2
+inquire \key1, \value1 .or \key2, \value2 #=> ?key1=value1;key2=value2
 ```
 
 Javascript:
 
 ```javascript
-inquire('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&(key2=value2)
-inquire('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;(key2=value2)
+inquire('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&key2=value2
+inquire('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;key2=value2
 ```
 
 `Inquire` supports three boolean operators `and`, `or`, and `not`.
