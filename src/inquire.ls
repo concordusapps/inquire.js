@@ -24,71 +24,75 @@ class Inquire
       `options` Additional information for constructing the inquire.
           `bool`  -> Boolean predicate to join with.
           `cat`   -> Boolean predicate to concat to the previous inquire with.
-          `op`    -> Relational operator to relate keys with values.
+          `rel`    -> Relational operator to relate keys with values.
 
       Returns this Allows for chaining of inquire's.
   */
-  _analyze: (key, val, {arity=\2 op=\=} = {}) ->
+  _analyze: (key, val, {arity=\2 bool=\& rel=\=}) ->
+    options = {arity, bool, rel}
     # Figure out our path, based on what the key is.
     match key
-    | (instanceof Inquire)      => @_handleInquire ...
-    | (is 'Array') . (typeof!)  => @_handleArray ...
-    | (is 'String') . (typeof!) => @_binary ...
-    | (is 'Object') . (typeof!) => @_handleObject ...
+    | (instanceof Inquire)      => @_handleInquire key, options
+    | (is 'Array') . (typeof!)  => @_handleArray key, options
+    | (is 'String') . (typeof!) => @_binary key, val, options
+    | (is 'Object') . (typeof!) => @_handleObject key, options
     this
 
   _binary: (key, val, options) ->
     if @_empty @inquiry
       @inquiry =
         arity: options.arity
-        op: options.op
+        rel: options.rel
         left: key
         right: val
     else
+      rel = match options.bool
+      | \!  => \&!
+      | _   => options.bool
       @inquiry =
         arity: options.arity
-        op: if options.op isnt \= then options.op else \&
+        rel: rel
         left: @inquiry
         right: (new Inquire ...).inquiry
 
-  _handleArray: (array, null, options) ->
+  _handleArray: (array, options) ->
     # Create a new inquire
     inquire = Inquire!
     # Set the operator
-    boolean = match options.op
+    boolean = match options.bool
     | \;  => \or
     | _   => \and
     # Stuff the inquires from the arry into it.
     for item in array
-      inquire[boolean] item
+      inquire[boolean] item, null, options
     # Now put that inquire into our inquire.
-    if @_empty @inquiry
-      op = if options.op is \! then options.op else ''
-      @_unary inquire, null, {arity: \1 op: op}
-    else
-      @_binary inquire, null, options
+    @_handleInquire inquire, {arity: \1, rel: options.rel, bool: options.bool}
 
-  _handleInquire: (inquire, null, options) ->
+  _handleInquire: (inquire, options) ->
     # We have our new inquire.
     # Put that into our inquire.
     if @_empty @inquiry
-      op = if options.op is \! then options.op else ''
-      @_unary inquire, null, {arity: \1 op: ''}
+      bool = if options.bool is \! then options.bool else ''
+      @_unary inquire, {arity: \1, bool: bool}
     else
-      @_binary inquire, null, options
+      @_binary inquire, null, {arity: \2, bool: options.bool, rel: options.bool}
 
-  _handleObject: (object, null, options) ->
+  _handleObject: (object, options) ->
     # Create a new inquire.
     inquire = Inquire!
+    # Set the relational operator
+    relation = match options.rel
+    | \=  => \eq
+    | \!= => \neq
+    | \>  => \gt
+    | \>= => \gte
+    | \<  => \lt
+    | \<= => \lte
     # Stuff the keys and values into it.
     for key, val of object
-      inquire.eq key, val
+      inquire[relation] key, val, options
     # Now put that inquire into our inquire.
-    if @_empty @inquiry
-      op = if options.op is \! then options.op else ''
-      @_unary inquire, null, {arity: \1 op: ''}
-    else
-      @_binary inquire, null, options
+    @_handleInquire inquire, {arity: \1, rel: options.rel, bool: options.bool}
 
   # Helper to check if an object is empty.
   _empty: (object) ->
@@ -96,38 +100,36 @@ class Inquire
      return false
     true
 
-  _unary: (val, _, options) ->
+  _unary: (val, options) ->
     if @_empty @inquiry
       @inquiry =
         arity: options.arity
-        op: options.op
-        value: val
+        bool: options.bool
+        value: val.inquiry
     else
       @inquiry =
         arity: options.arity
-        op: options.op
+        bool: options.bool
         value: @inquiry
 
   /*  Relational operators.
   */
-  eq: (key, val) -> @_analyze key, val, {arity: \2 op: \=}
-  neq: (key, val) -> @_analyze key, val, {arity: \2 op: \!=}
-  gt: (key, val) -> @_analyze key, val, {arity: \2 op: \>}
-  gte: (key, val) -> @_analyze key, val, {arity: \2 op: \>=}
-  lt: (key, val) -> @_analyze key, val, {arity: \2 op: \<}
-  lte: (key, val) -> @_analyze key, val, {arity: \2 op: \<=}
+  eq: (key, val) -> @_analyze key, val, {arity: \2 rel: \=}
+  neq: (key, val) -> @_analyze key, val, {arity: \2 rel: \!=}
+  gt: (key, val) -> @_analyze key, val, {arity: \2 rel: \>}
+  gte: (key, val) -> @_analyze key, val, {arity: \2 rel: \>=}
+  lt: (key, val) -> @_analyze key, val, {arity: \2 rel: \<}
+  lte: (key, val) -> @_analyze key, val, {arity: \2 rel: \<=}
 
   /*  Boolean predicates.
   */
-  and: (key, val) -> @_analyze key, val, {arity: \2 op: \&}
-  or: (key, val) -> @_analyze key, val, {arity: \2 op: \;}
-  not: (key) -> @_analyze key, null, {arity: \1 op: \!}
+  and: (key, val) -> @_analyze key, val, {arity: \2 bool: \&}
+  or: (key, val) -> @_analyze key, val, {arity: \2 bool: \;}
+  not: (key) -> @_analyze key, null, {arity: \1 bool: \!}
 
   /*  Make our Inquire actually look like a query string.
   */
-  generate: ->
-    # console.log 'were going to make a qs from: ' @inquiry
-    "?#{@_genHelper @inquiry}"
+  generate: -> "?#{@_genHelper @inquiry}"
 
   _genHelper: (I) ->
     if typeof! I is 'String'
@@ -135,8 +137,8 @@ class Inquire
     else if @_empty I
       ''
     else match I.arity
-    | \1 => "#{I.op}(#{@_genHelper I.value.inquiry})"
-    | \2 => "#{@_genHelper I.left}#{I.op}#{@_genHelper I.right}"
+    | \1 => "#{I.bool}(#{@_genHelper I.value})"
+    | \2 => "#{@_genHelper I.left}#{I.rel}#{@_genHelper I.right}"
 
   toString: -> @_genHelper @inquiry
 
