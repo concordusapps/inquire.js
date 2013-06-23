@@ -53,38 +53,42 @@ class Inquire
 
   _handleArray: (array, null, options) ->
     # Create a new inquire
-    i = Inquire!
+    inquire = Inquire!
+    # Set the operator
+    boolean = match options.op
+    | \;  => \or
+    | _   => \and
     # Stuff the inquires from the arry into it.
     for item in array
-      i.and item
+      inquire[boolean] item
     # Now put that inquire into our inquire.
     if @_empty @inquiry
-      @_unary i, null, {arity: \1 op: ''}
+      op = if options.op is \! then options.op else ''
+      @_unary inquire, null, {arity: \1 op: op}
     else
-      @_binary @inquiry, i, options
+      @_binary inquire, null, options
 
   _handleInquire: (inquire, null, options) ->
     # We have our new inquire.
     # Put that into our inquire.
     if @_empty @inquiry
-      @inquiry =
-        arity: \1
-        op: ''
-        value: inquire
+      op = if options.op is \! then options.op else ''
+      @_unary inquire, null, {arity: \1 op: ''}
     else
       @_binary inquire, null, options
 
   _handleObject: (object, null, options) ->
     # Create a new inquire.
-    i = Inquire!
+    inquire = Inquire!
     # Stuff the keys and values into it.
     for key, val of object
-      i.eq key, val
+      inquire.eq key, val
     # Now put that inquire into our inquire.
     if @_empty @inquiry
-      @_unary i, null, {arity: \1 op: ''}
+      op = if options.op is \! then options.op else ''
+      @_unary inquire, null, {arity: \1 op: ''}
     else
-      @_binary @inquiry, i, options
+      @_binary inquire, null, options
 
   # Helper to check if an object is empty.
   _empty: (object) ->
