@@ -22,41 +22,61 @@ class Inquire
           Rest      -> For anything else, just throw it away.
       `val` Currently only used as the value for strings.
       `options` Additional information for constructing the inquire.
-          `bool`  -> Boolean predicate to join with.
-          `cat`   -> Boolean predicate to concat to the previous inquire with.
-          `rel`    -> Relational operator to relate keys with values.
+          `arity`   -> Specifies if the predicate is unary or binary currently.
+          `bool`    -> Boolean predicate to join with.
+          `rel`     -> Relational operator to relate keys with values.
 
       Returns this Allows for chaining of inquire's.
   */
   _analyze: (key, val, {arity=\2 bool=\& rel=\=}) ->
+    # We need to provide some defaults for the options and also name it.
     options = {arity, bool, rel}
     # Figure out our path, based on what the key is.
     match key
     | (instanceof Inquire)      => @_handleInquire key, options
     | (is 'Array') . (typeof!)  => @_handleArray key, options
-    | (is 'String') . (typeof!) => @_binary key, val, options
+    | (is 'String') . (typeof!) => @_handleString key, val, options
     | (is 'Object') . (typeof!) => @_handleObject key, options
     this
 
+  # Append whatever it is to us with a relation.
   _binary: (key, val, options) ->
+    # If it's empty, pretty much it can only be a string.
     if @_empty @inquiry
       @inquiry =
         arity: options.arity
         rel: options.rel
         left: key
         right: val
+    # There's something else here.
+    # Put the old inquire as the left side and the new thing as the right.
     else
-      [bool, right-bool] = match options.bool, options.rel
+      # We need to do some special-ness for `not`.
+      # If we're `not`-ing something and there's already a `not` child,
+      # replace the `rel` with '&!' and the `bool` with ''.
+      [rel, bool] = match options.bool, options.rel
       | \!, \!  => <[ \&! '' ]>
       | _, _    => [options.bool, options.rel]
       @inquiry =
         arity: options.arity
-        rel: bool
+        rel: rel
         left: @inquiry
         right: (Inquire!._analyze key, val,
           arity: options.arity
-          bool: right-bool
+          bool: bool
           rel: options.rel).inquiry
+
+  # Wrap the inquiry in parens, basically.
+  _unary: (val, options) ->
+    @inquiry =
+      arity: options.arity
+      bool: options.bool
+      value: val.inquiry
+
+  # Helper to check if an object is empty.
+  _empty: (object) ->
+    for _ of object => return false
+    true
 
   _handleArray: (array, options) ->
     # Create a new inquire
@@ -75,9 +95,11 @@ class Inquire
     # We have our new inquire.
     # Put that into our inquire.
     if @_empty @inquiry
+      # The only time we want a `bool` value is when it's negation.
       bool = if options.bool is \! then options.bool else ''
       @_unary inquire, {arity: \1, bool: bool}
     else
+      # We have to make the rel into the `bool` because of `not`.
       @_binary inquire, null, {arity: \2, bool: options.bool, rel: options.bool}
 
   _handleObject: (object, options) ->
@@ -97,17 +119,8 @@ class Inquire
     # Now put that inquire into our inquire.
     @_handleInquire inquire, {arity: \1, rel: options.rel, bool: options.bool}
 
-  # Helper to check if an object is empty.
-  _empty: (object) ->
-    for key of object
-     return false
-    true
-
-  _unary: (val, options) ->
-    @inquiry =
-      arity: options.arity
-      bool: options.bool
-      value: val.inquiry
+  # At this point, just dish off to `_binary`
+  _handleString: (key, val, options) -> @_binary key, val, options
 
   /*  Relational operators.
   */
@@ -128,6 +141,7 @@ class Inquire
   */
   generate: -> "?#{@_genHelper @inquiry}"
 
+  # Recurse down our tree, and print out the good stuff.
   _genHelper: (I) ->
     if typeof! I in <[ Array Number String ]>
       I
