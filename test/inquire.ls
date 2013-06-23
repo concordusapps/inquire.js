@@ -24,9 +24,29 @@ describe \inquire, ->
       assert.strictEqual query.generate!, '?((key1=val1)&(key2=val2))'
 
   describe 'given an object of key, value pairs', ->
-    test 'it should conjoin them with equality', ->
-      query = I {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+    test 'it should conjoin them with "=" for eq', ->
+      query = I.eq {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
       assert.strictEqual query.generate!, '?(key1=val1&key2=val2&key3=val3&key4=val4)'
+
+    test 'it should conjoin them with "!=" for neq', ->
+      query = I.neq {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+      assert.strictEqual query.generate!, '?(key1!=val1&key2!=val2&key3!=val3&key4!=val4)'
+
+    test 'it should conjoin them with ">" for gt', ->
+      query = I.gt {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+      assert.strictEqual query.generate!, '?(key1>val1&key2>val2&key3>val3&key4>val4)'
+
+    test 'it should conjoin them with ">=" for gte', ->
+      query = I.gte {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+      assert.strictEqual query.generate!, '?(key1>=val1&key2>=val2&key3>=val3&key4>=val4)'
+
+    test 'it should conjoin them with "<" for lt', ->
+      query = I.lt {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+      assert.strictEqual query.generate!, '?(key1<val1&key2<val2&key3<val3&key4<val4)'
+
+    test 'it should conjoin them with "<=" for lte', ->
+      query = I.lte {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
+      assert.strictEqual query.generate!, '?(key1<=val1&key2<=val2&key3<=val3&key4<=val4)'
 
   describe 'given a different relational operator with "key", "val"', ->
     test 'it should generate "=" for eq', ->
@@ -177,6 +197,15 @@ describe \inquire, ->
       assert.strictEqual query.generate!, '?!((key1<=val1)&(key2<=val2))'
 
   describe 'given some long chain of function calls', ->
-    test 'it should generate this horrendous string ?key1=val1&!(key2=val2);((key3=key3&key4=key4&key5=key5))&((!((size<40)&(width>20)&(height>=10))))', ->
+    test 'it should generate this long query string: "?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))"', ->
+      query = I(I \color, \red .and I.gt \width, 30) ..or I.lte \sides, 12 ..or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
+      assert.strictEqual query.generate!, '?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))'
+    test 'it should generate this horrendous string "?key1=val1&!(key2=val2);((key3=key3&key4=key4&key5=key5))&((!((size<40)&(width>20)&(height>=10))))"', ->
       query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]
       assert.strictEqual query.generate!, '?key1=val1&!(key2=val2);((key3=key3&key4=key4&key5=key5))&((!((size<40)&(width>20)&(height>=10))))'
+
+describe 'function tests' ->
+  describe 'calling toString on an inquire with the query string "?key=val"' ->
+    test 'it should return the string "key=val"' ->
+      query = I \key \val
+      assert.strictEqual query.toString(), \key=val

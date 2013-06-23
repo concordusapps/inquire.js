@@ -46,14 +46,17 @@ class Inquire
         left: key
         right: val
     else
-      rel = match options.bool
-      | \!  => \&!
-      | _   => options.bool
+      [bool, right-bool] = match options.bool, options.rel
+      | \!, \!  => <[ \&! '' ]>
+      | _, _    => [options.bool, options.rel]
       @inquiry =
         arity: options.arity
-        rel: rel
+        rel: bool
         left: @inquiry
-        right: (new Inquire ...).inquiry
+        right: (Inquire!._analyze key, val,
+          arity: options.arity
+          bool: right-bool
+          rel: options.rel).inquiry
 
   _handleArray: (array, options) ->
     # Create a new inquire
@@ -90,7 +93,7 @@ class Inquire
     | \<= => \lte
     # Stuff the keys and values into it.
     for key, val of object
-      inquire[relation] key, val, options
+      inquire._analyze key, val, {arity: \2, rel: options.rel}
     # Now put that inquire into our inquire.
     @_handleInquire inquire, {arity: \1, rel: options.rel, bool: options.bool}
 
@@ -101,16 +104,10 @@ class Inquire
     true
 
   _unary: (val, options) ->
-    if @_empty @inquiry
-      @inquiry =
-        arity: options.arity
-        bool: options.bool
-        value: val.inquiry
-    else
-      @inquiry =
-        arity: options.arity
-        bool: options.bool
-        value: @inquiry
+    @inquiry =
+      arity: options.arity
+      bool: options.bool
+      value: val.inquiry
 
   /*  Relational operators.
   */
