@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.1.0
+#### 06/23/13
+- Re-implemented as an AST in preparation for parsing.
+- Can pass `options` when building an inquire
+- More tests for random cases.
+- Added coverage utility.
+
 ### 0.0.6
 #### 06/20/13
 - `not` parsed the same as other functions.
