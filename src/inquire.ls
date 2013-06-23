@@ -152,7 +152,7 @@ class Inquire
 
   # Recurse down our tree, and print out the good stuff.
   _genHelper: (I) ->
-    if typeof! I in <[ Array Number String ]>
+    if typeof! I in <[ Array Boolean Number String ]>
       I
     else if empty I
       ''
