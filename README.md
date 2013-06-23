@@ -17,6 +17,10 @@ Run the tests.
 
     npm test
 
+Check the coverage.
+
+    npm run cover
+
 ## The Problem
 
 Currently, query strings only conjoin predicates together with equality.
