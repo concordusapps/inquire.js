@@ -132,7 +132,7 @@ class Inquire
   generate: -> "?#{@_genHelper @inquiry}"
 
   _genHelper: (I) ->
-    if typeof! I is 'String'
+    if typeof! I in <[ Array Number String ]>
       I
     else if @_empty I
       ''
