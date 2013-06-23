@@ -4,6 +4,10 @@ I = require \../lib/inquire.js
 test = it
 
 describe \inquire, ->
+  describe 'given an empty inquire', ->
+    test 'it should generate "?"', ->
+      query = I!
+      assert.strictEqual query.generate!, '?'
   describe 'given "key", "value" arguments', ->
     test 'it should generate a "?key=value" query string', ->
       query = I \key, \value
@@ -21,12 +25,7 @@ describe \inquire, ->
 
   describe 'given an object of key, value pairs', ->
     test 'it should conjoin them with equality', ->
-      query = I {
-        key1: 'val1'
-        key2: 'val2'
-        key3: 'val3'
-        key4: 'val4'
-      }
+      query = I {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
       assert.strictEqual query.generate!, '?(key1=val1&key2=val2&key3=val3&key4=val4)'
 
   describe 'given a different relational operator with "key", "val"', ->
@@ -176,3 +175,8 @@ describe \inquire, ->
     test 'it should negate the conjunct of them with "<=" for not/lte', ->
       query = I.not [I.lte(\key1, \val1), I.lte(\key2, \val2)]
       assert.strictEqual query.generate!, '?!((key1<=val1)&(key2<=val2))'
+
+  describe 'given some long chain of function calls', ->
+    test 'it should generate this horrendous string ?key1=val1&!(key2=val2);((key3=key3&key4=key4&key5=key5))&((!((size<40)&(width>20)&(height>=10))))', ->
+      query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]
+      assert.strictEqual query.generate!, '?key1=val1&!(key2=val2);((key3=key3&key4=key4&key5=key5))&((!((size<40)&(width>20)&(height>=10))))'

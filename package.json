@@ -25,12 +25,14 @@
     "url": "git://github.com/concordusapps/inquire.git"
   },
   "scripts": {
-    "test": "mocha -R nyan --compilers ls:LiveScript ./test/*.ls"
+    "test": "mocha -R nyan --compilers ls:LiveScript test/*.ls",
+    "cover": "istanbul cover _mocha -- -R nyan --compilers ls:LiveScript test/*.ls"
   },
   "devDependencies": {
     "chai": "~1.7.0",
     "grunt": "~0.4.1",
     "grunt-livescript": "~0.5.0",
+    "istanbul": "~0.1.37",
     "LiveScript": "~1.1.1",
     "mocha": "~1.11.0"
   },
