@@ -7,6 +7,8 @@ branches:
   only:
     - master
 
-after_script:
+script:
   - npm run coverage
+
+after_script:
   - npm run coveralls

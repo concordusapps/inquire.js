@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.1
+#### 06/23/13
+- Added coveralls integration.
+
 ### 0.1.0
 #### 06/23/13
 - Re-implemented as an AST in preparation for parsing.
