@@ -29,6 +29,9 @@
     "coverage": "istanbul cover _mocha -- -R nyan --compilers ls:LiveScript test/*.ls",
     "coveralls": "cat coverage/lcov.info | coveralls"
   },
+  "dependencies": {
+    "jison": "~0.4.6"
+  },
   "devDependencies": {
     "chai": "~1.7.0",
     "coveralls": "~2.0.16",

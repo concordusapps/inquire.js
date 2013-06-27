@@ -1,5 +1,7 @@
 'use strict'
 
+{Parser} = require \jison
+
 # Check if an object is empty.
 empty = (object) ->
   for _ of object => return false
@@ -9,6 +11,55 @@ empty = (object) ->
 arity = (op) -> match op
 | (in <[ ! ]> ++ '')                => \1
 | (in <[ = != > >= < <= & &! ; ]>)  => \2
+
+# Inquire grammar.
+grammar =
+  lex:
+    rules: [
+      ['\\(',           'return "(";']
+      ['\\)',           'return ")";']
+      ['[A-Za-z0-9]+',  'return "VAR";']
+      ['=',             'return "EQ";']
+      ['!=',            'return "NEQ";']
+      ['>',             'return "GT";']
+      ['>=',            'return "GTE";']
+      ['<',             'return "LT";']
+      ['<=',            'return "LTE";']
+      ['&',             'return "AND";']
+      [';',             'return "OR";']
+      ['!',             'return "NOT";']
+      ['$!',            'return "ANDNOT";']
+    ]
+  operators: [
+    <[ left AND OR NOT ]>
+    <[ left EQ GT LT ]>
+    <[ left NEQ GTE LTE ]>
+    <[ left ( )']>
+  ]
+  bnf:
+    expressions: [[ 'q',  'return { inquiry: $1 };']]
+    q: [
+      ['( q )',           '$$ = { arity: "1", bool: "", value: $2 };']
+      ['VAR rel VAR',     '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
+      ['q binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
+      ['unaryBool q',     '$$ = { arity: "1", bool: $1, value: $2 };']
+    ]
+    rel: [
+      ['NEQ', '$$ = yytext;']
+      ['GTE', '$$ = yytext;']
+      ['LTE', '$$ = yytext;']
+      ['EQ',  '$$ = yytext;']
+      ['GT',  '$$ = yytext;']
+      ['LT',  '$$ = yytext;']
+    ]
+    binaryBool: [
+      ['AND', '$$ = yytext;']
+      ['OR',  '$$ = yytext;']
+    ]
+    unaryBool: [
+      ['NOT',     '$$ = yytext;']
+      ['ANDNOT',  '$$ = yytext;']
+    ]
 
 class Inquire
 
@@ -161,6 +212,10 @@ class Inquire
     | \2 => "#{@_genHelper I.left}#{I.rel}#{@_genHelper I.right}"
 
   toString: -> @_genHelper @inquiry
+
+  parse: (qs) ->
+    parser = new Parser grammar
+    parser.parse qs
 
 /*  Static methods.
     We can do stuff like:
