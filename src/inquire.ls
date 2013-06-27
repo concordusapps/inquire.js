@@ -28,7 +28,7 @@ grammar =
       ['&',             'return "AND";']
       [';',             'return "OR";']
       ['!',             'return "NOT";']
-      ['$!',            'return "ANDNOT";']
+      ['&!',            'return "ANDNOT";']
     ]
   operators: [
     <[ left AND OR NOT ]>
