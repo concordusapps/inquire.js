@@ -37,7 +37,7 @@ grammar =
     <[ left ( )']>
   ]
   bnf:
-    expressions: [[ 'q',  'return { inquiry: $1 };']]
+    expressions: [[ 'q',  'return { "_parsedQueryString": $1 };']]
     q: [
       ['( q )',           '$$ = { arity: "1", bool: "", value: $2 };']
       ['VAR rel VAR',     '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
@@ -165,6 +165,10 @@ class Inquire
   _handleObject: !(object, options) ->
     # Create a new inquire.
     inquire = Inquire!
+    # First let's check to see if we're trying to build a parsed query.
+    if object._parsedQueryString?
+      @_unary {inquiry: object._parsedQueryString}, options
+      return
     # Set the relational operator
     relation = match options.rel
     | \=  => \eq
@@ -215,7 +219,8 @@ class Inquire
 
   parse: (qs) ->
     parser = new Parser grammar
-    parser.parse qs
+    parsed = parser.parse qs
+    @_analyze parsed, null, {bool: ''}
 
 /*  Static methods.
     We can do stuff like:
