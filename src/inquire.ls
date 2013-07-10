@@ -1,6 +1,6 @@
 'use strict'
 
-{Parser} = require \jison
+{Parser} = require \jison,
 
 # Check if an object is empty.
 empty = (object) ->
@@ -34,15 +34,24 @@ grammar =
     <[ left AND OR NOT ]>
     <[ left EQ GT LT ]>
     <[ left NEQ GTE LTE ]>
-    <[ left ( )']>
+    <[ left ( ) ]>
   ]
   bnf:
-    expressions: [[ 'q',  'return { "_parsedQueryString": $1 };']]
+    expressions: [
+      [ 'q',  'return { "_parsedQueryString": $1 };']
+    ]
     q: [
-      ['( q )',           '$$ = { arity: "1", bool: "", value: $2 };']
-      ['VAR rel VAR',     '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
-      ['q binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
+      ['group', '$$ = $1;']
+      ['predicate', '$$ = $1;']
+      ['group binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
+      ['predicate binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
       ['unaryBool q',     '$$ = { arity: "1", bool: $1, value: $2 };']
+    ]
+    group: [
+      ['( q )',           '$$ = { arity: "1", bool: "", value: $2 };']
+    ]
+    predicate: [
+      ['VAR rel VAR',     '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
     ]
     rel: [
       ['NEQ', '$$ = yytext;']
