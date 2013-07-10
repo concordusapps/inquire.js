@@ -1,4 +1,5 @@
-I = require \../lib/inquire.js
+{inquire} = require \../lib/inquire.js
+I = inquire
 {assert} = require \chai
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 test = it
