@@ -41,17 +41,17 @@ grammar =
       [ 'q',  'return { "_parsedQueryString": $1 };']
     ]
     q: [
-      ['group', '$$ = $1;']
-      ['predicate', '$$ = $1;']
-      ['group binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
+      ['group',                   '$$ = $1;']
+      ['predicate',               '$$ = $1;']
+      ['group binaryBool q',      '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
       ['predicate binaryBool q',  '$$ = { arity: "2", bool: $2, left: $1, right: $3 };']
-      ['unaryBool q',     '$$ = { arity: "1", bool: $1, value: $2 };']
+      ['unaryBool q',             '$$ = { arity: "1", bool: $1, value: $2 };']
     ]
     group: [
-      ['( q )',           '$$ = { arity: "1", bool: "", value: $2 };']
+      ['( q )', '$$ = { arity: "1", bool: "", value: $2 };']
     ]
     predicate: [
-      ['VAR rel VAR',     '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
+      ['VAR rel VAR', '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
     ]
     rel: [
       ['NEQ', '$$ = yytext;']
