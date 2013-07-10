@@ -168,8 +168,9 @@ class Inquire
 
   toString: -> @_genHelper @inquiry
 
+  /*  Read in a query string, and return an inquire.
+  */
   parse: (qs) ->
-    # parser = new Parser grammar
     parsed = parser.parse qs
     @_analyze parsed, null, {bool: ''}
 
