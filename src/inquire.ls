@@ -154,19 +154,20 @@ class Inquire
 
   /*  Make our Inquire actually look like a query string.
   */
-  generate: -> "?#{@_genHelper @inquiry}"
+  generate: -> "?#{@_gen @inquiry}"
 
   # Recurse down our tree, and print out the good stuff.
-  _genHelper: (I) ->
+  _gen: (I) ->
     if typeof! I in <[ Array Boolean Number String ]>
       I
     else if empty I
       ''
-    else match I.arity
-    | \1 => "#{I.bool}(#{@_genHelper I.value})"
-    | \2 => "#{@_genHelper I.left}#{I.rel}#{@_genHelper I.right}"
+    else match I
+    | (.arity is \1) => "#{I.bool}(#{@_gen I.value})"
+    | (.arity is \2) and (.rel) => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+    | (.arity is \2) and (.bool) => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
-  toString: -> @_genHelper @inquiry
+  toString: -> @_gen @inquiry
 
   /*  Read in a query string, and return an inquire.
   */
