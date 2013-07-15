@@ -181,7 +181,12 @@ class Inquire
 
   /*  Make our Inquire actually look like a query string.
   */
-  generate: -> "?#{@_gen @inquiry}"
+  generate: ->
+    inquire = if @inquiry.bool is ''
+      @inquiry.value
+    else
+      @inquiry
+    "?#{@_gen inquire}"
 
   # Recurse down our tree, and print out the good stuff.
   _gen: (I) ->
@@ -189,11 +194,12 @@ class Inquire
       I
     else if empty I
       ''
-    else match I
-    | (.arity is \1) => "#{I.bool}(#{@_gen I.value})"
-    | (.arity is \2) and (.rel) => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
-    | (.arity is \2) and (.bool is \&!) => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
-    | (.arity is \2) and (.bool) => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
+    else if I.arity is \1
+      "#{I.bool}(#{@_gen I.value})"
+    else if I.arity is \2 then match I
+    | (.rel) => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+    | (.bool is \&!) => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
+    | (.bool) => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
   toString: -> @_gen @inquiry
 
