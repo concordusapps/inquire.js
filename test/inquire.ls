@@ -246,6 +246,11 @@ describe \inquire ->
       query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]
       assert.strictEqual query.generate!, '?key1=val1&!(key2=val2);(key3=key3&key4=key4&key5=key5)&!((size<40)&(width>20)&(height>=10))'
 
+  describe 'given a whole mess of nested stuffs' ->
+    test 'it should be smart about parens' ->
+      query = I I I I I \key, \value
+      assert.strictEqual query.generate!, '?key=value'
+
 describe 'function tests' ->
   describe \toString ->
     describe 'given an empty inquire' ->
@@ -488,3 +493,8 @@ describe 'function tests' ->
       test 'it should generate this horrendous string "key1=val1&!(key2=val2);(key3=key3&key4=key4&key5=key5)&!((size<40)&(width>20)&(height>=10))"' ->
         query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]
         assert.strictEqual query.toString!, 'key1=val1&!(key2=val2);(key3=key3&key4=key4&key5=key5)&!((size<40)&(width>20)&(height>=10))'
+
+  describe 'given a whole mess of nested stuffs' ->
+    test 'it should be smart about parens' ->
+      query = I I I I I \key, \value
+      assert.strictEqual query.toString!, '(key=value)'

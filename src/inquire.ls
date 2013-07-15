@@ -12,6 +12,15 @@ arity = (op) -> match op
 | (in <[ ! ]> ++ '')                => \1
 | (in <[ = != > >= < <= & &! ; ]>)  => \2
 
+# Map up the relation to the operator.
+relation = (op) -> match op
+| (is \=)  => \eq
+| (is \!=) => \neq
+| (is \>)  => \gt
+| (is \>=) => \gte
+| (is \<)  => \lt
+| (is \<=) => \lte
+
 class Inquire
 
   inquiry: {}
@@ -132,16 +141,10 @@ class Inquire
       @_unary {inquiry: object._parsedQueryString}, options
       return
     # Set the relational operator
-    relation = match options.rel
-    | \=  => \eq
-    | \!= => \neq
-    | \>  => \gt
-    | \>= => \gte
-    | \<  => \lt
-    | \<= => \lte
+    rel = relation options.rel
     # Stuff the keys and values into it.
     for key, val of object
-      inquire[relation] key, val, options
+      inquire[rel] key, val, options
     # Now put that inquire into our inquire.
     @_handleInquire inquire, {options.bool, options.rel}
 
@@ -227,8 +230,8 @@ Inquire.lt = (key, val) -> Inquire!.lt key, val
 Inquire.lte = (key, val) -> Inquire!.lte key, val
 Inquire.and = (key, val) -> Inquire!.and key, val
 Inquire.or = (key, val) -> Inquire!.or key, val
-Inquire.not = (key) -> Inquire!.not key
-Inquire.parse = (query) -> Inquire!.parse query
+Inquire.not = -> Inquire!.not it
+Inquire.parse = -> Inquire!.parse it
 
 /*  Exporting inquire.  */
 if module?exports

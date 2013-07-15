@@ -5,16 +5,82 @@ I = inquire
 test = it
 
 describe \parser ->
-  describe 'given a simple key=value query string' ->
+  describe 'given a simple key, value pair query string' ->
     test 'it should create an inquire with a generated query string "?key=value"' ->
       parsed-query = I.parse \key=value .generate!
       inquire-query = I \key, \value .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key!=value"' ->
+      parsed-query = I.parse \key!=value .generate!
+      inquire-query = I.neq \key, \value .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key<value"' ->
+      parsed-query = I.parse \key<value .generate!
+      inquire-query = I.lt \key, \value .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key<=value"' ->
+      parsed-query = I.parse \key<=value .generate!
+      inquire-query = I.lte \key, \value .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key>value"' ->
+      parsed-query = I.parse \key>value .generate!
+      inquire-query = I.gt \key, \value .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key>=value"' ->
+      parsed-query = I.parse \key>=value .generate!
+      inquire-query = I.gte \key, \value .generate!
       assert.strictEqual parsed-query, inquire-query
 
   describe 'given a query string with two conjoined predicates' ->
     test 'it should create an inquire with a generated query string "?key1=val1&key2=val2"' ->
       parsed-query = I.parse \key1=val1&key2=val2 .generate!
       inquire-query = I {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1!=val1&key2!=val2"' ->
+      parsed-query = I.parse \key1!=val1&key2!=val2 .generate!
+      inquire-query = I.neq {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1>val1&key2>val2"' ->
+      parsed-query = I.parse \key1>val1&key2>val2 .generate!
+      inquire-query = I.gt {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1>=val1&key2>=val2"' ->
+      parsed-query = I.parse \key1>=val1&key2>=val2 .generate!
+      inquire-query = I.gte {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1<val1&key2<val2"' ->
+      parsed-query = I.parse \key1<val1&key2<val2 .generate!
+      inquire-query = I.lt {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1<=val1&key2<=val2"' ->
+      parsed-query = I.parse \key1<=val1&key2<=val2 .generate!
+      inquire-query = I.lte {key1: \val1, key2: \val2} .generate!
+      assert.strictEqual parsed-query, inquire-query
+
+  describe 'given a query string with two disjoined predicates' ->
+    test 'it should create an inquire with a generated query string "?key1=val1;(key2=val2)"' ->
+      parsed-query = I.parse 'key1=val1;(key2=val2)' .generate!
+      inquire-query = I.eq \key1, \val1 .or I.eq \key2, \val2 .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1!=val1;(key2!=val2)"' ->
+      parsed-query = I.parse 'key1!=val1;(key2!=val2)' .generate!
+      inquire-query = I.neq \key1, \val1 .or I.neq \key2, \val2 .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1>val1;(key2>val2)"' ->
+      parsed-query = I.parse 'key1>val1;(key2>val2)' .generate!
+      inquire-query = I.gt \key1, \val1 .or I.gt \key2, \val2 .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1>=val1;(key2>=val2)"' ->
+      parsed-query = I.parse 'key1>=val1;(key2>=val2)' .generate!
+      inquire-query = I.gte \key1, \val1 .or I.gte \key2, \val2 .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1<val1;(key2<val2)"' ->
+      parsed-query = I.parse 'key1<val1;(key2<val2)' .generate!
+      inquire-query = I.lt \key1, \val1 .or I.lt \key2, \val2 .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should create an inquire with a generated query string "?key1<=val1;(key2<=val2)"' ->
+      parsed-query = I.parse 'key1<=val1;(key2<=val2)' .generate!
+      inquire-query = I.lte \key1, \val1 .or I.lte \key2, \val2 .generate!
       assert.strictEqual parsed-query, inquire-query
 
   describe 'given a negated query string' ->

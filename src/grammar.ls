@@ -38,6 +38,7 @@ module.exports =
     ]
     predicate: [
       ['VAR rel VAR', '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
+      ['VAR rel rel VAR', '$$ = { arity: "2", rel: $2 + $3, left: $1, right: $4 };']
     ]
     rel: [
       ['NEQ', '$$ = yytext;']
