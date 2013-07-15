@@ -47,9 +47,10 @@ class Inquire
     # Figure out our path, based on what the key is.
     match key
     | (instanceof Inquire)      => @_handleInquire key, options
-    | (is 'Array') . (typeof!)  => @_handleArray key, options
-    | (is 'String') . (typeof!) => @_handleString key, val, options
-    | (is 'Object') . (typeof!) => @_handleObject key, options
+    | (is \Array) . (typeof!)  => @_handleArray key, options
+    | (is \String) . (typeof!) => @_handleString key, val, options
+    | (is \Object) . (typeof!) => @_handleObject key, options
+    @_prune @inquiry
     this
 
   # Append whatever it is to us with a relation.
@@ -71,16 +72,26 @@ class Inquire
       # If we're `not`-ing something and there's already a `not` child,
       # replace the `rel` with '&!' and the `bool` with ''.
       [rel, bool] = match options.bool, options.rel
-      | \!, \!  => <[ \&! '' ]>
+      | \!, \!  => <[ &! '' ]>
       | _, _    => [options.bool, options.rel]
-      @inquiry =
-        arity: arity rel
-        rel: rel
-        left: @inquiry
-        right: (Inquire!._analyze key, val,
-          arity: arity bool
-          bool: bool
-          rel: options.rel).inquiry
+      if rel is options.bool
+        @inquiry =
+          arity: arity options.bool
+          bool: options.bool
+          left: @inquiry
+          right: (Inquire!._analyze key, val,
+            arity: arity options.bool
+            bool: options.bool
+            rel: options.rel).inquiry
+      else
+        @inquiry =
+          arity: arity rel
+          bool: rel
+          left: @inquiry
+          right: (Inquire!._analyze key, val,
+            arity: arity bool
+            bool: bool
+            rel: options.rel).inquiry
 
   # Wrap the inquiry in parens, basically.
   _unary: !(val, options) ->
@@ -137,6 +148,22 @@ class Inquire
   # At this point, just dish off to `_binary`
   _handleString: !(key, val, options) -> @_binary key, val, options
 
+  # Trim down the tree as much as possible.
+  _prune: !->
+    # There's a few different cases here.
+    # A paren within a paren can go, e.g.: ((key=val)) => (key=val)
+    # The top level paren can go, e.g.: (key=val) => key=val
+    # probably more...
+    if it.arity is \1 and it.value.arity is \1 and it.bool in <[ ! ]> ++ ''
+      @inquiry = it.value
+      @inquiry.bool = it.bool if it.bool
+      @inquiry.rel = it.rel if it.rel
+      @_prune @inquiry.value
+    if it.arity is \2 and it.right.arity is \1 and it.bool is \&!
+      it.right = it.right.value
+      @inquiry = it
+      @_prune @inquiry
+
   /*  Relational operators.
   */
   eq: (key, val) -> @_analyze key, val, {rel: \=}
@@ -165,6 +192,7 @@ class Inquire
     else match I
     | (.arity is \1) => "#{I.bool}(#{@_gen I.value})"
     | (.arity is \2) and (.rel) => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+    | (.arity is \2) and (.bool is \&!) => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
     | (.arity is \2) and (.bool) => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
   toString: -> @_gen @inquiry
@@ -194,11 +222,12 @@ Inquire.lte = (key, val) -> Inquire!.lte key, val
 Inquire.and = (key, val) -> Inquire!.and key, val
 Inquire.or = (key, val) -> Inquire!.or key, val
 Inquire.not = (key) -> Inquire!.not key
+Inquire.parse = (query) -> Inquire!.parse query
 
 /*  Exporting inquire.  */
 if module?exports
   module.exports = Inquire
 else
   @Inquire = Inquire
-if typeof define is 'function'
+if typeof define is \function
   define \Inquire [] -> Inquire
