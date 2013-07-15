@@ -1,5 +1,5 @@
 # Inquire grammar.
-module.exports.grammar = {
+module.exports =
   lex:
     rules: [
       ['\\(',           'return "(";']
@@ -55,5 +55,3 @@ module.exports.grammar = {
       ['NOT',     '$$ = yytext;']
       ['ANDNOT',  '$$ = yytext;']
     ]
-}
--> grammar

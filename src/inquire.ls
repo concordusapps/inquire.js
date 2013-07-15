@@ -3,8 +3,8 @@
 parser = require \../lib/parser.js
 
 # Check if an object is empty.
-empty = (object) ->
-  for _ of object => return false
+empty = ->
+  for _ of it => return false
   true
 
 # Map up the arity with an operator.
@@ -177,7 +177,7 @@ class Inquire
   */
   and: (key, val) -> @_analyze key, val, {bool: \&}
   or: (key, val) -> @_analyze key, val, {bool: \;}
-  not: (key) -> @_analyze key, null, {bool: \!}
+  not: -> @_analyze it, null, {bool: \!}
 
   /*  Make our Inquire actually look like a query string.
   */
@@ -205,8 +205,8 @@ class Inquire
 
   /*  Read in a query string, and return an inquire.
   */
-  parse: (qs) ->
-    parsed = parser.parse qs
+  parse: ->
+    parsed = parser.parse it
     @_analyze parsed, null, {bool: ''}
 
 /*  Static methods.

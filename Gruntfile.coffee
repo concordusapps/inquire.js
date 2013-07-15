@@ -10,7 +10,7 @@ module.exports = (grunt) ->
 
     jison:
       files:
-        src: './src/parser.ls'
+        src: './src/grammar.ls'
         dest: './lib/parser.js'
 
     cjs:
@@ -35,7 +35,7 @@ module.exports = (grunt) ->
     require 'LiveScript'
     {Parser} = require 'jison'
     compiled = require this.data.src
-    parser = new Parser compiled.grammar
+    parser = new Parser compiled
     grunt.file.write this.data.dest, parser.generate()
 
   grunt.registerMultiTask 'cjs', 'Wrap everything up for the browser', ->
@@ -46,4 +46,4 @@ module.exports = (grunt) ->
       grunt.file.write this.data.dest, js
       grunt.log.write "File #{this.data.dest} created."
 
-  grunt.registerTask 'default', ['livescript:build', 'jison', 'cjs']
+  grunt.registerTask 'default', ['jison', 'cjs']
