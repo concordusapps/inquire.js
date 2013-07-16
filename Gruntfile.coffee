@@ -1,13 +1,6 @@
 module.exports = (grunt) ->
   grunt.initConfig
 
-    # LiveScript
-    livescript:
-      build:
-        files: [
-          'lib/inquire.js': 'src/inquire.ls'
-        ]
-
     jison:
       files:
         src: './src/grammar.ls'

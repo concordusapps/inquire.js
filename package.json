@@ -29,9 +29,6 @@
     "coverage": "istanbul cover _mocha -- -R nyan --compilers ls:LiveScript test/*.ls",
     "coveralls": "cat coverage/lcov.info | coveralls"
   },
-  "dependencies": {
-    "jison": "~0.4.6"
-  },
   "devDependencies": {
     "chai": "~1.7.0",
     "commonjs-everywhere": "~0.8.0",
@@ -41,6 +38,7 @@
     "grunt": "~0.4.0",
     "grunt-livescript": "~0.5.0",
     "istanbul": "~0.1.37",
+    "jison": "~0.4.6",
     "LiveScript": "~1.1.1",
     "mocha": "~1.12.0",
     "mocha-lcov-reporter": "~0.0.1"
