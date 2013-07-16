@@ -88,3 +88,17 @@ describe \parser ->
       parsed-query = I.parse \!key=val .generate!
       inquire-query = I.not I \key, \val .generate!
       assert.strictEqual parsed-query, inquire-query
+
+  describe 'given a deeply nested query string' ->
+    test 'it should be smart about the parens, and optimize away everything' ->
+      parsed-query = I.parse '(((((((key=val)))))))' .generate!
+      inquire-query = I I I I I I I \key, \val .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should be smart about the parens, and optimize away most of it' ->
+      parsed-query = I.parse '(((((((key1=val1)&(key2=val2))))))))' .generate!
+      inquire-query = I I I I I (I I \key1, \val1).and(I I \key2, \val2) .generate!
+      assert.strictEqual parsed-query, inquire-query
+    test 'it should be smart about the parens, and optimize away almost all of it' ->
+      parsed-query = I.parse '(((((key1>val1)))&!(((key2<=val2)))))' .generate!
+      inquire-query = I I(I I I I.gt \key1, \val1).not(I I I I.lte \key2, \val2) .generate!
+      assert.strictEqual parsed-query, inquire-query

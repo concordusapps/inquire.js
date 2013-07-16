@@ -56,9 +56,9 @@ class Inquire
     # Figure out our path, based on what the key is.
     match key
     | (instanceof Inquire)      => @_handleInquire key, options
-    | (is \Array) . (typeof!)  => @_handleArray key, options
-    | (is \String) . (typeof!) => @_handleString key, val, options
-    | (is \Object) . (typeof!) => @_handleObject key, options
+    | (is \Array) . (typeof!)   => @_handleArray key, options
+    | (is \String) . (typeof!)  => @_handleString key, val, options
+    | (is \Object) . (typeof!)  => @_handleObject key, options
     @_prune @inquiry
     this
 
@@ -169,27 +169,25 @@ class Inquire
 
   /*  Relational operators.
   */
-  eq: (key, val) -> @_analyze key, val, {rel: \=}
+  eq: (key, val)  -> @_analyze key, val, {rel: \=}
   neq: (key, val) -> @_analyze key, val, {rel: \!=}
-  gt: (key, val) -> @_analyze key, val, {rel: \>}
+  gt: (key, val)  -> @_analyze key, val, {rel: \>}
   gte: (key, val) -> @_analyze key, val, {rel: \>=}
-  lt: (key, val) -> @_analyze key, val, {rel: \<}
+  lt: (key, val)  -> @_analyze key, val, {rel: \<}
   lte: (key, val) -> @_analyze key, val, {rel: \<=}
 
   /*  Boolean predicates.
   */
   and: (key, val) -> @_analyze key, val, {bool: \&}
-  or: (key, val) -> @_analyze key, val, {bool: \;}
+  or: (key, val)  -> @_analyze key, val, {bool: \;}
   not: -> @_analyze it, null, {bool: \!}
 
   /*  Make our Inquire actually look like a query string.
   */
-  generate: ->
-    inquire = if @inquiry.bool is ''
-      @inquiry.value
-    else
-      @inquiry
-    "?#{@_gen inquire}"
+  generate: -> "?#{@_gen @_unwrap @inquiry}"
+
+  # Remove some parens.
+  _unwrap: (I) -> if I.bool is '' then @_unwrap I.value else I
 
   # Recurse down our tree, and print out the good stuff.
   _gen: (I) ->
@@ -198,11 +196,11 @@ class Inquire
     else if empty I
       ''
     else if I.arity is \1
-      "#{I.bool}(#{@_gen I.value})"
+      "#{I.bool}(#{@_gen @_unwrap I.value})"
     else if I.arity is \2 then match I
-    | (.rel) => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
-    | (.bool is \&!) => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
-    | (.bool) => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
+    | (.rel)          => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+    | (.bool is \&!)  => "#{@_gen I.left}#{I.bool}(#{@_gen @_unwrap I.right})"
+    | (.bool)         => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
   toString: -> @_gen @inquiry
 
