@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.2.1
+#### 07/15/13
+- Parses strings to build an `inquire`.
+- Optimizes the parens quite a bit.
+- Minor bug fixes.
+- More testing.
+
 ### 0.1.1
 #### 06/23/13
 - Added coveralls integration.
