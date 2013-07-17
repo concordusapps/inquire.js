@@ -1,6 +1,11 @@
 # Changelog
 
 ### 0.2.1
+### 07/17/13
+- Encode query strings.
+- Updated dependency (`commonjs-everywhere`).
+
+### 0.2.0
 #### 07/15/13
 - Parses strings to build an `inquire`.
 - Optimizes the parens quite a bit.
