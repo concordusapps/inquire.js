@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "chai": "~1.7.0",
-    "commonjs-everywhere": "~0.8.0",
+    "commonjs-everywhere": "~0.9.0",
     "coveralls": "~2.0.16",
     "escodegen": "~0.0.23",
     "esprima": "~1.0.3",

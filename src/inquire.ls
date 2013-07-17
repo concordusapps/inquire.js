@@ -192,7 +192,7 @@ class Inquire
   # Recurse down our tree, and print out the good stuff.
   _gen: (I) ->
     if typeof! I in <[ Array Boolean Number String ]>
-      I
+      encodeURIComponent I
     else if empty I
       ''
     else if I.arity is \1
