@@ -9,8 +9,8 @@ empty = ->
 
 # Map up the arity with an operator.
 arity = (op) -> match op
-| (in <[ ! ]> ++ '')                => \1
-| (in <[ = != > >= < <= & &! ; ]>)  => \2
+| (in <[ ! ]> ++ '')                      => \1
+| (in <[ = != > >= < <= & &! ; concat ]>) => \2
 
 # Map up the relation to the operator.
 relation = (op) -> match op
@@ -22,6 +22,11 @@ relation = (op) -> match op
 | (is \<=) => \lte
 
 class Inquire
+
+  /*  Warning, this thing is chocked full of side effects.
+      It's mad hard to reason about.
+      Be careful...
+  */
 
   inquiry: {}
 
@@ -50,7 +55,7 @@ class Inquire
 
       Returns this Allows for chaining of inquire's.
   */
-  _analyze: (key, val, {bool=\& rel=\=}) ->
+  _analyze: (key, val, {bool=\& rel=\=}={}) ->
     # We need to provide some defaults for the options and also name it.
     options = {bool, rel}
     # Figure out our path, based on what the key is.
@@ -197,10 +202,11 @@ class Inquire
       ''
     else if I.arity is \1
       "#{I.bool}(#{@_gen @_unwrap I.value})"
-    else if I.arity is \2 then match I
-    | (.rel)          => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
-    | (.bool is \&!)  => "#{@_gen I.left}#{I.bool}(#{@_gen @_unwrap I.right})"
-    | (.bool)         => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
+    else if I.arity is \2 then match I.rel, I.bool
+    | (?), _          => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+    | _, (is \&!)     => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
+    | _, (is \concat) => "(#{@_gen I.left})&(#{@_gen I.right})"
+    | _, (?)          => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
   toString: -> @_gen @inquiry
 
@@ -209,6 +215,45 @@ class Inquire
   parse: ->
     parsed = parser.parse it
     @_analyze parsed, null, {bool: ''}
+
+  /*  Fantasy-land
+
+      Everything in here should be pure, and not mutate other things.
+      This is the only place where you can guarantee anything.
+  */
+
+  /*  Semigroup
+
+      1.  `a.concat(b).concat(c)` is equivalent to `a.concat(b.concat(c))`
+          (associativity)
+
+      `concat` method
+
+      A value which has a Semigroup must provide a `concat` method. The
+      `concat` method takes one argument:
+
+        s.concat(b)
+
+      1.  `b` must be a value of the same Semigroup
+
+          1.  If `b` is not the same semigroup, behaviour of `concat` is
+              unspecified.
+
+      2.  `concat` must return a value of the same Semigroup.
+  */
+  concat: (I) ->
+    # Take the entirety of our current inquire and clone it to and empty object.
+    old-i = {}
+    old-i <<< @inquiry
+    # Create a new inquire, then set the old attributes.
+    new-i = @@!
+    new-i.inquiry =
+      arity: \2
+      bool: \concat
+      left: old-i
+      right: I.inquiry
+    # Return our new inquire.
+    new-i
 
 /*  Static methods.
     We can do stuff like:
