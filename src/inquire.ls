@@ -201,12 +201,15 @@ class Inquire
     else if empty I
       ''
     else if I.arity is \1
-      "#{I.bool}(#{@_gen @_unwrap I.value})"
-    else if I.arity is \2 then match I.rel, I.bool
-    | (?), _          => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
-    | _, (is \&!)     => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
-    | _, (is \concat) => "(#{@_gen I.left})&(#{@_gen I.right})"
-    | _, (?)          => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
+      match I.bool
+      | (is \empty) => ''
+      | otherwise   => "#{I.bool}(#{@_gen @_unwrap I.value})"
+    else if I.arity is \2
+      match I.rel, I.bool
+      | (?), _          => "#{@_gen I.left}#{I.rel}#{@_gen I.right}"
+      | _, (is \&!)     => "#{@_gen I.left}#{I.bool}(#{@_gen I.right})"
+      | _, (is \concat) => "(#{@_gen I.left})&(#{@_gen I.right})"
+      | _, (?)          => "#{@_gen I.left}#{I.bool}#{@_gen I.right}"
 
   toString: -> @_gen @inquiry
 
@@ -243,8 +246,7 @@ class Inquire
   */
   concat: (I) ->
     # Take the entirety of our current inquire and clone it to and empty object.
-    old-i = {}
-    old-i <<< @inquiry
+    old-i = {} <<< @inquiry
     # Create a new inquire, then set the old attributes.
     new-i = @@!
     new-i.inquiry =
@@ -253,6 +255,32 @@ class Inquire
       left: old-i
       right: I.inquiry
     # Return our new inquire.
+    new-i
+
+  /*  Monoid
+
+      A value that implements the Monoid specification must also implement
+      the Semigroup specficiation.
+
+      1. `m.concat(m.empty())` is equivalent to `m` (right identity)
+      2. `m.empty().concat(m)` is equivalent to `m` (left identity)
+
+      `empty` method
+
+      A value which has a Monoid must provide an `empty` method on itself or
+      its `constructor` object. The `empty` method takes no arguments:
+
+        m.empty()
+        m.constructor.empty()
+
+      1. `empty` must return a value of the same Monoid
+  */
+  empty: ->
+    new-i = @@!
+    new-i.inquiry =
+      arity: \1
+      bool: \empty
+      value: ''
     new-i
 
 /*  Static methods.
