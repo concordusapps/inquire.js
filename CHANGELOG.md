@@ -1,7 +1,12 @@
 # Changelog
 
+### 0.3.0
+#### 07/19/13
+- First Fantasy Land algebra (Semigroup).
+- Renamed repository to `inquire.js`.
+
 ### 0.2.1
-### 07/17/13
+#### 07/17/13
 - Encode query strings.
 - Updated dependency (`commonjs-everywhere`).
 

@@ -8,9 +8,9 @@
     "string",
     "url"
   ],
-  "homepage": "https://github.com/concordusapps/inquire",
+  "homepage": "https://github.com/concordusapps/inquire.js",
   "bugs": {
-    "url": "https://github.com/concordusapps/inquire/issues"
+    "url": "https://github.com/concordusapps/inquire.js/issues"
   },
   "license": "MIT",
   "author": {
@@ -22,7 +22,7 @@
   "main": "lib/inquire.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/concordusapps/inquire.git"
+    "url": "git://github.com/concordusapps/inquire.js.git"
   },
   "scripts": {
     "test": "mocha -R nyan --compilers ls:LiveScript test/*.ls",

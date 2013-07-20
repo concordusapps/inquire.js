@@ -1,7 +1,7 @@
 # Inquire
-[![Build Status](https://travis-ci.org/concordusapps/inquire.png?branch=master)](https://travis-ci.org/concordusapps/inquire)
-[![Coverage Status](https://coveralls.io/repos/concordusapps/inquire/badge.png?branch=master)](https://coveralls.io/r/concordusapps/inquire?branch=master)
-[![devDependency Status](https://david-dm.org/concordusapps/inquire/dev-status.png)](https://david-dm.org/concordusapps/inquire#info=devDependencies)
+[![Build Status](https://travis-ci.org/concordusapps/inquire.js.png?branch=master)](https://travis-ci.org/concordusapps/inquire.js)
+[![Coverage Status](https://coveralls.io/repos/concordusapps/inquire.js/badge.png?branch=master)](https://coveralls.io/r/concordusapps/inquire.js?branch=master)
+[![devDependency Status](https://david-dm.org/concordusapps/inquire.js/dev-status.png)](https://david-dm.org/concordusapps/inquire.js#info=devDependencies)
 
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
