@@ -11,7 +11,7 @@ equivalent = (first, second) ->
   # We don't want to set up a server,
   # so we just normalize the structure of the inquires,
   # and compare them that way.
-  normalize first .toString! is normalize second .toString!
+  JSON.stringify(normalize first) is JSON.stringify(normalize second)
 
 # Restructure our inquiries to be in a normal form.
 # WARNING, this deals with the implementation,
@@ -19,10 +19,8 @@ equivalent = (first, second) ->
 normalize = ->
   # We got an actual inquire.
   if it instanceof I
-    # Create a new one, clone the old one, and normalize it, then return it.
-    new-i = I!
-    new-i.inquiry = normalize {} <<< it.inquiry
-    new-i
+    # Clone the old one, normalize it, unwrap it, then return it.
+    I!._unwrap normalize {} <<< it.inquiry
   # We should be normalizing things here.
   else if it.bool is \concat and it.left.bool is \concat
     # Make the structure be akin to (((a*b)*c)*...)
@@ -80,3 +78,8 @@ describe \fantasy ->
         assert.isTrue a.empty().concat(a) `equivalent` a
       test 'it should pass right identity' ->
         assert.isTrue a.concat(a.empty()) `equivalent` a
+
+  describe \Functor ->
+    describe 'map should unwrap the inquire apply the function to it, and rewrap it.' ->
+      test 'it should pass for identity' ->
+        assert.isTrue a.map(-> it) `equivalent` a

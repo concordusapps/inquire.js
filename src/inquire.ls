@@ -232,8 +232,8 @@ class Inquire
 
       `concat` method
 
-      A value which has a Semigroup must provide a `concat` method. The
-      `concat` method takes one argument:
+      A value which has a Semigroup must provide a `concat` method.
+      The `concat` method takes one argument:
 
         s.concat(b)
 
@@ -245,6 +245,7 @@ class Inquire
       2.  `concat` must return a value of the same Semigroup.
   */
   concat: (I) ->
+    throw new Error "TypeError: Not an inquire\n#I" unless I instanceof Inquire
     # Take the entirety of our current inquire and clone it to and empty object.
     old-i = {} <<< @inquiry
     # Create a new inquire, then set the old attributes.
@@ -282,6 +283,42 @@ class Inquire
       bool: \empty
       value: ''
     new-i
+
+  /*  Functor
+
+      1. `u.map(function(a) { return a; }))` is equivalent to `u` (identity)
+      2. `u.map(function(x) { return f(g(x)); })` is equivalent to
+         `u.map(g).map(f)` (composition)
+
+      `map` method
+
+      A value which has a Functor must provide a `map` method.
+      The `map` method takes one argument:
+
+        u.map(f)
+
+      1. `f` must be a function,
+
+        1. If `f` is not a function, the behaviour of `map` is unspecified.
+        2. `f` can return any value.
+
+      2. `map` must return a value of the same Functor
+  */
+  map: (f) ->
+    unless typeof! f is \Function
+      throw new Error "TypeError: Not a function\n#f"
+    # Clone our current inquire into an intermediate one.
+    temp-i = @@!
+    temp-i.inquiry = {} <<< @inquiry
+    # Apply the function given to the intermediate inquire.
+    applied = f @toString!
+    # # If this thing is already an inquire, just return it.
+    # if applied instanceof Inquire
+    #   applied
+    # # Otherwise, take whatever the function did to the temp inquire,
+    # # and try to wrap as an inquire.
+    # else
+    @@.parse applied
 
 /*  Static methods.
     We can do stuff like:
