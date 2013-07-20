@@ -35,17 +35,31 @@ normalize = ->
         bool: \concat
         left: it.left.right
         right: it.right
+    # Normalize both sides of what we just made.
     new-i.left = normalize new-i.left
     new-i.right = normalize new-i.right
-    new-i
+    # Normalize what we just made.
+    normalize new-i
   # We don't need to do anything with this part.
   else
     it
 
 describe \fantasy ->
+  a = I \keyA, \valA
+  b = I \keyB, \valB
+  c = I \keyC, \valC
+  d = I \keyD, \valD
+  e = I \keyE, \valE
+  f = I \keyF, \valF
   describe \Semigroup ->
-    test 'concat should be associative' ->
-      a = I \keyA, \valA
-      b = I \keyB, \valB
-      c = I \keyC, \valC
-      assert.isTrue a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+    describe 'concat should be associative' ->
+      test 'it should pass the definition of associativity' ->
+        assert.isTrue a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+      test 'it should pass some more complicated structure' ->
+        abbc = a.concat(b).concat(b).concat(c)
+        a_b_b_c = a.concat(b.concat(b.concat(c)))
+        assert.isTrue abbc `equivalent` a_b_b_c
+      test 'is should pass some random structure' ->
+        abcdef = a.concat(b.concat(c.concat(d.concat(e.concat(f)))))
+        a_b_cde_f = a.concat(b.concat((c.concat(d.concat(e))))).concat(f)
+        assert.isTrue abcdef `equivalent` a_b_cde_f
