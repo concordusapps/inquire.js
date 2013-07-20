@@ -11,6 +11,8 @@ Currently supports [armet][armet] syntax query strings.
 
 #### Algebras
 * Semigroup
+* Monoid
+* Functor
 
 ## Installation
 
