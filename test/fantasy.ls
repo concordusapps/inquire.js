@@ -11,7 +11,9 @@ equivalent = (first, second) ->
   # We don't want to set up a server,
   # so we just normalize the structure of the inquires,
   # and compare them that way.
-  JSON.stringify(normalize first) is JSON.stringify(normalize second)
+  obj = JSON.stringify(normalize first) is JSON.stringify(normalize second)
+  str = "#{normalize first}" is "#{normalize second}"
+  obj or str
 
 # Restructure our inquiries to be in a normal form.
 # WARNING, this deals with the implementation,
@@ -61,25 +63,30 @@ describe \fantasy ->
           assert.instanceOf b, I
           assert.instanceOf a.concat(b), I
     describe 'concat should be associative' ->
-      test 'it should pass the definition of associativity' ->
+      test 'it should hold for the definition of associativity' ->
         assert.isTrue a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
-      test 'it should pass some more complicated structure' ->
+      test 'it should hold for some more complicated structure' ->
         abbc = a.concat(b).concat(b).concat(c)
         a_b_b_c = a.concat(b.concat(b.concat(c)))
         assert.isTrue abbc `equivalent` a_b_b_c
-      test 'it should pass some random structure' ->
+      test 'it should hold for some random structure' ->
         abcdef = a.concat(b.concat(c.concat(d.concat(e.concat(f)))))
         a_b_cde_f = a.concat(b.concat((c.concat(d.concat(e))))).concat(f)
         assert.isTrue abcdef `equivalent` a_b_cde_f
 
   describe \Monoid ->
     describe 'empty should be the identity' ->
-      test 'it should pass left identity' ->
+      test 'it should hold for left identity' ->
         assert.isTrue a.empty().concat(a) `equivalent` a
-      test 'it should pass right identity' ->
+      test 'it should hold for right identity' ->
         assert.isTrue a.concat(a.empty()) `equivalent` a
 
   describe \Functor ->
+    id = -> it
+    wrap = -> "(#it)"
+    negate = -> "!(#it)"
     describe 'map should unwrap the inquire apply the function to it, and rewrap it.' ->
-      test 'it should pass for identity' ->
-        assert.isTrue a.map(-> it) `equivalent` a
+      test 'it should hold for identity' ->
+        assert.isTrue a.map(id) `equivalent` a
+      test 'it should hold for composition' ->
+        assert.isTrue a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)

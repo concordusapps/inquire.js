@@ -162,11 +162,10 @@ class Inquire
     # A paren within a paren can go, e.g.: ((key=val)) => (key=val)
     # The top level paren can go, e.g.: (key=val) => key=val
     # probably more...
-    if it.arity is \1 and it.value.arity is \1 and it.bool in <[ ! ]> ++ ''
+    if it.arity is \1 and it.value.arity is \1 and it.bool isnt \!
       @inquiry = it.value
       @inquiry.bool = it.bool if it.bool
-      @inquiry.rel = it.rel if it.rel
-      @_prune @inquiry.value
+      @_prune @inquiry
     if it.arity is \2 and it.right.arity is \1 and it.bool is \&!
       it.right = it.right.value
       @inquiry = it
@@ -307,18 +306,13 @@ class Inquire
   map: (f) ->
     unless typeof! f is \Function
       throw new Error "TypeError: Not a function\n#f"
-    # Clone our current inquire into an intermediate one.
-    temp-i = @@!
-    temp-i.inquiry = {} <<< @inquiry
-    # Apply the function given to the intermediate inquire.
-    applied = f @toString!
-    # # If this thing is already an inquire, just return it.
-    # if applied instanceof Inquire
-    #   applied
-    # # Otherwise, take whatever the function did to the temp inquire,
-    # # and try to wrap as an inquire.
-    # else
-    @@.parse applied
+    # Apply the function given to the query string,
+    # then parse it as a new inquire.
+    # console.log JSON.stringify this, null, 4
+    # console.log JSON.stringify @toString!, null, 4
+    # console.log JSON.stringify (f @toString!), null, 4
+    # console.log JSON.stringify (@@.parse f @toString!), null, 4
+    @@.parse f @toString!
 
 /*  Static methods.
     We can do stuff like:
