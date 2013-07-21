@@ -1,6 +1,5 @@
 I = require \../src/inquire.ls
 
-{assert} = require \chai
 {data: d, forAll} =  require \claire
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 test = it
@@ -59,40 +58,51 @@ describe \fantasy-claire ->
             a = I ak, av
             b = I bk, bv
             a instanceof I and b instanceof I and a.concat(b) instanceof I
-          .asTest({+verbose, times: 1000})!
-
-describe \fantasy ->
-  a = I \keyA, \valA
-  b = I \keyB, \valB
-  c = I \keyC, \valC
-  d = I \keyD, \valD
-  e = I \keyE, \valE
-  f = I \keyF, \valF
-  describe \Semigroup ->
-    describe 'concat should be a magma operation' ->
-      describe 'given two semigroups' ->
-        test 'it should return another semigroup' ->
-          assert.instanceOf a, I
-          assert.instanceOf b, I
-          assert.instanceOf a.concat(b), I
+          .asTest({-verbose, times: 1000})!
     describe 'concat should be associative' ->
       test 'it should hold for the definition of associativity' ->
-        assert.isTrue a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+        forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
+        .satisfy (ak, av, bk, bv, ck, cv) ->
+          a = I ak, av
+          b = I bk, bv
+          c = I ck, cv
+          a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+        .asTest({-verbose, times: 1000})!
       test 'it should hold for some more complicated structure' ->
-        abbc = a.concat(b).concat(b).concat(c)
-        a_b_b_c = a.concat(b.concat(b.concat(c)))
-        assert.isTrue abbc `equivalent` a_b_b_c
+        forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
+        .satisfy (ak, av, bk, bv, ck, cv) ->
+          a = I ak, av
+          b = I bk, bv
+          c = I ck, cv
+          abbc = a.concat(b).concat(b).concat(c)
+          a_b_b_c = a.concat(b.concat(b.concat(c)))
+          abbc `equivalent` a_b_b_c
+        .asTest({-verbose, times: 1000})!
       test 'it should hold for some random structure' ->
-        abcdef = a.concat(b.concat(c.concat(d.concat(e.concat(f)))))
-        a_b_cde_f = a.concat(b.concat((c.concat(d.concat(e))))).concat(f)
-        assert.isTrue abcdef `equivalent` a_b_cde_f
+        forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
+        .satisfy (ak, av, bk, bv, ck, cv) ->
+          a = I ak, av
+          b = I bk, bv
+          c = I ck, cv
+          abcabc = a.concat(b.concat(c.concat(a.concat(b.concat(c)))))
+          a_b_cab_c = a.concat(b.concat((c.concat(a.concat(b))))).concat(c)
+          abcabc `equivalent` a_b_cab_c
+        .asTest({-verbose, times: 1000})!
 
   describe \Monoid ->
     describe 'empty should be the identity' ->
       test 'it should hold for left identity' ->
-        assert.isTrue a.empty().concat(a) `equivalent` a
+        forAll(d.Str, d.Str)
+        .satisfy (key, val) ->
+          a = I key, val
+          a.empty().concat(a) `equivalent` a
+        .asTest({-verbose, times: 1000})!
       test 'it should hold for right identity' ->
-        assert.isTrue a.concat(a.empty()) `equivalent` a
+        forAll(d.Str, d.Str)
+        .satisfy (key, val) ->
+          a = I key, val
+          a.concat(a.empty()) `equivalent` a
+        .asTest({-verbose, times: 1000})!
 
   describe \Functor ->
     id = -> it
@@ -100,6 +110,18 @@ describe \fantasy ->
     negate = -> "!(#it)"
     describe 'map should unwrap the inquire apply the function to it, and rewrap it.' ->
       test 'it should hold for identity' ->
-        assert.isTrue a.map(id) `equivalent` a
+        forAll(d.AlphaStr, d.AlphaStr)
+        .given (key, val) ->
+          '' not in [key, val]
+        .satisfy (key, val) ->
+          a = I key, val
+          a.map(id) `equivalent` a
+        .asTest({-verbose, times: 1000})!
       test 'it should hold for composition' ->
-        assert.isTrue a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
+        forAll(d.AlphaStr, d.AlphaStr)
+        .given (key, val) ->
+          '' not in [key, val]
+        .satisfy (key, val) ->
+          a = I key, val
+          a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
+        .asTest({-verbose, times: 1000})!
