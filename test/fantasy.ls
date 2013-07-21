@@ -1,6 +1,7 @@
 I = require \../src/inquire.ls
 
 {assert} = require \chai
+{data: d, forAll} =  require \claire
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 test = it
 
@@ -47,6 +48,18 @@ normalize = ->
   # We don't need to do anything with this part.
   else
     it
+
+describe \fantasy-claire ->
+  describe \Semigroup ->
+    describe 'concat should be a magma operation' ->
+      describe 'given two semigroups' ->
+        test 'it should return another semigroup' ->
+          forAll(d.Str, d.Str, d.Str, d.Str)
+          .satisfy (ak, av, bk, bv) ->
+            a = I ak, av
+            b = I bk, bv
+            a instanceof I and b instanceof I and a.concat(b) instanceof I
+          .asTest({+verbose, times: 1000})!
 
 describe \fantasy ->
   a = I \keyA, \valA
