@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Inquire.js by concordusapps</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Inquire.js</h1>
+          <h2>Generate advanced query strings. </h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/concordusapps/inquire.js/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/concordusapps/inquire.js/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/concordusapps/inquire.js" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="inquire" class="anchor" href="#inquire"><span class="octicon octicon-link"></span></a>Inquire</h1>
+
+<p><a href="https://travis-ci.org/concordusapps/inquire.js"><img src="https://travis-ci.org/concordusapps/inquire.js.png?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/r/concordusapps/inquire.js?branch=master"><img src="https://coveralls.io/repos/concordusapps/inquire.js/badge.png?branch=master" alt="Coverage Status"></a>
+<a href="https://david-dm.org/concordusapps/inquire.js#info=devDependencies"><img src="https://david-dm.org/concordusapps/inquire.js/dev-status.png" alt="devDependency Status"></a></p>
+
+<p>Inquire allows you to generate advanced query strings.
+Currently supports <a href="http://armet.github.io/">armet</a> syntax query strings.</p>
+
+<h3>
+<a name="fantasy-land-compliant" class="anchor" href="#fantasy-land-compliant"><span class="octicon octicon-link"></span></a>Fantasy Land Compliant</h3>
+
+<p><a href="https://github.com/puffnfresh/fantasy-land"><img src="images/fantasy-land.png" alt="Fantasy Land"></a></p>
+
+<h4>
+<a name="algebras" class="anchor" href="#algebras"><span class="octicon octicon-link"></span></a>Algebras</h4>
+
+<ul>
+<li>Semigroup</li>
+<li>Monoid</li>
+<li>Functor</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Inquire is available on the npm registry: <a href="https://npmjs.org/package/inquire">inquire</a></p>
+
+<p>You can install it with npm.</p>
+
+<pre><code>npm install inquire
+</code></pre>
+
+<p>Run the tests.</p>
+
+<pre><code>npm test
+</code></pre>
+
+<p>Check the coverage.</p>
+
+<pre><code>npm run cover
+</code></pre>
+
+<h2>
+<a name="the-problem" class="anchor" href="#the-problem"><span class="octicon octicon-link"></span></a>The Problem</h2>
+
+<p>Currently, query strings only conjoin predicates together with equality.
+<a href="http://armet.github.io/">Armet</a> attempts to extend this in two ways:</p>
+
+<ul>
+<li>Allowing predicates to be conjoined, disjoined and negated.</li>
+<li>Allowing more than just equality, e.g. inequalities.</li>
+</ul><p>This ends up creating a problem.
+We now have to generate these advanced query strings.
+Generating these advanced query strings by hand gets unwieldy.</p>
+
+<p>For example, let's say we are dealing with a REST api for shapes.
+We can <code>GET</code> on <code>/api/shape</code> and return all of the shapes.</p>
+
+<p>Now let's try to get more detailed in our result.
+Let's say we want red shapes wider than 30 pixels or
+we want all shapes with no more than 12 sides or
+we want all of the squares that either aren't black or that were created by bob.
+Our <code>GET</code> request becomes:</p>
+
+<p><code>/api/shape?(color=red&amp;width&gt;30);sides&lt;=12;(shape=square&amp;(color!=black;user=bob))</code></p>
+
+<h2>
+<a name="a-solution" class="anchor" href="#a-solution"><span class="octicon octicon-link"></span></a>A Solution</h2>
+
+<p>We need a better way to generate query strings for <a href="http://armet.github.io/">armet</a>'s consumption.
+Inquire allows you do the same query without trying to man-handle the string.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nv">query = </span><span class="nx">inquire</span><span class="p">(</span><span class="nx">inquire</span> <span class="s">\color</span><span class="p">,</span> <span class="s">\red</span> <span class="p">.</span><span class="nx">and</span> <span class="nx">inquire</span><span class="p">.</span><span class="nx">gt</span> <span class="s">\width</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">or</span> <span class="nx">inquire</span><span class="p">.</span><span class="nx">lte</span> <span class="s">\sides</span><span class="p">,</span> <span class="mi">12</span>
+<span class="p">.</span><span class="nx">or</span> <span class="p">(</span><span class="nx">inquire</span> <span class="s">\shape</span><span class="p">,</span> <span class="s">\square</span> <span class="p">.</span><span class="nx">and</span> <span class="p">(</span><span class="nx">inquire</span><span class="p">.</span><span class="nx">neq</span> <span class="s">\color</span><span class="p">,</span> <span class="s">\black</span> <span class="p">.</span><span class="nx">or</span> <span class="s">\user</span><span class="p">,</span> <span class="s">\bob</span><span class="p">))</span>
+<span class="nv">url = </span><span class="s">"/api/shape/</span><span class="si">#{</span><span class="nx">query</span><span class="p">.</span><span class="nx">generate</span><span class="o">!</span><span class="si">}</span><span class="s">"</span>
+<span class="c1"># url =&gt; /api/shape?(color=red&amp;(width&gt;30));(sides&lt;=12);(shape=square&amp;(color!=black;user=bob))</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">query</span> <span class="o">=</span> <span class="nx">inquire</span><span class="p">(</span><span class="nx">inquire</span><span class="p">(</span><span class="s1">'color'</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">).</span><span class="nx">and</span><span class="p">(</span><span class="nx">inquire</span><span class="p">.</span><span class="nx">gt</span><span class="p">(</span><span class="s1">'width'</span><span class="p">,</span> <span class="mi">30</span><span class="p">)))</span>
+<span class="p">.</span><span class="nx">or</span><span class="p">(</span><span class="nx">inquire</span><span class="p">.</span><span class="nx">lte</span><span class="p">(</span><span class="s1">'sides'</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="p">.</span><span class="nx">or</span><span class="p">(</span><span class="nx">inquire</span><span class="p">(</span><span class="s1">'shape'</span><span class="p">,</span> <span class="s1">'square'</span><span class="p">).</span><span class="nx">and</span><span class="p">(</span><span class="nx">inquire</span><span class="p">.</span><span class="nx">neq</span><span class="p">(</span><span class="s1">'color'</span><span class="p">,</span> <span class="s1">'black'</span><span class="p">).</span><span class="nx">or</span><span class="p">(</span><span class="s1">'user'</span><span class="p">,</span> <span class="s1">'bob'</span><span class="p">)));</span>
+<span class="nx">url</span> <span class="o">=</span> <span class="s2">"/api/shape/"</span> <span class="o">+</span> <span class="nx">query</span><span class="p">.</span><span class="nx">generate</span><span class="p">();</span>
+<span class="c1">// url =&gt; /api/shape?(color=red&amp;(width&gt;30));(sides&lt;=12);(shape=square&amp;(color!=black;user=bob))</span>
+</pre></div>
+
+<p>Note: At this time, inquire does not optimize away parens.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>The inquire class can be used to create a new predicate defaulting to equality.
+There are multiple ways to create an <code>inquire</code>.</p>
+
+<p>Passing just the key, value pair.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span> <span class="s">\key</span><span class="p">,</span> <span class="s">\value</span> <span class="c1">#=&gt; key=value</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">(</span><span class="s1">'key'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">);</span> <span class="c1">//=&gt; key=value</span>
+</pre></div>
+
+<p>Passing in another <code>inquire</code>, which will end up wrapping it in parens.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span> <span class="nx">inquire</span> <span class="s">\key</span><span class="p">,</span> <span class="s">\value</span> <span class="c1">#=&gt; (key=value)</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">(</span><span class="nx">inquire</span><span class="p">(</span><span class="s1">'key'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">));</span> <span class="c1">//=&gt; (key=value)</span>
+</pre></div>
+
+<p>You can pass in an object, or an array of <code>inquire</code>'s.
+Both of these conjoin their values by default and wrap in parens.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span> <span class="p">{</span><span class="nv">key1: </span><span class="s">\value1</span><span class="p">,</span> <span class="nv">key2: </span><span class="s">\value2</span><span class="p">}</span> <span class="c1">#=&gt; (key1=value1&amp;key2=value2)</span>
+<span class="nx">inquire</span> <span class="p">[</span><span class="nx">inquire</span><span class="p">(</span><span class="s">\key1</span><span class="p">,</span> <span class="s">\value1</span><span class="p">),</span> <span class="nx">inquire</span><span class="p">(</span><span class="s">\key2</span><span class="p">,</span> <span class="s">\value2</span><span class="p">)]</span> <span class="c1">#=&gt; ((key1=value1)&amp;(key2=value2))</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">({</span><span class="nx">key1</span><span class="o">:</span> <span class="s1">'value1'</span><span class="p">,</span> <span class="nx">key2</span><span class="o">:</span> <span class="s1">'value2'</span><span class="p">});</span> <span class="c1">//=&gt; (key1=value1&amp;key2=value2)</span>
+<span class="nx">inquire</span><span class="p">([</span><span class="nx">inquire</span><span class="p">(</span><span class="s1">'key1'</span><span class="p">,</span> <span class="s1">'value1'</span><span class="p">),</span> <span class="nx">inquire</span><span class="p">(</span><span class="s1">'key2'</span><span class="p">,</span> <span class="s1">'value2'</span><span class="p">)]);</span> <span class="c1">//=&gt; ((key1=value1)&amp;(key2=value2))</span>
+</pre></div>
+
+<p>You can change the default relation by calling a different operator.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">.</span><span class="nx">gte</span> <span class="s">\key</span><span class="p">,</span> <span class="s">\value</span> <span class="c1">#=&gt; key&gt;=value</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">.</span><span class="nx">gte</span><span class="p">(</span><span class="s1">'key'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">);</span> <span class="c1">//=&gt; key&gt;=value</span>
+</pre></div>
+
+<p>The <code>and</code> and <code>or</code> predicates work in much the same way,
+but require an already created <code>inquire</code>.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span> <span class="s">\key1</span><span class="p">,</span> <span class="s">\value1</span> <span class="p">.</span><span class="nx">and</span> <span class="s">\key2</span><span class="p">,</span> <span class="s">\value2</span> <span class="c1">#=&gt; key1=value1&amp;key2=value2</span>
+<span class="nx">inquire</span> <span class="s">\key1</span><span class="p">,</span> <span class="s">\value1</span> <span class="p">.</span><span class="nx">or</span> <span class="s">\key2</span><span class="p">,</span> <span class="s">\value2</span> <span class="c1">#=&gt; key1=value1;key2=value2</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">(</span><span class="s1">'key1'</span><span class="p">,</span> <span class="s1">'value1'</span><span class="p">).</span><span class="nx">and</span><span class="p">(</span><span class="s1">'key2'</span><span class="p">,</span> <span class="s1">'value2'</span><span class="p">);</span> <span class="c1">//=&gt; key1=value1&amp;key2=value2</span>
+<span class="nx">inquire</span><span class="p">(</span><span class="s1">'key1'</span><span class="p">,</span> <span class="s1">'value1'</span><span class="p">).</span><span class="nx">or</span><span class="p">(</span><span class="s1">'key2'</span><span class="p">,</span> <span class="s1">'value2'</span><span class="p">);</span> <span class="c1">//=&gt; key1=value1;key2=value2</span>
+</pre></div>
+
+<p><code>Inquire</code> supports three boolean operators <code>and</code>, <code>or</code>, and <code>not</code>.
+These operators also take objects, arrays, and <code>inquire</code>'s.
+In addition, <code>and</code> and <code>or</code> take <code>key</code>, <code>value</code> strings and construct the proper query.
+The semantics for <code>and</code> and <code>or</code> are similar to the constructor taking these types,
+and conjoining or disjoining it to the previous <code>inquire</code> with the proper operator.
+For <code>not</code>, the argument is analyzed then wrapped in parens and negated.</p>
+
+<p><strong>NOTE</strong>: <code>not</code> doesn't take <code>key</code>, <code>value</code> strings.
+Currently, this will produce a querystring, but it will not have the valid semantics.
+Something like <code>!(key=undefined)</code>.</p>
+
+<p>LiveScript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">.</span><span class="nx">not</span> <span class="nx">inquire</span> <span class="s">\key</span><span class="p">,</span> <span class="s">\value</span> <span class="c1">#=&gt; !(key=value)</span>
+</pre></div>
+
+<p>Javascript:</p>
+
+<div class="highlight"><pre><span class="nx">inquire</span><span class="p">.</span><span class="nx">not</span><span class="p">(</span><span class="nx">inquire</span><span class="p">(</span><span class="s1">'key'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">))</span> <span class="c1">//=&gt; !(key=value)</span>
+</pre></div>
+
+<h3>
+<a name="functions" class="anchor" href="#functions"><span class="octicon octicon-link"></span></a>Functions</h3>
+
+<h5>
+<a name="eqkey-val" class="anchor" href="#eqkey-val"><span class="octicon octicon-link"></span></a>eq(key, val)</h5>
+
+<p>Creates a <code>key=val</code> predicate.</p>
+
+<h5>
+<a name="neq-key-val" class="anchor" href="#neq-key-val"><span class="octicon octicon-link"></span></a>neq (key, val)</h5>
+
+<p>Creates a <code>key!=val</code> predicate.</p>
+
+<h5>
+<a name="gt-key-val" class="anchor" href="#gt-key-val"><span class="octicon octicon-link"></span></a>gt (key, val)</h5>
+
+<p>Creates a <code>key&gt;val</code> predicate.</p>
+
+<h5>
+<a name="gte-key-val" class="anchor" href="#gte-key-val"><span class="octicon octicon-link"></span></a>gte (key, val)</h5>
+
+<p>Creates a <code>key&gt;=val</code> predicate.</p>
+
+<h5>
+<a name="lt-key-val" class="anchor" href="#lt-key-val"><span class="octicon octicon-link"></span></a>lt (key, val)</h5>
+
+<p>Creates a <code>key&lt;val</code> predicate.</p>
+
+<h5>
+<a name="lte-key-val" class="anchor" href="#lte-key-val"><span class="octicon octicon-link"></span></a>lte (key, val)</h5>
+
+<p>Creates a <code>key&lt;=val</code> predicate.</p>
+
+<h5>
+<a name="andkey-val" class="anchor" href="#andkey-val"><span class="octicon octicon-link"></span></a>and(key, val)</h5>
+
+<p>If <code>key</code> is an <code>inquire</code>, then it wraps the <code>inquire</code> in parens
+and conjoins it with the current <code>inquire</code>.</p>
+
+<p>Otherwise, assumes <code>key</code> is a string and <code>val</code> has a <code>toString</code> function,
+then conjoins the current query with a new <code>key=val</code> predicate.</p>
+
+<h5>
+<a name="orkey-val" class="anchor" href="#orkey-val"><span class="octicon octicon-link"></span></a>or(key, val)</h5>
+
+<p>If <code>key</code> is an <code>inquire</code> then it wraps the <code>inquire</code> in parens
+and disjoins it with the current <code>inquire</code>.</p>
+
+<p>Otherwise, assumes <code>key</code> is a string and <code>val</code> has a <code>toString</code> function,
+then disjoins the current query with a new <code>key=val</code> predicate.</p>
+
+<h5>
+<a name="notquery" class="anchor" href="#notquery"><span class="octicon octicon-link"></span></a>not(query)</h5>
+
+<p>Negates the supplied query.</p>
+
+<h5>
+<a name="generate" class="anchor" href="#generate"><span class="octicon octicon-link"></span></a>generate()</h5>
+
+<p>Returns a formatted querystring.</p>
+
+<h5>
+<a name="parsequerystring" class="anchor" href="#parsequerystring"><span class="octicon octicon-link"></span></a>parse(querystring)</h5>
+
+<p>Generates an inquire from the passed in query string.</p>
+
+<h3>
+<a name="fantasy-land-algebras" class="anchor" href="#fantasy-land-algebras"><span class="octicon octicon-link"></span></a>Fantasy Land Algebras</h3>
+
+<h4>
+<a name="semigroup" class="anchor" href="#semigroup"><span class="octicon octicon-link"></span></a>Semigroup</h4>
+
+<h5>
+<a name="concatinquire" class="anchor" href="#concatinquire"><span class="octicon octicon-link"></span></a>concat(inquire)</h5>
+
+<p>Takes an inquire and conjoins it to a copy of the current inquire with <code>and</code>.  This function is associative, meaning that no matter what kind of parens nesting you use to call <code>concat</code>, the result will always be the same.
+For example, given some predicates <code>a</code>, <code>b</code>, <code>c</code> and <code>d</code> (each of the form <code>key=val</code>), <code>a.concat(b).concat(c.concat(d))</code> is equivalent to <code>a.concat(b.concat(c).concat(d))</code>.  To put it in more explicit terms, <code>(a&amp;b)&amp;(c&amp;d)</code> is equivalent to <code>a&amp;((b&amp;c)&amp;d)</code></p>
+
+<h4>
+<a name="monoid" class="anchor" href="#monoid"><span class="octicon octicon-link"></span></a>Monoid</h4>
+
+<h5>
+<a name="empty" class="anchor" href="#empty"><span class="octicon octicon-link"></span></a>empty()</h5>
+
+<p>Returns an empty inquire.
+Although it might seem useless, this has its place when being used with other structures.  Much like the identity function has its place for functions, the number 1 its place for multiplication, or the number 0 its place for addition.</p>
+
+<h4>
+<a name="functor" class="anchor" href="#functor"><span class="octicon octicon-link"></span></a>Functor</h4>
+
+<h5>
+<a name="mapfunction" class="anchor" href="#mapfunction"><span class="octicon octicon-link"></span></a>map(function)</h5>
+
+<p>Takes the function and applies the inquire to it.  The inquire is first stringified then passed to the function, so the function should operate over strings.  The result of the function is then used to create a new inquire and returned.  The function can return whatever it wants, and inquire will try its best to make something of it, but realize that at this time only strings, arrays, objects, and other inquires are really supported.</p>
+        </section>
+
+        <footer>
+          Inquire.js is maintained by <a href="https://github.com/concordusapps">concordusapps</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
