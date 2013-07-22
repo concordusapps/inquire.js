@@ -7,7 +7,7 @@ Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
 
 ### Fantasy Land Compliant
-[![Fantasy Land](images/fantasy-land.png)](https://github.com/puffnfresh/fantasy-land)
+[![Fantasy Land](https://raw.github.com/concordusapps/inquire.js/master/images/fantasy-land.png)](https://github.com/puffnfresh/fantasy-land)
 
 #### Algebras
 * Semigroup
