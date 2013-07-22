@@ -63,9 +63,9 @@ LiveScript:
 
 ```livescript
 query = inquire(inquire \color, \red .and inquire.gt \width, 30)
-  ..or inquire.lte \sides, 12
-  ..or (inquire \shape, \square .and (inquire.neq \color, \black .or \user, \bob))
-url = "/api/shape/#{query}"
+.or inquire.lte \sides, 12
+.or (inquire \shape, \square .and (inquire.neq \color, \black .or \user, \bob))
+url = "/api/shape/#{query.generate!}"
 # url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
 
@@ -75,7 +75,7 @@ Javascript:
 query = inquire(inquire('color', 'red').and(inquire.gt('width', 30)))
 .or(inquire.lte('sides', 12))
 .or(inquire('shape', 'square').and(inquire.neq('color', 'black').or('user', 'bob')));
-url = "/api/shape/" + query;
+url = "/api/shape/" + query.generate();
 // url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
 ```
 
@@ -91,27 +91,27 @@ Passing just the key, value pair.
 LiveScript:
 
 ```livescript
-inquire \key, \value #=> ?key=value
+inquire \key, \value #=> key=value
 ```
 
 Javascript:
 
 ```javascript
-inquire('key', 'value'); //=> ?key=value
+inquire('key', 'value'); //=> key=value
 ```
 
-Passing an another `inquire`, which will end up wrapping it in parens.
+Passing in another `inquire`, which will end up wrapping it in parens.
 
 LiveScript:
 
 ```livescript
-inquire inquire \key, \value #=> ?(key=value)
+inquire inquire \key, \value #=> (key=value)
 ```
 
 Javascript:
 
 ```javascript
-inquire(inquire('key', 'value')); //=> ?(key=value)
+inquire(inquire('key', 'value')); //=> (key=value)
 ```
 You can pass in an object, or an array of `inquire`'s.
 Both of these conjoin their values by default and wrap in parens.
@@ -119,15 +119,15 @@ Both of these conjoin their values by default and wrap in parens.
 LiveScript:
 
 ```livescript
-inquire {key1: \value1, key2: \value2} #=> ?(key1=value1&key2=value2)
-inquire [inquire(\key1, \value1), inquire(\key2, \value2)] #=> ?((key1=value1)&(key2=value2))
+inquire {key1: \value1, key2: \value2} #=> (key1=value1&key2=value2)
+inquire [inquire(\key1, \value1), inquire(\key2, \value2)] #=> ((key1=value1)&(key2=value2))
 ```
 
 Javascript:
 
 ```javascript
-inquire({key1: 'value1', key2: 'value2'}); //=> ?(key1=value1&key2=value2)
-inquire([inquire('key1', 'value1'), inquire('key2', 'value2')]); //=> ?((key1=value1)&(key2=value2))
+inquire({key1: 'value1', key2: 'value2'}); //=> (key1=value1&key2=value2)
+inquire([inquire('key1', 'value1'), inquire('key2', 'value2')]); //=> ((key1=value1)&(key2=value2))
 ```
 
 You can change the default relation by calling a different operator.
@@ -150,15 +150,15 @@ but require an already created `inquire`.
 LiveScript:
 
 ```livescript
-inquire \key1, \value1 .and \key2, \value2 #=> ?key1=value1&key2=value2
-inquire \key1, \value1 .or \key2, \value2 #=> ?key1=value1;key2=value2
+inquire \key1, \value1 .and \key2, \value2 #=> key1=value1&key2=value2
+inquire \key1, \value1 .or \key2, \value2 #=> key1=value1;key2=value2
 ```
 
 Javascript:
 
 ```javascript
-inquire('key1', 'value1').and('key2', 'value2'); //=> ?key1=value1&key2=value2
-inquire('key1', 'value1').or('key2', 'value2'); //=> ?key1=value1;key2=value2
+inquire('key1', 'value1').and('key2', 'value2'); //=> key1=value1&key2=value2
+inquire('key1', 'value1').or('key2', 'value2'); //=> key1=value1;key2=value2
 ```
 
 `Inquire` supports three boolean operators `and`, `or`, and `not`.
@@ -170,19 +170,19 @@ For `not`, the argument is analyzed then wrapped in parens and negated.
 
 __NOTE__: `not` doesn't take `key`, `value` strings.
 Currently, this will produce a querystring, but it will not have the valid semantics.
-Something like `?!(key=undefined)`.
+Something like `!(key=undefined)`.
 
 
 LiveScript:
 
 ```livescript
-inquire.not inquire \key, \value #=> ?!(key=value)
+inquire.not inquire \key, \value #=> !(key=value)
 ```
 
 Javascript:
 
 ```javascript
-inquire.not(inquire('key', 'value')) //=> ?!(key=value)
+inquire.not(inquire('key', 'value')) //=> !(key=value)
 ```
 
 ### Functions
@@ -206,7 +206,7 @@ Creates a `key<val` predicate.
 Creates a `key<=val` predicate.
 
 ##### and(key, val)
-If `key` is an `inquire` then it wraps the `inquire` in parens
+If `key` is an `inquire`, then it wraps the `inquire` in parens
 and conjoins it with the current `inquire`.
 
 Otherwise, assumes `key` is a string and `val` has a `toString` function,
@@ -224,6 +224,28 @@ Negates the supplied query.
 
 ##### generate()
 Returns a formatted querystring.
+
+##### parse(querystring)
+Generates an inquire from the passed in query string.
+
+### Fantasy Land Algebras
+
+#### Semigroup
+
+##### concat(inquire)
+Takes an inquire and conjoins it to a copy of the current inquire with `and`.  This function is associative, meaning that no matter what kind of parens nesting you use to call `concat`, the result will always be the same.
+For example, given some predicates `a`, `b`, `c` and `d` (each of the form `key=val`), `a.concat(b).concat(c.concat(d))` is equivalent to `a.concat(b.concat(c).concat(d))`.  To put it in more explicit terms, `(a&b)&(c&d)` is equivalent to `a&((b&c)&d)`
+
+#### Monoid
+
+##### empty()
+Returns an empty inquire.
+Although it might seem useless, this has its place when being used with other structures.  Much like the identity function has its place for functions, the number 1 its place for multiplication, or the number 0 its place for addition.
+
+#### Functor
+
+##### map(function)
+Takes the function and applies the inquire to it.  The inquire is first stringified then passed to the function, so the function should operate over strings.  The result of the function is then used to create a new inquire and returned.  The function can return whatever it wants, and inquire will try its best to make something of it, but realize that at this time only strings, arrays, objects, and other inquires are really supported.
 
 
 [armet]: http://armet.github.io/

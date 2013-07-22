@@ -48,7 +48,7 @@ normalize = ->
   else
     it
 
-describe \fantasy-claire ->
+describe \fantasy ->
   describe \Semigroup ->
     describe 'concat should be a magma operation' ->
       describe 'given two semigroups' ->

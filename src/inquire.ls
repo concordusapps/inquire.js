@@ -154,7 +154,10 @@ class Inquire
     @_handleInquire inquire, {options.bool, options.rel}
 
   # At this point, just dish off to `_binary`
-  _handleString: !(key, val, options) -> @_binary key, val, options
+  _handleString: !(key, val, options) ->
+    match typeof! val
+    | (in <[ Boolean Number String ]>)  => @_binary key, val, options
+    | otherwise                         => @parse key
 
   # Trim down the tree as much as possible.
   _prune: !->
@@ -307,12 +310,8 @@ class Inquire
     unless typeof! f is \Function
       throw new Error "TypeError: Not a function\n#f"
     # Apply the function given to the query string,
-    # then parse it as a new inquire.
-    # console.log JSON.stringify this, null, 4
-    # console.log JSON.stringify @toString!, null, 4
-    # console.log JSON.stringify (f @toString!), null, 4
-    # console.log JSON.stringify (@@.parse f @toString!), null, 4
-    @@.parse f @toString!
+    # then construct a new inquire from the result.
+    @@ f @toString!
 
 /*  Static methods.
     We can do stuff like:
