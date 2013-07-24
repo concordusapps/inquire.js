@@ -48,11 +48,12 @@
     "node": ">=0.8.22"
   },
   "testling": {
-    "files": "lib/inquire.js",
     "browsers": {
       "chrome": [20, 21, 22, 23, 24, 25, "canary"],
       "firefox": [17, 18, 19, "nightly"],
       "ie": [9, 10]
-    }
+    },
+    "files": "lib/inquire.js",
+    "harness": "mocha"
   }
 }
