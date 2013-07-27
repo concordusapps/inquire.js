@@ -53,7 +53,7 @@
       "firefox": [17, 18, 19, "nightly"],
       "ie": [9, 10]
     },
-    "files": "test/*.ls",
+    "files": "test/*.js",
     "harness": "mocha"
   }
 }
