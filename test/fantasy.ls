@@ -58,7 +58,7 @@ describe \fantasy ->
             a = I ak, av
             b = I bk, bv
             a instanceof I and b instanceof I and a.concat(b) instanceof I
-          .asTest({-verbose, times: 1000})!
+          .asTest({-verbose, times: 100})!
     describe 'concat should be associative' ->
       test 'it should hold for the definition of associativity' ->
         forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
@@ -67,7 +67,7 @@ describe \fantasy ->
           b = I bk, bv
           c = I ck, cv
           a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
       test 'it should hold for some more complicated structure' ->
         forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
@@ -77,7 +77,7 @@ describe \fantasy ->
           abbc = a.concat(b).concat(b).concat(c)
           a_b_b_c = a.concat(b.concat(b.concat(c)))
           abbc `equivalent` a_b_b_c
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
       test 'it should hold for some random structure' ->
         forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
@@ -87,7 +87,7 @@ describe \fantasy ->
           abcabc = a.concat(b.concat(c.concat(a.concat(b.concat(c)))))
           a_b_cab_c = a.concat(b.concat((c.concat(a.concat(b))))).concat(c)
           abcabc `equivalent` a_b_cab_c
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
 
   describe \Monoid ->
     describe 'empty should be the identity' ->
@@ -96,13 +96,13 @@ describe \fantasy ->
         .satisfy (key, val) ->
           a = I key, val
           a.empty().concat(a) `equivalent` a
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
       test 'it should hold for right identity' ->
         forAll(d.Str, d.Str)
         .satisfy (key, val) ->
           a = I key, val
           a.concat(a.empty()) `equivalent` a
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
 
   describe \Functor ->
     id = -> it
@@ -116,7 +116,7 @@ describe \fantasy ->
         .satisfy (key, val) ->
           a = I key, val
           a.map(id) `equivalent` a
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!
       test 'it should hold for composition' ->
         forAll(d.AlphaStr, d.AlphaStr)
         .given (key, val) ->
@@ -124,4 +124,4 @@ describe \fantasy ->
         .satisfy (key, val) ->
           a = I key, val
           a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
-        .asTest({-verbose, times: 1000})!
+        .asTest({-verbose, times: 100})!

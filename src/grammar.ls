@@ -2,19 +2,23 @@
 module.exports =
   lex:
     rules: [
-      ['\\(',           'return "(";']
-      ['\\)',           'return ")";']
-      ['[A-Za-z0-9]+',  'return "VAR";']
-      ['=',             'return "EQ";']
-      ['!=',            'return "NEQ";']
-      ['>',             'return "GT";']
-      ['>=',            'return "GTE";']
-      ['<',             'return "LT";']
-      ['<=',            'return "LTE";']
-      ['&',             'return "AND";']
-      [';',             'return "OR";']
-      ['!',             'return "NOT";']
-      ['&!',            'return "ANDNOT";']
+      ['\\(',                 'return "(";']
+      ['\\)',                 'return ")";']
+      ['[A-Za-z]+',           'return "ALPHA";']
+      ['[0-9]+',              'return "DIGIT";']
+      ['[\\$\\-_@\\.\\+]+',  'return "SAFE";']
+      ['[\\*"\\\',]+',        'return "EXTRA";']
+      ['%[A-Fa-f0-9]{2}',     'return "ESCAPE";']
+      ['=',                   'return "EQ";']
+      ['!=',                  'return "NEQ";']
+      ['>',                   'return "GT";']
+      ['>=',                  'return "GTE";']
+      ['<',                   'return "LT";']
+      ['<=',                  'return "LTE";']
+      ['&',                   'return "AND";']
+      [';',                   'return "OR";']
+      ['!',                   'return "NOT";']
+      ['&!',                  'return "ANDNOT";']
     ]
   operators: [
     <[ left AND OR NOT ]>
@@ -37,8 +41,19 @@ module.exports =
       ['( q )', '$$ = { arity: "1", bool: "", value: $2 };']
     ]
     predicate: [
-      ['VAR rel VAR', '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
-      ['VAR rel rel VAR', '$$ = { arity: "2", rel: $2 + $3, left: $1, right: $4 };']
+      ['variable rel variable', '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
+      ['variable rel rel variable', '$$ = { arity: "2", rel: $2 + $3, left: $1, right: $4 };']
+    ]
+    variable: [
+      ['_var', '$$ = $1;']
+      ['_var variable', '$$ = $1 + $2;']
+    ]
+    _var: [
+      ['ALPHA', '$$ = yytext;']
+      ['DIGIT', '$$ = yytext;']
+      ['SAFE', '$$ = yytext;']
+      ['EXTRA', '$$ = yytext;']
+      ['ESCAPE', '$$ = yytext;']
     ]
     rel: [
       ['NEQ', '$$ = yytext;']
