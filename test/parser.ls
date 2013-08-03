@@ -1,4 +1,4 @@
-I = require \../src/inquire.ls
+I = require \../lib/inquire.js
 {assert} = require \chai
 # Save mocha's it so we don't end up using livescript's it.
 test = it

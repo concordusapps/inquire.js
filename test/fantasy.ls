@@ -1,4 +1,4 @@
-I = require \../src/inquire.ls
+I = require \../lib/inquire.js
 
 {data: d, forAll} =  require \claire
 # Livescript uses it for stuff, so save the mocha version outside any functions.
