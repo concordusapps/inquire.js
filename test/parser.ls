@@ -1,34 +1,32 @@
 I = require \../lib/inquire.js
+{choice, data: d, forAll} =  require \claire
+# Livescript uses it for stuff, so save the mocha version outside any functions.
+o = it
 {assert} = require \chai
 # Save mocha's it so we don't end up using livescript's it.
 test = it
 
+# Make a generator of the relations,
+Rel = choice ...<[ = != > >= < <= ]>
+# and a way to get back.
+rel-map = (rel) -> match rel
+| \=  => I.eq
+| \!= => I.neq
+| \>  => I.gt
+| \>= => I.gte
+| \<  => I.lt
+| \<= => I.lte
+
 describe \parser ->
-  describe 'given a simple key, value pair query string' ->
-    test 'it should create an inquire with a generated query string "?key=value"' ->
-      parsed-query = I.parse \key=value .generate!
-      inquire-query = I \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should create an inquire with a generated query string "?key!=value"' ->
-      parsed-query = I.parse \key!=value .generate!
-      inquire-query = I.neq \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should create an inquire with a generated query string "?key<value"' ->
-      parsed-query = I.parse \key<value .generate!
-      inquire-query = I.lt \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should create an inquire with a generated query string "?key<=value"' ->
-      parsed-query = I.parse \key<=value .generate!
-      inquire-query = I.lte \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should create an inquire with a generated query string "?key>value"' ->
-      parsed-query = I.parse \key>value .generate!
-      inquire-query = I.gt \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should create an inquire with a generated query string "?key>=value"' ->
-      parsed-query = I.parse \key>=value .generate!
-      inquire-query = I.gte \key, \value .generate!
-      assert.strictEqual parsed-query, inquire-query
+  describe 'given a simple key, val pair query string' ->
+    describe 'given one of the available relations' ->
+      o 'it should create a simple <key><rel><val> query' (forAll(d.AlphaNumStr, Rel, d.AlphaNumStr)
+        .given (key, rel, val) -> key isnt '' and val isnt ''
+        .satisfy (key, rel, val) ->
+          parsed-query = I.parse "#key#rel#val" .generate!
+          inquire-query = (rel-map rel) key, val .generate!
+          parsed-query is inquire-query
+        .asTest!)
 
   describe 'given a query string with two conjoined predicates' ->
     test 'it should create an inquire with a generated query string "?key1=val1&key2=val2"' ->
