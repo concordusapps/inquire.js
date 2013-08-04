@@ -2,9 +2,7 @@ I = require \../lib/inquire.js
 {choice, data: d, forAll} =  require \claire
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 o = it
-{assert} = require \chai
-# Save mocha's it so we don't end up using livescript's it.
-test = it
+# Something throws up in here.
 require! assert.throws
 
 # Make a generator of the relations,
@@ -25,6 +23,14 @@ bool-map = -> I[raw-bool it]
 raw-bool = (bool) -> match bool
 | \&  => \and
 | \;  => \or
+
+# Make a set amount of parens.
+SetParens = (query, num) --> "#{\( * num}#query#{\) * num}"
+
+# Wrap an inquire a set number of times.
+SetInquire = (inquire, num) --> match num
+| (> 0) => I SetInquire inquire, num - 1
+| _     => inquire
 
 describe \parser ->
   describe 'given an empty string' ->
@@ -47,7 +53,7 @@ describe \parser ->
         .given -> '' not in &
         .satisfy (k1, k2, v1, v2, r1, r2, bool) ->
           parsed-query = I.parse "#k1#r1#v1#bool(#k2#r2#v2)" .generate!
-          preds = (rel-map r1)(k1, v1).(raw-bool bool) (rel-map r2)(k2, v2)
+          preds = (rel-map r1)(k1, v1)[raw-bool bool] (rel-map r2)(k2, v2)
           inquire-query = preds.generate!
           parsed-query is inquire-query
         .asTest!)
@@ -62,16 +68,24 @@ describe \parser ->
           parsed-query is inquire-query
         .asTest!)
 
-  describe 'given a deeply nested query string' ->
-    test 'it should be smart about the parens, and optimize away everything' ->
-      parsed-query = I.parse '(((((((key=val)))))))' .generate!
-      inquire-query = I I I I I I I \key, \val .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should be smart about the parens, and optimize away most of it' ->
-      parsed-query = I.parse '(((((((key1=val1)&(key2=val2))))))))' .generate!
-      inquire-query = I I I I I (I I \key1, \val1).and(I I \key2, \val2) .generate!
-      assert.strictEqual parsed-query, inquire-query
-    test 'it should be smart about the parens, and optimize away almost all of it' ->
-      parsed-query = I.parse '(((((key1>val1)))&!(((key2<=val2)))))' .generate!
-      inquire-query = I I(I I I I.gt \key1, \val1).not(I I I I.lte \key2, \val2) .generate!
-      assert.strictEqual parsed-query, inquire-query
+  describe \nesting ->
+    describe 'given a simple key, val query string' ->
+      o 'it should optimize away everything' (forAll(d.AlphaNumStr, Rel, d.AlphaNumStr, d.Positive)
+        .given (key, rel, val, rand) -> key isnt '' and val isnt ''
+        .satisfy (key, rel, val, rand) ->
+          parsed-query = I.parse SetParens "#key#rel#val", rand .generate!
+          inquire-query = SetInquire "#key#rel#val", rand .generate!
+          parsed-query is inquire-query
+        .asTest!)
+    describe 'given two simple predicates' ->
+      o 'it should optimize away most of it' (forAll(d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, Rel, Rel, Bool, d.Positive, d.Positive)
+        .given -> '' not in &
+        .satisfy (k1, k2, v1, v2, r1, r2, bool, rand1, rand2) ->
+          parsed1 = SetParens "#k1#r1#v1", rand1
+          parsed2 = SetParens "#k2#r2#v2", rand2
+          parsed-query = I.parse "#parsed1#bool#parsed2" .generate!
+          inquire1 = SetInquire "#k1#r1#v1", rand1
+          inquire2 = SetInquire "#k2#r2#v2", rand2
+          inquire-query = inquire1[raw-bool bool] inquire2 .generate!
+          parsed-query is inquire-query
+        .asTest!)
