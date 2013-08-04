@@ -7,6 +7,8 @@ module.exports = (grunt) ->
         src: './src/inquire.ls'
       options:
         standalone: 'Inquire'
+        # This transform should actually be here,
+        # but it causes an issue with the package.json `browserify.transform`.
         transform: ['liveify']
 
     jison:
