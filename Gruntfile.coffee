@@ -9,7 +9,7 @@ module.exports = (grunt) ->
         standalone: 'Inquire'
         # This transform should actually be here,
         # but it causes an issue with the package.json `browserify.transform`.
-        transform: ['liveify']
+        # transform: ['liveify']
 
     jison:
       files:

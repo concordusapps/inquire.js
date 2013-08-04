@@ -46,6 +46,9 @@
   "engines": {
     "node": ">=0.8.22"
   },
+  "browserify": {
+    "transform": ["liveify"]
+  },
   "testling": {
     "browsers": {
       "android-browser": [4.2],
@@ -58,7 +61,6 @@
       "safari": [6.0]
     },
     "harness": "mocha",
-    "scripts": "browser.js",
-    "preprocess": "browserify -t liveify -o browser.js test/*.ls"
+    "files": "test/*.ls"
   }
 }
