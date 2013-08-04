@@ -25,11 +25,13 @@
     "url": "git://github.com/concordusapps/inquire.js.git"
   },
   "scripts": {
+    "browserify": "browserify -t liveify --standalone Inquire src/inquire.ls > lib/inquire-browser.js",
     "coverage": "istanbul cover _mocha -- -R nyan --compilers ls:LiveScript test/*.ls",
     "coveralls": "cat coverage/lcov.info | coveralls",
     "test": "mocha -R nyan --compilers ls:LiveScript test/*.ls"
   },
   "devDependencies": {
+    "browserify": "~2.26.0",
     "chai": "~1.7.0",
     "claire": "~0.4.1",
     "coveralls": "~2.1.0",
@@ -37,6 +39,7 @@
     "grunt-livescript": "~0.5.0",
     "istanbul": "~0.1.37",
     "jison": "~0.4.6",
+    "liveify": "~0.3.0",
     "LiveScript": "~1.2.0",
     "mocha": "~1.12.0",
     "mocha-lcov-reporter": "~0.0.1"
