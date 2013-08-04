@@ -58,7 +58,7 @@
       "safari": [6.0]
     },
     "harness": "mocha",
-    "files": "test/*.ls",
-    "transform": ["liveify"]
+    "scripts": "browser.js",
+    "preprocess": "browserify -t liveify -o browser.js test/*.ls"
   }
 }
