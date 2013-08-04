@@ -247,7 +247,6 @@ class Inquire
       2.  `concat` must return a value of the same Semigroup.
   */
   concat: (I) ->
-    throw new Error "TypeError: Not an inquire\n#I" unless I instanceof Inquire
     # Take the entirety of our current inquire and clone it to and empty object.
     old-i = {} <<< @inquiry
     # Create a new inquire, then set the old attributes.
@@ -307,8 +306,6 @@ class Inquire
       2. `map` must return a value of the same Functor
   */
   map: (f) ->
-    unless typeof! f is \Function
-      throw new Error "TypeError: Not a function\n#f"
     # Apply the function given to the query string,
     # then construct a new inquire from the result.
     @@ f @toString!

@@ -5,6 +5,7 @@ o = it
 {assert} = require \chai
 # Save mocha's it so we don't end up using livescript's it.
 test = it
+require! assert.throws
 
 # Make a generator of the relations,
 Rel = choice ...<[ = != > >= < <= ]>
@@ -20,11 +21,16 @@ rel-map = (rel) -> match rel
 # Make a generator for the bools,
 Bool = choice ...<[ & ; ]>
 # and a way to get back.
-bool-map = (bool) -> match bool
-| \&  => I.and
-| \;  => I.or
+bool-map = -> I[raw-bool it]
+raw-bool = (bool) -> match bool
+| \&  => \and
+| \;  => \or
 
 describe \parser ->
+  describe 'given an empty string' ->
+    o 'it should throw a Parse Error' ->
+      throws (!-> I.parse ''), /^Error: Parse error/
+
   describe 'given a simple key, val pair query string' ->
     describe 'given one of the available relations' ->
       o 'it should create a simple <key><rel><val> query' (forAll(d.AlphaNumStr, Rel, d.AlphaNumStr)
@@ -37,20 +43,24 @@ describe \parser ->
 
   describe 'given a query string with two simple predicates' ->
     describe 'given one of the available booleans' ->
-      o 'it should create a <k1><r1><v1><bool><k2><r2><v2> query' (forAll(d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, Rel, Rel, Bool)
+      o 'it should create a <k1><r1><v1><bool>(<k2><r2><v2>) query' (forAll(d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, Rel, Rel, Bool)
         .given -> '' not in &
         .satisfy (k1, k2, v1, v2, r1, r2, bool) ->
-          parsed-query = I.parse "(#k1#r1#v1)#bool(#k2#r2#v2)" .generate!
-          preds = [(rel-map r1)(k1, v1), (rel-map r2)(k2, v2)]
-          inquire-query = (bool-map bool) preds .generate!
+          parsed-query = I.parse "#k1#r1#v1#bool(#k2#r2#v2)" .generate!
+          preds = (rel-map r1)(k1, v1).(raw-bool bool) (rel-map r2)(k2, v2)
+          inquire-query = preds.generate!
           parsed-query is inquire-query
         .asTest!)
 
-  describe 'given a negated query string' ->
-    test 'it should create an inquire with a generated query string "?!(key=val)"' ->
-      parsed-query = I.parse \!key=val .generate!
-      inquire-query = I.not I \key, \val .generate!
-      assert.strictEqual parsed-query, inquire-query
+  describe 'given a simple key, val pair query string' ->
+    describe 'given one of the available relations' ->
+      o 'it should create a simple <!>(<key><rel><val>) query' (forAll(d.AlphaNumStr, Rel, d.AlphaNumStr)
+        .given (key, rel, val) -> key isnt '' and val isnt ''
+        .satisfy (key, rel, val) ->
+          parsed-query = I.parse "!(#key#rel#val)" .generate!
+          inquire-query = I.not (rel-map rel) key, val .generate!
+          parsed-query is inquire-query
+        .asTest!)
 
   describe 'given a deeply nested query string' ->
     test 'it should be smart about the parens, and optimize away everything' ->

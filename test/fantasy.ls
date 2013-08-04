@@ -58,6 +58,12 @@ describe \fantasy ->
             b = I bk, bv
             a instanceof I and b instanceof I and a.concat(b) instanceof I
           .asTest!)
+        o 'it should still generate a string' (forAll(d.Str, d.Str, d.Str, d.Str)
+          .satisfy (ak, av, bk, bv) ->
+            a = I ak, av
+            b = I bk, bv
+            typeof! a.concat(b).generate! is \String
+          .asTest!)
     describe 'concat should be associative' ->
       o 'it should hold for the definition of associativity' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
@@ -86,34 +92,40 @@ describe \fantasy ->
         .asTest!)
 
   describe \Monoid ->
-    describe 'empty should be the identity' ->
-      o 'it should hold for left identity' (forAll(d.Str, d.Str)
-        .satisfy (key, val) ->
-          a = I key, val
-          a.empty().concat(a) `equivalent` a
-        .asTest!)
-      o 'it should hold for right identity' (forAll(d.Str, d.Str)
-        .satisfy (key, val) ->
-          a = I key, val
-          a.concat(a.empty()) `equivalent` a
-        .asTest!)
+    describe \empty ->
+      o 'it should still generate a string' ->
+        if typeof! I!empty!generate! isnt \String then ...
+      describe 'should be the identity' ->
+        o 'it should hold for left identity' (forAll(d.Str, d.Str)
+          .satisfy (key, val) ->
+            a = I key, val
+            a.empty().concat(a) `equivalent` a
+          .asTest!)
+        o 'it should hold for right identity' (forAll(d.Str, d.Str)
+          .satisfy (key, val) ->
+            a = I key, val
+            a.concat(a.empty()) `equivalent` a
+          .asTest!)
 
   describe \Functor ->
     id = -> it
     wrap = -> "(#it)"
     negate = -> "!(#it)"
-    describe 'map should unwrap the inquire apply the function to it, and rewrap it.' ->
-      o 'it should hold for identity' (forAll(d.AlphaStr, d.AlphaStr)
-        .given (key, val) ->
-          '' not in [key, val]
-        .satisfy (key, val) ->
-          a = I key, val
-          a.map(id) `equivalent` a
-        .asTest!)
-      o 'it should hold for composition' (forAll(d.AlphaStr, d.AlphaStr)
-        .given (key, val) ->
-          '' not in [key, val]
-        .satisfy (key, val) ->
-          a = I key, val
-          a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
-        .asTest!)
+    describe \map ->
+      o 'it should still generate a string' ->
+        if typeof! I \key, \val .map id .generate! isnt \String then ...
+      describe 'should unwrap the inquire apply the function to it, and rewrap it.' ->
+        o 'it should hold for identity' (forAll(d.AlphaStr, d.AlphaStr)
+          .given (key, val) ->
+            '' not in [key, val]
+          .satisfy (key, val) ->
+            a = I key, val
+            a.map(id) `equivalent` a
+          .asTest!)
+        o 'it should hold for composition' (forAll(d.AlphaStr, d.AlphaStr)
+          .given (key, val) ->
+            '' not in [key, val]
+          .satisfy (key, val) ->
+            a = I key, val
+            a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
+          .asTest!)
