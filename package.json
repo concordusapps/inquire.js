@@ -25,38 +25,23 @@
     "url": "git://github.com/concordusapps/inquire.js.git"
   },
   "scripts": {
-    "test": "mocha -R nyan --compilers ls:LiveScript test/*.ls",
     "coverage": "istanbul cover _mocha -- -R nyan --compilers ls:LiveScript test/*.ls",
-    "coveralls": "cat coverage/lcov.info | coveralls"
+    "coveralls": "cat coverage/lcov.info | coveralls",
+    "test": "mocha -R nyan --compilers ls:LiveScript test/*.ls"
   },
   "devDependencies": {
     "chai": "~1.7.0",
     "claire": "~0.4.1",
-    "coveralls": "~2.0.16",
+    "coveralls": "~2.1.0",
     "grunt": "~0.4.0",
-    "grunt-browserify": "~1.2.1",
     "grunt-livescript": "~0.5.0",
     "istanbul": "~0.1.37",
     "jison": "~0.4.6",
-    "LiveScript": "~1.1.1",
+    "LiveScript": "~1.2.0",
     "mocha": "~1.12.0",
     "mocha-lcov-reporter": "~0.0.1"
   },
   "engines": {
     "node": ">=0.8.22"
-  },
-  "testling": {
-    "browsers": {
-      "android-browser": [4.2],
-      "chrome": [20, 21, 22, 23, 24, 25, "canary"],
-      "firefox": [15, 16, 17, 18, 19, "nightly"],
-      "ie": [8, 9, 10],
-      "ipad": [6.0],
-      "iphone": [6.0],
-      "opera": [12, "next"],
-      "safari": [6.0]
-    },
-    "harness": "mocha",
-    "files": "test/*.js"
   }
 }

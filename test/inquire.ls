@@ -239,7 +239,7 @@ describe \inquire ->
 
   describe 'given some long chain of function calls' ->
     test 'it should generate this long query string: "?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))"' ->
-      query = I(I \color, \red .and I.gt \width, 30) ..or I.lte \sides, 12 ..or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
+      query = I(I \color, \red .and I.gt \width, 30) .or I.lte \sides, 12 .or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
       assert.strictEqual query.generate!, '?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))'
     test 'it should generate this horrendous string "?key1=val1&!(key2=val2);(key3=key3&key4=key4&key5=key5)&!((size<40)&(width>20)&(height>=10))"' ->
       query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]
@@ -487,7 +487,7 @@ describe 'function tests' ->
 
     describe 'given some long chain of function calls' ->
       test 'it should generate this long query string: "(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))"' ->
-        query = I(I \color, \red .and I.gt \width, 30) ..or I.lte \sides, 12 ..or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
+        query = I(I \color, \red .and I.gt \width, 30) .or I.lte \sides, 12 .or (I \shape, \square .and (I.neq \color, \black .or \user, \bob))
         assert.strictEqual query.toString!, '(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))'
       test 'it should generate this horrendous string "key1=val1&!(key2=val2);(key3=key3&key4=key4&key5=key5)&!((size<40)&(width>20)&(height>=10))"' ->
         query = I \key1 \val1 .not I \key2 \val2 .or I {\key3 \key4 \key5} .and [I.not [I.lt \size 40; I.gt \width 20; I.gte \height 10]]

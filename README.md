@@ -3,8 +3,6 @@
 [![Coverage Status](https://coveralls.io/repos/concordusapps/inquire.js/badge.png?branch=master)](https://coveralls.io/r/concordusapps/inquire.js?branch=master)
 [![devDependency Status](https://david-dm.org/concordusapps/inquire.js/dev-status.png)](https://david-dm.org/concordusapps/inquire.js#info=devDependencies)
 
-[![browser support](https://ci.testling.com/concordusapps/inquire.js.png)](https://ci.testling.com/concordusapps/inquire.js)
-
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
 
