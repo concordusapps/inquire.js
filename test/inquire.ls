@@ -1,28 +1,65 @@
 I = require \../lib/inquire.js
+{choice, data: d, forAll} = require \claire
 {assert} = require \chai
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 test = it
+# Livescript uses it for stuff, so save the mocha version outside any functions.
+o = it
+
+# Make a generator of the relations,
+Rel = choice ...<[ = != > >= < <= ]>
+# and a way to get back.
+rel-map = (rel) -> match rel
+| \=  => I.eq
+| \!= => I.neq
+| \>  => I.gt
+| \>= => I.gte
+| \<  => I.lt
+| \<= => I.lte
+
+# Make a generator for the bools,
+Bool = choice ...<[ & ; ]>
+# and a way to get back.
+bool-map = -> I[raw-bool it]
+raw-bool = (bool) -> match bool
+| \&  => \and
+| \;  => \or
+
+# Make a set amount of parens.
+SetParens = (query, num) --> "#{\( * num}#query#{\) * num}"
+
+# Wrap an inquire a set number of times.
+SetInquire = (inquire, num) --> match num
+| (> 0) => I SetInquire inquire, num - 1
+| _     => inquire
 
 describe \inquire ->
   describe 'given an empty inquire' ->
-    test 'it should generate "?"' ->
-      query = I!
-      assert.strictEqual query.generate!, \?
+    o 'it should generate "?"' ->
+      unless I!generate! is \? then ...
 
-  describe 'given "key", "value" arguments' ->
-    test 'it should generate a "?key=value" query string' ->
-      query = I \key, \value
-      assert.strictEqual query.generate!, \?key=value
+  describe 'given key, val strings' ->
+    o 'it should generate a "?<key>=<value>" query string' (forAll(d.AlphaNumStr, d.AlphaNumStr)
+      .given -> '' not in &
+      .satisfy (key, val) ->
+        query = I key, val
+        query.generate! is"?#key=#val"
+      .asTest!)
 
-  describe 'given "key", "value" arguments and "bool=;", "rel=!=" options' ->
-    test 'it should generate a "?key!=value" query string' ->
-      query = I \key, \value, {bool: \;, rel: \!=}
-      assert.strictEqual query.generate!, \?key!=value
-
-  describe 'given "key", "value" arguments and "bool=!", "rel=!=" options' ->
-    test 'it should generate a "?key!=value" query string' ->
-      query = I \key, \value, {bool: \!, rel: \!=}
-      assert.strictEqual query.generate!, '?!(key!=value)'
+    describe 'given different rel options' ->
+      describe 'given bool being ! or nothing' ->
+        o 'it should generate a ?<bool><key><rel><val>' (forAll(d.Bool, d.AlphaNumStr, Rel, d.AlphaNumStr)
+          .given -> '' not in &
+          .satisfy (b, key, rel, val) ->
+            if b
+              bool = \!
+              wrap = (\( +) . (+ \))
+            else
+              bool = ''
+              wrap = ('' +)
+            query = I key, val, {bool, rel}
+            query.generate! is "?#bool#{wrap "#key#rel#val"}"
+          .asTest!)
 
   describe 'given an inquire: "key1=val1" or-ed with another inquire with "key2", "value2" arguments and "bool=;", "rel=<" options' ->
     test 'it should generate a "?key1=value1;(key2<value2)" query string' ->
