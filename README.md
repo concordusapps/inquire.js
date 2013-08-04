@@ -5,6 +5,9 @@
 
 [![NPM](https://nodei.co/npm/inquire.png?compact=true)](https://nodei.co/npm/inquire/)
 
+[![browser support](https://ci.testling.com/concordusapps/inquire.js.png)](https://ci.testling.com/concordusapps/inquire.js)
+
+
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
 
