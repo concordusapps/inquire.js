@@ -45,6 +45,7 @@ module.exports =
       ['variable rel rel variable', '$$ = { arity: "2", rel: $2 + $3, left: $1, right: $4 };']
     ]
     variable: [
+      ['( variable )', '$$ = { arity: "1", bool: "", value: $2 };']
       ['_var', '$$ = $1;']
       ['_var variable', '$$ = $1 + $2;']
     ]
