@@ -310,6 +310,31 @@ class Inquire
     # then construct a new inquire from the result.
     @@ f @toString!
 
+  /*  Chain
+
+      1. `m.chain(f).chain(g)` is equivalent to
+         `m.chain(function(x) { return f(x).chain(g); })` (associativity)
+
+      `chain` method
+
+      A value which has a Chain must provide a `chain` method. The `chain`
+      method takes one argument:
+
+        m.chain(f)
+
+      1. `f` must be a function which returns a value
+
+          1. If `f` is not a function, the behaviour of `chain` is unspecified.
+          2. `f` must return a value of the same Chain
+
+      2. `chain` must return a value of the same Chain
+  */
+  chain: (f) ->
+    # Apply the function to the query string.
+    # The function better return a new Inquire, or the caller broke some laws,
+    # and there's no telling what can happen.
+    f @toString!
+
 /*  Static methods.
     We can do stuff like:
     LiveScript

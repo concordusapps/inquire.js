@@ -48,6 +48,11 @@ normalize = ->
   else
     it
 
+# Some helper functions.
+id = -> it
+wrap = -> "(#it)"
+negate = -> "!(#it)"
+
 describe \fantasy ->
   describe \Semigroup ->
     describe 'concat should be a magma operation' ->
@@ -108,9 +113,6 @@ describe \fantasy ->
           .asTest!)
 
   describe \Functor ->
-    id = -> it
-    wrap = -> "(#it)"
-    negate = -> "!(#it)"
     describe \map ->
       o 'it should still generate a string' ->
         if typeof! I \key, \val .map id .generate! isnt \String then ...
@@ -127,5 +129,28 @@ describe \fantasy ->
             '' not in [key, val]
           .satisfy (key, val) ->
             a = I key, val
-            a.map(wrap).map(negate) `equivalent` a.map(-> wrap negate it)
+            a.map(wrap).map(negate) `equivalent` a.map(wrap . negate)
           .asTest!)
+
+  describe \Chain ->
+    chain-id = (I.parse . id)
+    chain-wrap = (I.parse . wrap)
+    chain-negate = (I.parse . negate)
+    describe \chain ->
+      o 'it should still generate a string' ->
+        if typeof! I \key, \val .chain chain-id .generate! isnt \String then ...
+      o 'it should return an inquire' (forAll(d.AlphaStr, d.AlphaStr)
+        .given (key, val) ->
+          '' not in [key, val]
+        .satisfy (key, val) ->
+          m = I key, val
+          m.chain(chain-id) instanceof I
+        .asTest!)
+    describe 'given two functions f and g' ->
+      o 'it should hold for associativity' (forAll(d.AlphaStr, d.AlphaStr)
+        .given (key, val) ->
+          '' not in [key, val]
+        .satisfy (key, val) ->
+          m = I key, val
+          m.chain(chain-wrap).chain(chain-negate) `equivalent` m.chain(-> chain-wrap(it).chain(chain-negate))
+        .asTest!)
