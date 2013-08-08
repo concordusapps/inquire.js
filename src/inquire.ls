@@ -60,10 +60,11 @@ class Inquire
     options = {bool, rel}
     # Figure out our path, based on what the key is.
     match key
-    | (instanceof Inquire)      => @_handleInquire key, options
-    | (is \Array) . (typeof!)   => @_handleArray key, options
-    | (is \String) . (typeof!)  => @_handleString key, val, options
-    | (is \Object) . (typeof!)  => @_handleObject key, options
+    | (instanceof Inquire)        => @_handleInquire key, options
+    | (is \Array) . (typeof!)     => @_handleArray key, options
+    | (is \String) . (typeof!)    => @_handleString key, val, options
+    | (is \Function) . (typeof!)  => @_handleFunction key, options
+    | (is \Object) . (typeof!)    => @_handleObject key, options
     @_prune @inquiry
     this
 
@@ -125,6 +126,13 @@ class Inquire
     for item in array
       inquire[boolean] item, null, options
     # Now put that inquire into our inquire.
+    @_handleInquire inquire, {options.bool, options.rel}
+
+  _handleFunction: !(func, options) ->
+    # We shouldn't want to do anything with this function,
+    # just wrap it in an inquire and store it for later.
+    inquire = @@!
+    inquire.inquiry = func
     @_handleInquire inquire, {options.bool, options.rel}
 
   _handleInquire: !(inquire, options) ->
@@ -200,6 +208,8 @@ class Inquire
   _gen: (I) ->
     if typeof! I in <[ Array Boolean Number String ]>
       encodeURIComponent I
+    else if typeof! I is \Function
+      encodeURIComponent I!
     else if empty I
       ''
     else if I.arity is \1

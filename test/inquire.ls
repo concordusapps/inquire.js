@@ -287,6 +287,13 @@ describe \inquire ->
       query = I I I I I \key, \value
       assert.strictEqual query.generate!, '?key=value'
 
+  # describe 'given a function as a key' ->
+  #   o 'it should invoke the function and shove it in the query' ->
+  #     key-func = (-> \key)
+  #     val-func = (-> \val)
+  #     query = I (I key-func), (I val-func)
+  #     assert.strictEqual query.generate!, '?key=val'
+
 describe 'function tests' ->
   describe \toString ->
     describe 'given an empty inquire' ->
@@ -534,3 +541,10 @@ describe 'function tests' ->
     test 'it should be smart about parens' ->
       query = I I I I I \key, \value
       assert.strictEqual query.toString!, '(key=value)'
+
+  # describe 'given a function as a key' ->
+  #   o 'it should invoke the function and shove it in the query' ->
+  #     key-func = (-> \key)
+  #     val-func = (-> \val)
+  #     query = I (I key-func), (I val-func)
+  #     assert.strictEqual query.toString!, 'key=val'
