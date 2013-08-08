@@ -246,6 +246,7 @@ class Inquire
 
       2.  `concat` must return a value of the same Semigroup.
   */
+  /* concat :: Inquire a -> Inquire a */
   concat: (I) ->
     # Take the entirety of our current inquire and clone it to and empty object.
     old-i = {} <<< @inquiry
@@ -277,6 +278,7 @@ class Inquire
 
       1. `empty` must return a value of the same Monoid
   */
+  /* empty :: Inquire a */
   empty: ->
     new-i = @@!
     new-i.inquiry =
@@ -305,6 +307,7 @@ class Inquire
 
       2. `map` must return a value of the same Functor
   */
+  /* map :: (a -> b) -> Inquire b */
   map: (f) ->
     # Apply the function given to the query string,
     # then construct a new inquire from the result.
@@ -329,6 +332,7 @@ class Inquire
 
       2. `chain` must return a value of the same Chain
   */
+  /* chain :: (a -> Inquire b) -> Inquire b */
   chain: (f) ->
     # Apply the function to the query string.
     # The function better return a new Inquire, or the caller broke some laws,
