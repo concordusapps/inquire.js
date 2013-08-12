@@ -18,13 +18,13 @@ describe \fantasy ->
           .satisfy (ak, av, bk, bv) ->
             a = I ak, av
             b = I bk, bv
-            a instanceof I and b instanceof I and a.concat(b) instanceof I
+            a instanceof I and b instanceof I and a ++ b instanceof I
           .asTest!)
         o 'it should still generate a string' (forAll(d.Str, d.Str, d.Str, d.Str)
           .satisfy (ak, av, bk, bv) ->
             a = I ak, av
             b = I bk, bv
-            typeof! a.concat(b).generate! is \String
+            typeof! (a ++ b).generate! is \String
           .asTest!)
     describe 'concat should be associative' ->
       o 'it should hold for the definition of associativity' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
@@ -32,15 +32,15 @@ describe \fantasy ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+          ((a ++ b) ++ c) `equivalent` (a ++ (b ++ c))
         .asTest!)
       o 'it should hold for some more complicated structure' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          abbc = a.concat(b).concat(b).concat(c)
-          a_b_b_c = a.concat(b.concat(b.concat(c)))
+          abbc = a ++ b ++ b ++ c
+          a_b_b_c = a ++ (b ++ (b ++ c))
           abbc `equivalent` a_b_b_c
         .asTest!)
       o 'it should hold for some random structure' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
@@ -48,8 +48,8 @@ describe \fantasy ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          abcabc = a.concat(b.concat(c.concat(a.concat(b.concat(c)))))
-          a_b_cab_c = a.concat(b.concat((c.concat(a.concat(b))))).concat(c)
+          abcabc = a ++ b ++ c ++ a ++ b ++ c
+          a_b_cab_c = a ++ (b ++ (c ++ a ++ b) ++ c)
           abcabc `equivalent` a_b_cab_c
         .asTest!)
 
@@ -61,12 +61,12 @@ describe \fantasy ->
         o 'it should hold for left identity' (forAll(d.Str, d.Str)
           .satisfy (key, val) ->
             a = I key, val
-            a.empty().concat(a) `equivalent` a
+            (a.empty! ++ a) `equivalent` a
           .asTest!)
         o 'it should hold for right identity' (forAll(d.Str, d.Str)
           .satisfy (key, val) ->
             a = I key, val
-            a.concat(a.empty()) `equivalent` a
+            (a ++ a.empty!) `equivalent` a
           .asTest!)
 
   describe \Functor ->
