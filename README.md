@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/concordusapps/inquire.js.png?branch=master)](https://travis-ci.org/concordusapps/inquire.js)
 [![Coverage Status](https://coveralls.io/repos/concordusapps/inquire.js/badge.png?branch=master)](https://coveralls.io/r/concordusapps/inquire.js?branch=master)
 [![devDependency Status](https://david-dm.org/concordusapps/inquire.js/dev-status.png)](https://david-dm.org/concordusapps/inquire.js#info=devDependencies)
+[![Stories in Ready](https://badge.waffle.io/concordusapps/inquire.js.png)](http://waffle.io/concordusapps/inquire.js)
 
 [![NPM](https://nodei.co/npm/inquire.png?compact=true)](https://nodei.co/npm/inquire/)
 
