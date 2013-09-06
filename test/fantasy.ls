@@ -89,6 +89,11 @@ describe \fantasy ->
             a.map(wrap).map(negate) `equivalent` a.map(wrap . negate)
           .asTest!)
 
+  describe \Applicative ->
+    describe \of ->
+      o 'it should return an inquire no matter what is passed in' ->
+        unless (I!of {key: \val}) instanceof I then ...
+
   describe \Chain ->
     chain-id = (I.parse . id)
     chain-wrap = (I.parse . wrap)

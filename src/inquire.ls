@@ -323,6 +323,26 @@ class Inquire
     # then construct a new inquire from the result.
     @@ f @toString!
 
+  /*  Of
+
+      `of` method
+
+      A value which has an Applicative must provide an `of` method on itself
+      or its `constructor` object. The `of` method takes one argument:
+
+          a.of(b)
+          a.constructor.of(b)
+
+      1. `of` must provide a value of the same Applicative
+
+          1. No parts of `b` should be checked
+  */
+  /* of :: a -> Inquire a */
+  of: (a) ->
+    # Shove whatever we got into a new inquire.
+    # It'll return an inquire, but it might not actually have anything in it.
+    @@ a
+
   /*  Chain
 
       1. `m.chain(f).chain(g)` is equivalent to
