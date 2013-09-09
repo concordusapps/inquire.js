@@ -1,6 +1,6 @@
 {
   "name": "inquire",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Generate advanced URL query strings.",
   "keywords": [
     "armet",
@@ -47,18 +47,50 @@
     "node": ">=0.8.22"
   },
   "browserify": {
-    "transform": ["liveify"]
+    "transform": [
+      "liveify"
+    ]
   },
   "testling": {
     "browsers": {
-      "android-browser": [4.2],
-      "chrome": [20, 21, 22, 23, 24, 25, "canary"],
-      "firefox": [15, 16, 17, 18, 19, "nightly"],
-      "ie": [8, 9, 10],
-      "ipad": [6.0],
-      "iphone": [6.0],
-      "opera": [12, "next"],
-      "safari": [6.0]
+      "android-browser": [
+        4.2
+      ],
+      "chrome": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        "canary"
+      ],
+      "firefox": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        "nightly"
+      ],
+      "ie": [
+        8,
+        9,
+        10
+      ],
+      "ipad": [
+        6
+      ],
+      "iphone": [
+        6
+      ],
+      "opera": [
+        12,
+        "next"
+      ],
+      "safari": [
+        6
+      ]
     },
     "harness": "mocha",
     "files": "test/*.ls"
