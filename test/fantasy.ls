@@ -90,9 +90,26 @@ describe \fantasy ->
           .asTest!)
 
   describe \Applicative ->
+    describe \ap ->
+      o 'it should still be an inquire' ->
+        unless (I id .ap I!of {key: \val}) instanceof I then ...
     describe \of ->
       o 'it should return an inquire no matter what is passed in' ->
         unless (I!of {key: \val}) instanceof I then ...
+    describe \laws ->
+      o 'it should hold for identity' ->
+        (I!of id .ap I {key: \val}) `equivalent` {key: \val}
+      o 'it should hold for composition' ->
+        u = I id
+        v = I wrap
+        w = I {key: \val}
+        (I!of((f) -> (g) -> (x) -> f g x)ap u .ap v .ap w) `equivalent` u.ap v.ap w
+      o 'it should hold for homomorphism' ->
+        (I!of id .ap I!of {key: \val}) `equivalent` I!of id {key: \val}
+      o 'it should hold for interchange' ->
+        u = I id
+        y = {key: \val}
+        (u.ap I!of y) `equivalent` I!of (-> it y) .ap u
 
   describe \Chain ->
     chain-id = (I.parse . id)

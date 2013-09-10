@@ -256,7 +256,7 @@ class Inquire
 
       2.  `concat` must return a value of the same Semigroup.
   */
-  /* concat :: Inquire a -> Inquire a */
+  /* concat :: Inquire a -> Inquire a -> Inquire a */
   concat: (I) ->
     # Take the entirety of our current inquire and clone it to and empty object.
     old-i = {} <<< @inquiry
@@ -317,14 +317,65 @@ class Inquire
 
       2. `map` must return a value of the same Functor
   */
-  /* map :: (a -> b) -> Inquire b */
+  /* map :: Inquire a -> (a -> b) -> Inquire b */
   map: (f) ->
     # Apply the function given to the query string,
     # then construct a new inquire from the result.
     @@ f @toString!
 
-  /*  Of
+  /*  Applicative
 
+      A value that implements the Applicative specification must also
+      implement the Functor specification.
+
+      A value which satisfies the specification of a Applicative does not
+      need to implement:
+
+      * Functor's `map`
+        derivable as `function(f) { return this.of(f).ap(this); })}`
+
+      1. `a.of(function(a) { return a; }).ap(v)` is equivalent to `v` (identity)
+      2. `a.of(function(f) {
+            return function(g) {
+              return function(x) {
+                return f(g(x))
+              };
+            };
+          }).ap(u).ap(v).ap(w)`
+          is equivalent to `u.ap(v.ap(w))` (composition)
+      3. `a.of(f).ap(a.of(x))` is equivalent to `a.of(f(x))` (homomorphism)
+      4. `u.ap(a.of(y))` is equivalent to
+         `a.of(function(f) { return f(y); }).ap(u)` (interchange)
+
+      `ap` method
+
+      A value which has an Applicative must provide an `ap` method. The `ap`
+      method takes one argument:
+
+          a.ap(b)
+
+      1. `a` must be an Applicative of a function,
+
+        1. If `a` does not represent a function, the behaviour of `ap` is
+           unspecified.
+
+      2. `b` must be an Applicative of any value
+
+      3. `ap` must apply the function in Applicative `a` to the value in
+         Applicative `b`
+
+  */
+  /* ap :: Inquire (a -> b) -> Inquire a -> Inquire b*/
+  ap: (I) ->
+    # Rip the value out of the passed Inquire,
+    # rip our function out of the current Inquire,
+    # Apply the value to our function, then throw it in a new Inquire.
+    if typeof! I.inquiry.value is \Function
+      @@ @inquiry.value I.inquiry.value
+    else
+      @@ @inquiry.value I.toString!
+
+  /*
       `of` method
 
       A value which has an Applicative must provide an `of` method on itself
@@ -362,7 +413,7 @@ class Inquire
 
       2. `chain` must return a value of the same Chain
   */
-  /* chain :: (a -> Inquire b) -> Inquire b */
+  /* chain :: Inquire a -> (a -> Inquire b) -> Inquire b */
   chain: (f) ->
     # Apply the function to the query string.
     # The function better return a new Inquire, or the caller broke some laws,
