@@ -418,7 +418,34 @@ class Inquire
     # Apply the function to the query string.
     # The function better return a new Inquire, or the caller broke some laws,
     # and there's no telling what can happen.
-    f @toString!
+    f this
+
+  /*  Monad
+
+      A value that implements the Monad specification must also implement
+      the Applicative and Chain specifications.
+
+      A value which satisfies the specification of a Monad does not need to
+      implement:
+
+      * Applicative's `ap`
+        derivable as `function(m) {
+                        return this.chain(function(f) {
+                          return m.map(f);
+                        });
+                      }`
+      * Functor's `map`
+        derivable as `function(f) {
+                        var m = this;
+                        return m.chain(function(a) {
+                          return m.of(f(a));
+                        });
+                      }`
+
+      1. `m.of(a).chain(f)` is equivalent to `f(a)` (left identity)
+      2. `m.chain(m.of)` is equivalent to `m` (right identity)
+
+  */
 
 /*  Static methods.
     We can do stuff like:

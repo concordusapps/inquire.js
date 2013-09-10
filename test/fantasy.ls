@@ -112,9 +112,9 @@ describe \fantasy ->
         (u.ap I!of y) `equivalent` I!of (-> it y) .ap u
 
   describe \Chain ->
-    chain-id = (I.parse . id)
-    chain-wrap = (I.parse . wrap)
-    chain-negate = (I.parse . negate)
+    chain-id = (I . id)
+    chain-wrap = (I . wrap)
+    chain-negate = (I . negate)
     describe \chain ->
       o 'it should still generate a string' ->
         if typeof! I \key, \val .chain chain-id .generate! isnt \String then ...
@@ -133,3 +133,16 @@ describe \fantasy ->
           m = I key, val
           m.chain(chain-wrap).chain(chain-negate) `equivalent` m.chain(-> chain-wrap(it).chain(chain-negate))
         .asTest!)
+
+  describe \Monad ->
+    describe \laws ->
+      o 'it should hold for left identity' ->
+        a = {key: \val}
+        f = id
+        (I!of a .chain f) `equivalent` f a
+      o 'it should hold for right identity' ->
+        (I!chain I!of) `equivalent` I!
+      o 'it should hold for associativity' ->
+        f = -> I it
+        g = -> I "(#it)"
+        (I!chain f .chain g) `equivalent` I!chain -> f it .chain g

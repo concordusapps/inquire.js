@@ -39,6 +39,7 @@ module.exports =
     ]
     group: [
       ['( q )', '$$ = { arity: "1", bool: "", value: $2 };']
+      ['( )',   '$$ = { arity: "1", bool: "", value: ""};']
     ]
     predicate: [
       ['variable rel variable', '$$ = { arity: "2", rel: $2, left: $1, right: $3 };']
