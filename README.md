@@ -19,6 +19,9 @@ Currently supports [armet][armet] syntax query strings.
 * Semigroup
 * Monoid
 * Functor
+* Applicative
+* Chain
+* Monad
 
 ## Installation
 
