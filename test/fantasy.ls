@@ -1,7 +1,7 @@
 I = require \../lib/inquire.js
 {equivalent, normalize} = require \../lib/utils.js
 
-{data: d, forAll} =  require \claire
+{choice, data: d, forAll} =  require \claire
 # Livescript uses it for stuff, so save the mocha version outside any functions.
 o = it
 
@@ -9,6 +9,8 @@ o = it
 id = -> it
 wrap = -> "(#it)"
 negate = -> "!(#it)"
+
+Func = choice (-> id), (-> wrap), (-> negate)
 
 describe \fantasy ->
   describe \Semigroup ->
@@ -18,13 +20,13 @@ describe \fantasy ->
           .satisfy (ak, av, bk, bv) ->
             a = I ak, av
             b = I bk, bv
-            a instanceof I and b instanceof I and a.concat(b) instanceof I
+            a instanceof I and b instanceof I and a ++ b instanceof I
           .asTest!)
         o 'it should still generate a string' (forAll(d.Str, d.Str, d.Str, d.Str)
           .satisfy (ak, av, bk, bv) ->
             a = I ak, av
             b = I bk, bv
-            typeof! a.concat(b).generate! is \String
+            typeof! (a ++ b).generate! is \String
           .asTest!)
     describe 'concat should be associative' ->
       o 'it should hold for the definition of associativity' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
@@ -32,24 +34,22 @@ describe \fantasy ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          a.concat(b).concat(c) `equivalent` a.concat(b.concat(c))
+          ((a ++ b) ++ c) `equivalent` (a ++ (b ++ c))
         .asTest!)
       o 'it should hold for some more complicated structure' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          abbc = a.concat(b).concat(b).concat(c)
-          a_b_b_c = a.concat(b.concat(b.concat(c)))
-          abbc `equivalent` a_b_b_c
+          (((a ++ b) ++ b) ++ c) `equivalent` (a ++ (b ++ (b ++ c)))
         .asTest!)
       o 'it should hold for some random structure' (forAll(d.Str, d.Str, d.Str, d.Str, d.Str, d.Str)
         .satisfy (ak, av, bk, bv, ck, cv) ->
           a = I ak, av
           b = I bk, bv
           c = I ck, cv
-          abcabc = a.concat(b.concat(c.concat(a.concat(b.concat(c)))))
-          a_b_cab_c = a.concat(b.concat((c.concat(a.concat(b))))).concat(c)
+          abcabc = a ++ (b ++ (c ++ (a ++ (b ++ c))))
+          a_b_cab_c = (a ++ (b ++ ((c ++ (a ++ b))))) ++ c
           abcabc `equivalent` a_b_cab_c
         .asTest!)
 
@@ -74,19 +74,19 @@ describe \fantasy ->
       o 'it should still generate a string' ->
         if typeof! I \key, \val .map id .generate! isnt \String then ...
       describe 'should unwrap the inquire apply the function to it, and rewrap it.' ->
-        o 'it should hold for identity' (forAll(d.AlphaStr, d.AlphaStr)
-          .given (key, val) ->
+        o 'it should hold for identity' (forAll(d.AlphaStr, d.AlphaStr, Func)
+          .given (key, val, f) ->
             '' not in [key, val]
-          .satisfy (key, val) ->
+          .satisfy (key, val, f) ->
             a = I key, val
-            a.map(id) `equivalent` a
+            a.map(f) `equivalent` a
           .asTest!)
-        o 'it should hold for composition' (forAll(d.AlphaStr, d.AlphaStr)
-          .given (key, val) ->
+        o 'it should hold for composition' (forAll(d.AlphaStr, d.AlphaStr, Func, Func)
+          .given (key, val, f1, f2) ->
             '' not in [key, val]
-          .satisfy (key, val) ->
+          .satisfy (key, val, f1, f2) ->
             a = I key, val
-            a.map(wrap).map(negate) `equivalent` a.map(wrap . negate)
+            a.map(f1).map(f2) `equivalent` a.map(f1 . f2)
           .asTest!)
 
   describe \Applicative ->
@@ -97,52 +97,75 @@ describe \fantasy ->
       o 'it should return an inquire no matter what is passed in' ->
         unless (I!of {key: \val}) instanceof I then ...
     describe \laws ->
-      o 'it should hold for identity' ->
-        (I!of id .ap I {key: \val}) `equivalent` {key: \val}
-      o 'it should hold for composition' ->
-        u = I id
-        v = I wrap
-        w = I {key: \val}
-        (I!of((f) -> (g) -> (x) -> f g x)ap u .ap v .ap w) `equivalent` u.ap v.ap w
-      o 'it should hold for homomorphism' ->
-        (I!of id .ap I!of {key: \val}) `equivalent` I!of id {key: \val}
-      o 'it should hold for interchange' ->
-        u = I id
-        y = {key: \val}
-        (u.ap I!of y) `equivalent` I!of (-> it y) .ap u
+      o 'it should hold for identity' (forAll(d.AlphaStr, d.AlphaStr, Func)
+        .given (key, val, f) ->
+          '' not in [key, val]
+        .satisfy (key, val, f) ->
+          v = I {key: val}
+          I!of(f).ap(v) `equivalent` v
+        .asTest!)
+      o 'it should hold for composition' (forAll(d.AlphaStr, d.AlphaStr, Func, Func)
+        .given (key, val, f1, f2) ->
+          '' not in [key, val]
+        .satisfy (key, val, f1, f2) ->
+          u = I f1
+          v = I f2
+          w = I {key: val}
+          I!of((f) -> (g) -> -> f g it)ap(u)ap(v)ap(w) `equivalent` u.ap v.ap w
+        .asTest!)
+      o 'it should hold for homomorphism' (forAll(d.AlphaStr, d.AlphaStr, Func)
+        .given (key, val, f) ->
+          '' not in [key, val]
+        .satisfy (key, val, f) ->
+          x = I {key: val}
+          I!of(f)ap(I!of(x)) `equivalent` I!of f x
+        .asTest!)
+      o 'it should hold for interchange' (forAll(d.AlphaStr, d.AlphaStr, Func)
+        .given (key, val, f) ->
+          '' not in [key, val]
+        .satisfy (key, val, f) ->
+          u = I f
+          y = I {key: val}
+          u.ap(I!of(y)) `equivalent` I!of (-> it y) .ap u
+        .asTest!)
 
   describe \Chain ->
-    chain-id = (I . id)
-    chain-wrap = (I . wrap)
-    chain-negate = (I . negate)
     describe \chain ->
       o 'it should still generate a string' ->
-        if typeof! I \key, \val .chain chain-id .generate! isnt \String then ...
-      o 'it should return an inquire' (forAll(d.AlphaStr, d.AlphaStr)
-        .given (key, val) ->
+        if typeof! I \key, \val .chain (I . id) .generate! isnt \String then ...
+      o 'it should return an inquire' (forAll(d.AlphaStr, d.AlphaStr, Func)
+        .given (key, val, f) ->
           '' not in [key, val]
-        .satisfy (key, val) ->
+        .satisfy (key, val, f) ->
           m = I key, val
-          m.chain(chain-id) instanceof I
+          cf = I . f
+          m.chain(cf) instanceof I
         .asTest!)
     describe 'given two functions f and g' ->
-      o 'it should hold for associativity' (forAll(d.AlphaStr, d.AlphaStr)
-        .given (key, val) ->
+      o 'it should hold for associativity' (forAll(d.AlphaStr, d.AlphaStr, Func, Func)
+        .given (key, val, f1, f2) ->
           '' not in [key, val]
-        .satisfy (key, val) ->
+        .satisfy (key, val, f1, f2) ->
           m = I key, val
-          m.chain(chain-wrap).chain(chain-negate) `equivalent` m.chain(-> chain-wrap(it).chain(chain-negate))
+          f = I . f1
+          g = I . f2
+          m.chain(f).chain(g) `equivalent` m.chain -> f it .chain(g)
         .asTest!)
 
   describe \Monad ->
     describe \laws ->
-      o 'it should hold for left identity' ->
-        a = {key: \val}
-        f = id
-        (I!of a .chain f) `equivalent` f a
-      o 'it should hold for right identity' ->
-        (I!chain I!of) `equivalent` I!
-      o 'it should hold for associativity' ->
-        f = -> I it
-        g = -> I "(#it)"
-        (I!chain f .chain g) `equivalent` I!chain -> f it .chain g
+      o 'it should hold for left identity' (forAll(d.AlphaStr, d.AlphaStr, Func)
+        .given (key, val, func) ->
+          '' not in [key, val]
+        .satisfy (key, val, func) ->
+          a = "#key=#val"
+          f = I . func
+          I!of(a).chain(f) `equivalent` f a
+        .asTest!)
+      o 'it should hold for right identity' (forAll(d.AlphaStr, d.AlphaStr)
+        .given (key, val) ->
+          '' not in [key, val]
+        .satisfy (key, val) ->
+          m = I {key: val}
+          m.chain(m.of) `equivalent` m
+        .asTest!)

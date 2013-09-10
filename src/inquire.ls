@@ -365,7 +365,7 @@ class Inquire
          Applicative `b`
 
   */
-  /* ap :: Inquire (a -> b) -> Inquire a -> Inquire b*/
+  /* ap :: Inquire (a -> b) -> Inquire a -> Inquire b */
   ap: (I) ->
     # Rip the value out of the passed Inquire,
     # rip our function out of the current Inquire,
