@@ -240,22 +240,42 @@ Generates an inquire from the passed in query string.
 ### Fantasy Land Algebras
 
 #### Semigroup
+Semigroups are algebras with an associative operation.  The associative operation gives a way to combine two items from this algebra.  In the case of Inquire, it allows you to `and` them together.  This isn't especially unique, but it is a good foundation for creating better or more interesting operations.
 
 ##### concat(inquire)
 Takes an inquire and conjoins it to a copy of the current inquire with `and`.  This function is associative, meaning that no matter what kind of parens nesting you use to call `concat`, the result will always be the same.
 For example, given some predicates `a`, `b`, `c` and `d` (each of the form `key=val`), `a.concat(b).concat(c.concat(d))` is equivalent to `a.concat(b.concat(c).concat(d))`.  To put it in more explicit terms, `(a&b)&(c&d)` is equivalent to `a&((b&c)&d)`
 
 #### Monoid
+Monoids are Semigroups with an identity element.  This means they also have an associative operation.  The identity element allows you to always have a place to start, or something to concat with that will give you back just what you started with.  This can come into play when traversing the inquire.
 
 ##### empty()
 Returns an empty inquire.
 Although it might seem useless, this has its place when being used with other structures.  Much like the identity function has its place for functions, the number 1 its place for multiplication, or the number 0 its place for addition.
 
 #### Functor
+Functors are algebras which allow some sort of morphism between values.  This means it can transform the data within the Inquire.  Currently, Inquire operates on strings only, but you should be able to traverse the entire tree, and manipulate the data.
 
 ##### map(function)
 Takes the function and applies the inquire to it.  The inquire is first stringified then passed to the function, so the function should operate over strings.  The result of the function is then used to create a new inquire and returned.  The function can return whatever it wants, and inquire will try its best to make something of it, but realize that at this time only strings, arrays, objects, and other inquires are really supported.
 
+#### Applicative
+Applicatives are Functors which allow you to take the function which is already in your current inquire and apply it to a value within an inquire.  This may seem more restrictive, but it actually allows for more freedom.  With functors you can only take a single function, with applicatives you can string together a whole mess of functions.  There's definitely more stuff you can do with them though.
+
+##### ap(inquire)
+Takes an inquire and applies the function in the current inquire to it.  This requires the current inquire to have a function inside of it.  If there isn't, you'll get some sort of error.
+
+##### of(anything)
+Takes whatever you give it, and returns a new inquire.  This means you can pass in anything: strings, objects, functions, jQuery selectors, Bacon.js Eventstreams, whatever.  Currently, there's no guarantee that anything you pass in will generate a valid inquire, but there's clearly room for improvement.
+
+#### Chain
+Chains are algebras which give you a way to take a value into the algebra while also transforming it in the process.  It's sort of like having `of` and `map` rolled into one function.
+
+##### chain(function)
+Takes a function that takes something and returns a new inquire, and applies whatever is in the current inquire to the function, returning the new inquire.
+
+#### Monad
+Monads are Applicatives and Chains which give an interface for operating in the algebra.  What this means for inquire right now is nothing.  However, it may mean something better in the future.  This could be something like validation of data, or it may mean working with promises, jQuery, or other "popular" JS things.
 
 [armet]: http://armet.github.io/
 [inquire]: https://npmjs.org/package/inquire
