@@ -1,5 +1,24 @@
 # Changelog
 
+### 0.3.2
+#### 09/10/13
+- Added Fantasy Land algebra (Applicative, Monad).
+- More tests.
+
+### 0.3.1
+#### 09/06/13
+- Added Fantasy Land algebra (Monoid, Functor, Chain).
+- Added Fantasy Land tests.
+- Added devDependency `claire`.
+- Added `testling` and badge.
+- Added support for functions.
+- Converted from `commonjs-everywhere` to `browserify`.
+- Converted fantasy and parser tests from `chai` to `claire`.
+- Fixed `map`.
+- Updated grammar to follow official bnf.
+- Updated grammar for groups.
+- Using `waffle.io` for kanban.
+
 ### 0.3.0
 #### 07/19/13
 - First Fantasy Land algebra (Semigroup).
