@@ -22,8 +22,8 @@ Bool = choice ...<[ & ; ]>
 # and a way to get back.
 bool-map = -> I[raw-bool it]
 raw-bool = (bool) -> match bool
-| \&  => \and
-| \;  => \or
+| \& => \and
+| \; => \or
 
 # Make a set amount of parens.
 SetParens = (query, num) --> "#{\( * num}#query#{\) * num}"
@@ -53,10 +53,10 @@ describe \inquire ->
           .satisfy (b, key, rel, val) ->
             if b
               bool = \!
-              wrap = (\( +) . (+ \))
+              wrap = -> "(#it)"
             else
               bool = ''
-              wrap = ('' +)
+              wrap = -> "#it"
             query = I key, val, {bool, rel}
             query.generate! is "?#bool#{wrap "#key#rel#val"}"
           .asTest!)
@@ -77,29 +77,11 @@ describe \inquire ->
       assert.strictEqual query.generate!, '?(key1=val1)&(key2=val2)'
 
   describe 'given an object of key, value pairs' ->
-    test 'it should conjoin them with "=" for eq' ->
-      query = I.eq {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1=val1&key2=val2&key3=val3&key4=val4'
-
-    test 'it should conjoin them with "!=" for neq' ->
-      query = I.neq {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1!=val1&key2!=val2&key3!=val3&key4!=val4'
-
-    test 'it should conjoin them with ">" for gt' ->
-      query = I.gt {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1>val1&key2>val2&key3>val3&key4>val4'
-
-    test 'it should conjoin them with ">=" for gte' ->
-      query = I.gte {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1>=val1&key2>=val2&key3>=val3&key4>=val4'
-
-    test 'it should conjoin them with "<" for lt' ->
-      query = I.lt {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1<val1&key2<val2&key3<val3&key4<val4'
-
-    test 'it should conjoin them with "<=" for lte' ->
-      query = I.lte {key1: 'val1', key2: 'val2', key3: 'val3', key4: 'val4'}
-      assert.strictEqual query.generate!, '?key1<=val1&key2<=val2&key3<=val3&key4<=val4'
+    o 'it should conjoin them with a relation' (forAll(Rel, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr)
+      .given -> '' not in &
+      .satisfy (rel, k1, v1, k2, v2) ->
+        rel-map(rel) {"#k1": v1, "#k2": v2} .generate! is "?#k1#rel#v1&#k2#rel#v2"
+      .asTest!)
 
   describe 'given an object of boolean values' ->
     test 'it should conjoin them with "=" for eq' ->
