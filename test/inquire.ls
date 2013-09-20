@@ -77,61 +77,17 @@ describe \inquire ->
       assert.strictEqual query.generate!, '?(key1=val1)&(key2=val2)'
 
   describe 'given an object of key, value pairs' ->
-    o 'it should conjoin them with a relation' (forAll(Rel, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr, d.AlphaNumStr)
+    o 'it should conjoin them with a relation' (forAll(Rel, d.AlphaStr, d.AlphaStr, d.AlphaStr, d.AlphaStr)
       .given -> '' not in &
       .satisfy (rel, k1, v1, k2, v2) ->
         rel-map(rel) {"#k1": v1, "#k2": v2} .generate! is "?#k1#rel#v1&#k2#rel#v2"
       .asTest!)
 
   describe 'given an object of boolean values' ->
-    test 'it should conjoin them with "=" for eq' ->
-      query = I.eq {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1=true&key2=false&key3=true&key4=false'
-
-    test 'it should conjoin them with "!=" for neq' ->
-      query = I.neq {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1!=true&key2!=false&key3!=true&key4!=false'
-
-    test 'it should conjoin them with ">" for gt' ->
-      query = I.gt {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1>true&key2>false&key3>true&key4>false'
-
-    test 'it should conjoin them with ">=" for gte' ->
-      query = I.gte {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1>=true&key2>=false&key3>=true&key4>=false'
-
-    test 'it should conjoin them with "<" for lt' ->
-      query = I.lt {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1<true&key2<false&key3<true&key4<false'
-
-    test 'it should conjoin them with "<=" for lte' ->
-      query = I.lte {+key1, -key2, +key3, -key4}
-      assert.strictEqual query.generate!, '?key1<=true&key2<=false&key3<=true&key4<=false'
-
-  describe 'given a different relational operator with "key", "val"' ->
-    test 'it should generate "=" for eq' ->
-      query = I.eq \key, \val
-      assert.strictEqual query.generate!, \?key=val
-
-    test 'it should generate "!=" for neq' ->
-      query = I.neq \key, \val
-      assert.strictEqual query.generate!, \?key!=val
-
-    test 'it should generate ">" for gt' ->
-      query = I.gt \key, \val
-      assert.strictEqual query.generate!, \?key>val
-
-    test 'it should generate ">=" for gte' ->
-      query = I.gte \key, \val
-      assert.strictEqual query.generate!, \?key>=val
-
-    test 'it should generate "<" for lt' ->
-      query = I.lt \key, \val
-      assert.strictEqual query.generate!, \?key<val
-
-    test 'it should generate "<=" for lte' ->
-      query = I.lte \key, \val
-      assert.strictEqual query.generate!, \?key<=val
+    o 'it should conjoin them with a relation' (forAll(Rel, d.Bool, d.Bool)
+      .satisfy (rel, b1, b2) ->
+        rel-map(rel) {key1: b1, key2: b2} .generate! is "?key1#rel#b1&key2#rel#b2"
+      .asTest!)
 
   describe 'given a different relational operator with an inquire' ->
     test 'it should generate "=" for eq, wrapped in parens' ->
