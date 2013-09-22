@@ -61,21 +61,6 @@ describe \inquire ->
             query.generate! is "?#bool#{wrap "#key#rel#val"}"
           .asTest!)
 
-  describe 'given an inquire: "key1=val1" or-ed with another inquire with "key2", "value2" arguments and "bool=;", "rel=<" options' ->
-    test 'it should generate a "?key1=value1;(key2<value2)" query string' ->
-      query = I \key1, \value1 .or I \key2, \value2, {bool: \;, rel: \<}
-      assert.strictEqual query.generate!, '?key1=value1;(key2<value2)'
-
-  describe 'given an inquire object with a "?key=value" query string' ->
-    test 'it should generate a "?(key=value)" query string' ->
-      query = I I \key, \value
-      assert.strictEqual query.generate!, '?key=value'
-
-  describe 'given an array of inquire objects with "?key1=val1" and "?key2=val2"' ->
-    test 'it should generate a "??((key1=val1)&(key2=val2))" query string' ->
-      query = I [I(\key1, \val1), I(\key2, \val2)]
-      assert.strictEqual query.generate!, '?(key1=val1)&(key2=val2)'
-
   describe 'given an object of key, value pairs' ->
     o 'it should conjoin them with a relation' (forAll(Rel, d.AlphaStr, d.AlphaStr, d.AlphaStr, d.AlphaStr)
       .given -> '' not in &
@@ -139,21 +124,6 @@ describe 'function tests' ->
               query = I key, val, {bool, rel}
               query.toString! is "#bool#{wrap "#key#rel#val"}"
             .asTest!)
-
-    describe 'given an inquire: "key1=val1" or-ed with another inquire with "key2", "value2" arguments and "bool=;", "rel=<" options' ->
-      test 'it should generate a "key1=value1;(key2<value2)" query string' ->
-        query = I \key1, \value1 .or I \key2, \value2, {bool: \;, rel: \<}
-        assert.strictEqual query.toString!, 'key1=value1;(key2<value2)'
-
-    describe 'given an inquire object with a "key=value" query string' ->
-      test 'it should generate a "(key=value)" query string' ->
-        query = I I \key, \value
-        assert.strictEqual query.toString!, '(key=value)'
-
-    describe 'given an array of inquire objects with "key1=val1" and "key2=val2"' ->
-      test 'it should generate a "((key1=val1)&(key2=val2))" query string' ->
-        query = I [I(\key1, \val1), I(\key2, \val2)]
-        assert.strictEqual query.toString!, '((key1=val1)&(key2=val2))'
 
     describe 'given an object of key, value pairs' ->
       o 'it should conjoin them with a relation' (forAll(Rel, d.AlphaStr, d.AlphaStr, d.AlphaStr, d.AlphaStr)
