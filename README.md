@@ -239,12 +239,24 @@ Generates an inquire from the passed in query string.
 
 ### Fantasy Land Algebras
 
+A bit of motivation is necessary.
+Why go through all the trouble to define and use these algebras?
+The driving factor is to provide a uniform interface that *should* be easier to reason about.
+The fantasy land spec removes the notion of side effects from implementations, so certain things are easier.
+This uniform interface allows anyone who knows the spec to pick up `inquire` and start working with it just by knowing which algebras it implements.
+More importantly, it allows any library that operates on fantasy land algebras to abstract right over it.
+
 #### Semigroup
 Semigroups are algebras with an associative operation.  The associative operation gives a way to combine two items from this algebra.  In the case of Inquire, it allows you to `and` them together.  This isn't especially unique, but it is a good foundation for creating better or more interesting operations.
 
 ##### concat(inquire)
 Takes an inquire and conjoins it to a copy of the current inquire with `and`.  This function is associative, meaning that no matter what kind of parens nesting you use to call `concat`, the result will always be the same.
-For example, given some predicates `a`, `b`, `c` and `d` (each of the form `key=val`), `a.concat(b).concat(c.concat(d))` is equivalent to `a.concat(b.concat(c).concat(d))`.  To put it in more explicit terms, `(a&b)&(c&d)` is equivalent to `a&((b&c)&d)`
+For example, given some predicates `a`, `b`, `c` and `d` (each of the form `key=val`), `a.concat(b).concat(c.concat(d))` is equivalent to `a.concat(b.concat(c).concat(d))`.
+To put it in more explicit terms, `(a&b)&(c&d)` is equivalent to `a&((b&c)&d)` is equivalent to `a&b&c&d`.
+
+The point of this is that now it doesn't matter which order you add each predicate, or if it supported it, which order the predicates were resolved.
+This gives us the ability to perform these operations concurrently (since it doesn't matter which order things happen in).
+Of course with string predicates, it's trivial whether we do this sequentially or concurrently, but when things like promises or functions start happening it becomes important.
 
 #### Monoid
 Monoids are Semigroups with an identity element.  This means they also have an associative operation.  The identity element allows you to always have a place to start, or something to concat with that will give you back just what you started with.  This can come into play when traversing the inquire.
