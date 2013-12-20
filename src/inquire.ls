@@ -7,6 +7,8 @@
 
 */
 
+id = -> it
+
 class Inquire
 
   (@op, @key, @val) ~>
@@ -14,6 +16,13 @@ class Inquire
   and: (i) -> new Group new And, this, i
   or:  (i) -> new Group new Or,  this, i
   not:     -> new Wrap  new Not, this
+
+  /*
+    Fantasy land stuff.
+  */
+  concat: @and
+  empty: -> new Atom
+  map: -> @bimap id, it
 
 class Relation
 
@@ -65,14 +74,22 @@ module.exports.Atom = class Atom extends Inquire
 
   to-string: -> ''
 
+  bimap: (f, g) -> this
+
 module.exports.Pred = class Pred extends Inquire
 
   to-string: -> "#{@key}#{@op}#{@val}"
+
+  bimap: (f, g) -> new Pred @op, (f @key), g @val
 
 module.exports.Group = class Group extends Inquire
 
   to-string: -> "(#{@key})#{@op}(#{@val})"
 
+  bimap: (f, g) -> new Group @op, (@key.bimap f, g), @val.bimap f, g
+
 module.exports.Wrap = class Wrap extends Inquire
 
   to-string: -> "#{@op}(#{@key})"
+
+  bimap: (f, g) -> new Wrap @op, @key.bimap f, g
