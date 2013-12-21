@@ -35,10 +35,6 @@ class Inquire
   foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
   biof: (k, v) -> new Pred new Eq, k, v
 
-  biap-atom: -> this
-  biap-group: (i) -> new Group i.op, (i.key.biap this), i.val.biap this
-  biap-wrap: (i) -> new Wrap i.op, i.key.biap this
-
 module.exports.Atom = class Atom extends Inquire
 
   to-string: -> ''
@@ -47,13 +43,8 @@ module.exports.Atom = class Atom extends Inquire
 
   bifoldr: (f, g, z) -> z
 
-  biap: (i) -> i.biap-atom this
-
-  biap-pred: -> this
-
-  biap-group: -> this
-
-  biap-wrap: -> this
+  biap: id
+  biap-pred: (i) -> this
 
 module.exports.Pred = class Pred extends Inquire
 
@@ -63,8 +54,8 @@ module.exports.Pred = class Pred extends Inquire
 
   bifoldr: (f, g, z) -> f @key, g @val, z
 
+  /* We can use double dispatch to avoid worrying about what we're ap-ing to. */
   biap: (i) -> i.biap-pred this
-
   biap-pred: (i) -> new Pred @op, (i.key @key), i.val @val
 
 module.exports.Group = class Group extends Inquire
@@ -75,8 +66,7 @@ module.exports.Group = class Group extends Inquire
 
   bifoldr: (f, g, z) -> @key.bifoldr f, g, @val.bifoldr f, g, z
 
-  biap: (i) -> i.biap-group this
-
+  biap: (i) -> new Group @op, (@key.biap i), @val.biap i
   biap-pred: (i) -> new Group @op, (i.biap @key), i.biap @val
 
 module.exports.Wrap = class Wrap extends Inquire
@@ -87,8 +77,7 @@ module.exports.Wrap = class Wrap extends Inquire
 
   bifoldr: (f, g, z) -> @key.bifoldr f, g, z
 
-  biap: (i) -> i.biap-wrap this
-
+  biap: (i) -> new Wrap @op, @key.biap i
   biap-pred: (i) -> new Wrap @op, i.biap @key
 
 class Relation
