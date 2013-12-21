@@ -35,7 +35,9 @@ class Inquire
   foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
   biof: (k, v) -> new Pred new Eq, k, v
 
-  biap-atom: -> it
+  biap-atom: -> this
+  biap-group: (i) -> new Group i.op, (i.key.biap this), i.val.biap this
+  biap-wrap: (i) -> new Wrap i.op, i.key.biap this
 
 module.exports.Atom = class Atom extends Inquire
 
@@ -47,11 +49,11 @@ module.exports.Atom = class Atom extends Inquire
 
   biap: (i) -> i.biap-atom this
 
-  biap-pred: (_, _) -> this
+  biap-pred: -> this
 
-  biap-group: (_, _) -> this
+  biap-group: -> this
 
-  biap-wrap: (_) -> this
+  biap-wrap: -> this
 
 module.exports.Pred = class Pred extends Inquire
 
@@ -61,11 +63,9 @@ module.exports.Pred = class Pred extends Inquire
 
   bifoldr: (f, g, z) -> f @key, g @val, z
 
-  biap: (i) -> i.biap-pred @key, @val
+  biap: (i) -> i.biap-pred this
 
-  biap-pred: (f, g) -> new Pred @op, (f @key), g @val
-
-  biap-group: (f, g) -> new Group @op, (f.biap this), g.biap this
+  biap-pred: (i) -> new Pred @op, (i.key @key), i.val @val
 
 module.exports.Group = class Group extends Inquire
 
@@ -75,11 +75,9 @@ module.exports.Group = class Group extends Inquire
 
   bifoldr: (f, g, z) -> @key.bifoldr f, g, @val.bifoldr f, g, z
 
-  biap: (i) -> i.biap-group @key, @val
+  biap: (i) -> i.biap-group this
 
-  biap-pred: (f, g) -> new Group @op, (@key.biap f, g), @val.biap f, g
-
-  biap-group: (f, g) -> new Group @op, (f.biap this), g.biap this
+  biap-pred: (i) -> new Group @op, (i.biap @key), i.biap @val
 
 module.exports.Wrap = class Wrap extends Inquire
 
@@ -89,11 +87,9 @@ module.exports.Wrap = class Wrap extends Inquire
 
   bifoldr: (f, g, z) -> @key.bifoldr f, g, z
 
-  biap: (i) -> i.biap-wrap @key
+  biap: (i) -> i.biap-wrap this
 
-  biap-pred: (f, g) -> new Wrap @op, @key.biap f, g
-
-  biap-group: (f, g) -> new Group @op, (f.biap this), g.biap this
+  biap-pred: (i) -> new Wrap @op, i.biap @key
 
 class Relation
 
