@@ -29,6 +29,10 @@ class Inquire
   not:     -> new Wrap  new Not, this
 
   /*
+    The convention is that all functions prefixed with `bi`,
+    operate on both parts of the inquire.
+  */
+  /*
     Fantasy land stuff.
   */
   concat: @and
@@ -47,6 +51,11 @@ class Inquire
   /*
     Extra algebra stuff.
   */
+
+  /* Functor */
+  /* Replace all values with the passed in value. */
+  supplant: @map . con
+  bisupplant: (u, v) -> @bimap (con u), (con v)
   # TODO: Need the rest of {Bi-}foldable.
   foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
   biof: (k, v) -> new Pred new Eq, k, v
@@ -221,3 +230,6 @@ module.exports.lift-a3 = lift-a3 = (f, u, v, w) ->
   u.map (a) -> (b) -> (c) -> f a, b, c
   .ap v
   .ap w
+
+# a -> b -> a
+module.exports.con = con = (a, b) --> a
