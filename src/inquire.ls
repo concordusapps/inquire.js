@@ -39,6 +39,11 @@ class Inquire
   ap: @biap
 
   /*
+    Chain might not actually be right due to predicates.
+    TODO: Prove some laws and do more maths.
+  */
+
+  /*
     Extra algebra stuff.
   */
   # TODO: Need the rest of {Bi-}foldable.
@@ -48,6 +53,8 @@ class Inquire
 module.exports.Atom = class Atom extends Inquire
 
   to-string: -> ''
+
+  chain: (f) -> this
 
   bimap: (f, g) -> this
 
@@ -75,6 +82,8 @@ module.exports.Pred = class Pred extends Inquire
   /* Predicates have to shove an identity through the first func for biap. */
   ap: (i) -> (new Pred @op, id, @val).biap i
 
+  chain: (f) -> f @val
+
   bimap: (f, g) -> new Pred @op, (f @key), g @val
 
   bifoldr: (f, g, z) -> f @key, g @val, z
@@ -99,6 +108,8 @@ module.exports.Group = class Group extends Inquire
 
   to-string: -> "(#{@key})#{@op}(#{@val})"
 
+  chain: (f) -> new Group @op, (@key.chain f), @val.chain f
+
   bimap: (f, g) -> new Group @op, (@key.bimap f, g), @val.bimap f, g
 
   bifoldr: (f, g, z) -> @key.bifoldr f, g, @val.bifoldr f, g, z
@@ -121,6 +132,8 @@ module.exports.Group = class Group extends Inquire
 module.exports.Wrap = class Wrap extends Inquire
 
   to-string: -> "#{@op}(#{@key})"
+
+  chain: (f) -> new Wrap @op, @key.chain f
 
   bimap: (f, g) -> new Wrap @op, @key.bimap f, g
 
