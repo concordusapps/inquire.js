@@ -42,6 +42,7 @@ class Inquire
     Chain might not actually be right due to predicates.
     TODO: Prove some laws and do more maths.
   */
+  chain: (f) -> @bichain (u, v) -> f v
 
   /*
     Extra algebra stuff.
@@ -53,8 +54,6 @@ class Inquire
 module.exports.Atom = class Atom extends Inquire
 
   to-string: -> ''
-
-  chain: (f) -> this
 
   bimap: (f, g) -> this
 
@@ -75,14 +74,14 @@ module.exports.Atom = class Atom extends Inquire
     g-val = g this
     if g-val.of or g-val.@@.of then that this else ...
 
+  bichain: (f) -> this
+
 module.exports.Pred = class Pred extends Inquire
 
   to-string: -> "#{@key}#{@op}#{@val}"
 
   /* Predicates have to shove an identity through the first func for biap. */
   ap: (i) -> (new Pred @op, id, @val).biap i
-
-  chain: (f) -> f @val
 
   bimap: (f, g) -> new Pred @op, (f @key), g @val
 
@@ -104,11 +103,11 @@ module.exports.Pred = class Pred extends Inquire
         new Pred op, key, val), (that @op), f-key, g-val
     else ...
 
+  bichain: (f) -> f @key, @val
+
 module.exports.Group = class Group extends Inquire
 
   to-string: -> "(#{@key})#{@op}(#{@val})"
-
-  chain: (f) -> new Group @op, (@key.chain f), @val.chain f
 
   bimap: (f, g) -> new Group @op, (@key.bimap f, g), @val.bimap f, g
 
@@ -129,11 +128,11 @@ module.exports.Group = class Group extends Inquire
         new Group op, key, val), (that @op), f-key, g-val
     else ...
 
+  bichain: (f) -> new Group @op, (@key.chain f), @val.chain f
+
 module.exports.Wrap = class Wrap extends Inquire
 
   to-string: -> "#{@op}(#{@key})"
-
-  chain: (f) -> new Wrap @op, @key.chain f
 
   bimap: (f, g) -> new Wrap @op, @key.bimap f, g
 
@@ -148,6 +147,8 @@ module.exports.Wrap = class Wrap extends Inquire
     if f-key.of or f-key.@@.of
       lift-a2 ((op, key) -> new Wrap op, key), (that @op), f-key
     else ...
+
+  bichain: (f) -> new Wrap @op, @key.chain f
 
 class Relation
 
