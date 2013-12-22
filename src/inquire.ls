@@ -8,22 +8,17 @@
   TODO: This should probably be a zipper.
 
 */
+
+# Some array polyfills.
 if (!Array.of)
   Array.prototype.of = ->
     Array.prototype.slice.call arguments
 
-flatten = -> it.reduce (++)
-
 if (!Array.ap)
+  flatten = -> it.reduce (++)
   Array.prototype.ap = (a2) ->
     flatten @map (f) ->
       a2.map (a) -> f a
-
-module.exports.ap-test = ap-test = ->
-  x = [(+ 3), (+ 100)]
-  console.log "x.ap", x.ap 5
-
-id = -> it
 
 class Inquire
 
@@ -49,18 +44,6 @@ class Inquire
   # TODO: Need the rest of {Bi-}foldable.
   foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
   biof: (k, v) -> new Pred new Eq, k, v
-
-# module.exports.lift-a2 = (f, u, v) --> f .ap u .ap v
-# module.exports.lift-a3 = (f, u, v, w) --> f .ap u .ap v .ap w
-
-module.exports.map = map = (m, f) -> m.map f
-module.exports.ap = ap = (a, f) -> f.ap a
-
-module.exports.lift-a3 = lift-a3 = (f, a, b, c) ->
-  ap(c, ap(b, map(a, (a) ->
-    (b) ->
-      (c) ->
-        f a, b, c)))
 
 module.exports.Atom = class Atom extends Inquire
 
@@ -107,15 +90,10 @@ module.exports.Pred = class Pred extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of
+    if g-val.of or g-val.@@.of or g-val::of
       lift-a3 ((op, key, val) ->
         new Pred op, key, val), (that @op), f-key, g-val
-    else
-      ...
-
-module.exports.bleh =  ->
-  p = new Pred new Le, <[ hi hello ]> <[ nope nada ]>
-  p.bitraverse id, id
+    else ...
 
 module.exports.Group = class Group extends Inquire
 
@@ -135,7 +113,10 @@ module.exports.Group = class Group extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of then that new Group @op, f-key, g-val else ...
+    if g-val.of or g-val.@@.of or g-val::of
+      lift-a3 ((op, key, val) ->
+        new Group op, key, val), (that @op), f-key, g-val
+    else ...
 
 module.exports.Wrap = class Wrap extends Inquire
 
@@ -151,7 +132,9 @@ module.exports.Wrap = class Wrap extends Inquire
   bitraverse: (f, g) ->
     f-key = @key.bitraverse f, g
     /* We need the context of the applicative we're traversing. */
-    if f-key.of or f-key.@@.of then that new Wrap @op, f-key else ...
+    if f-key.of or f-key.@@.of
+      lift-a2 ((op, key) -> new Wrap op, key), (that @op), f-key
+    else ...
 
 class Relation
 
@@ -199,6 +182,9 @@ module.exports.Not = class Not extends WrapBool
 
   to-string: -> '!'
 
+# a -> a
+id = -> it
+
 # (a -> Bool) -> (b -> Bool) -> Inquire a b -> Bool
 module.exports.biany = (f, g, inq) ->
   inq.bifoldr ((a, c) -> c or f a), ((b, c) -> c or g b), false
@@ -206,3 +192,18 @@ module.exports.biany = (f, g, inq) ->
 # (b -> Bool) -> Inquire a b -> Bool
 module.exports.any = (f, inq) ->
   inq.bifoldr ((_, c) -> c), f, inq
+
+# (a -> b) -> f a -> f b
+module.exports.lift-a1 = lift-a1 = (f, u) ->
+  u.map (a) -> f a
+
+# (a -> b -> c) -> f a -> f b -> f c
+module.exports.lift-a2 = lift-a2 = (f, u, v) ->
+  u.map (a) -> (b) -> f a, b
+  .ap v
+
+# (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+module.exports.lift-a3 = lift-a3 = (f, u, v, w) ->
+  u.map (a) -> (b) -> (c) -> f a, b, c
+  .ap v
+  .ap w
