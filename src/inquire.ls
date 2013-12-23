@@ -1,7 +1,7 @@
 'use strict'
 
-{lift-a2, lift-a3} = require \utils/applicative.ls
-{id, con} = require \utils.ls
+{lift-a2, lift-a3, bilift-a2, bilift-a3} = require \./utils/applicative.js
+{id, con, flip-con} = require \./utils.js
 
 /*
 
@@ -12,7 +12,7 @@
 
 */
 
-module.exports = class Inquire
+class Inquire
 
   (@op, @key, @val) ~>
 
@@ -41,7 +41,7 @@ module.exports = class Inquire
   */
   /* Conjoin two Inquires together. */
   /* Inquire a b -> Inquire a b -> Inquire a b */
-  concat: @and
+  concat: -> @and it
   /* Create an empty Inquire. */
   /* Inquire a b -> Inquire a b */
   empty: -> new Atom
@@ -54,7 +54,7 @@ module.exports = class Inquire
   of: -> @biof '*', it
   /* Apply a val in an Inquire to a function in an Inquire. */
   /* Inquire a (b -> c) -> Inquire a b -> Inquire a c */
-  ap: @biap
+  ap: -> @biap it
   /*
     Chain might not actually be right due to predicates.
     TODO: Prove some laws and do more maths.
@@ -84,16 +84,36 @@ module.exports = class Inquire
   /* Functor */
   /* Map over the keys. */
   /* Inquire a b -> (a -> c) -> Inquire c b */
-  first: -> @bimap it, id
+  map-first: -> @bimap it, id
   /* Map over the vals. */
   /* Inquire a b -> (b -> c) -> Inquire a c */
-  second: @map
+  map-second: -> @map it
   /* Replace all vals with the passed in value. */
   /* Inquire a b -> c -> Inquire a c */
   supplant: @map . con
   /* Replace all keys and vals with the passed in value. */
   /* Inquire a b -> c -> d -> Inquire c d */
   bisupplant: (u, v) -> @bimap (con u), (con v)
+
+  /* Applicative */
+  /* Pure of an object. */
+  /* Inquire a b -> {c: d} -> Inquire c d */
+  of-obj: (o) ~>
+    # This naively assumes objects are only one level deep,
+    # constructs a bunch of predicates, and conjoins them all.
+    [@biof k, v for k, v of o].reduce-right (acc, x, i, a) -> x.and acc
+  /* Sequence actions and drop the second. */
+  /* Inquire a b -> Inquire c d -> Inquire a b */
+  ap-first: (i) -> lift-a2 con, this, i
+  /* Sequence actions and drop the first. */
+  /* Inquire a b -> Inquire c d -> Inquire c d */
+  ap-second: (i) -> lift-a2 (flip-con), this, i
+  /* Sequence actions and drop the second. */
+  /* Inquire a b -> Inquire c d -> Inquire a b */
+  biap-first: (i) -> bilift-a2 con, con, this, i
+  /* Sequence actions and drop the first. */
+  /* Inquire a b -> Inquire c d -> Inquire c d */
+  biap-second: (i) -> bilift-a2 (flip-con), (flip-con), this, i
 
 class Atom extends Inquire
 
@@ -307,3 +327,15 @@ class NoBool extends WrapBool
 class Not extends WrapBool
 
   to-string: -> '!'
+
+module.exports =
+  of-obj: Inquire!of-obj
+  eq: (k, v) -> new Pred new Eq, k, v
+  ne: (k, v) -> new Pred new Ne, k, v
+  gt: (k, v) -> new Pred new Gt, k, v
+  ge: (k, v) -> new Pred new Ge, k, v
+  lt: (k, v) -> new Pred new Lt, k, v
+  le: (k, v) -> new Pred new Le, k, v
+  and: (l, r) -> new Group new And, l, r
+  or:  (l, r) -> new Group new Or,  l, r
+  not: (i) -> new Wrap new Not, i

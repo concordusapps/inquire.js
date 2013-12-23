@@ -4,7 +4,10 @@
 module.exports.id = -> it
 
 # a -> b -> a
-module.exports.con = (a, b) --> a
+module.exports.con = (a, b) -> a
+
+# b -> a -> a
+module.exports.flip-con = (b, a) -> a
 
 # Some array polyfills.
 if (!Array.of)
