@@ -1,5 +1,8 @@
 'use strict'
 
+{lift-a2, lift-a3} = require \utils/applicative.ls
+{id, con} = require \utils.ls
+
 /*
 
   So it turns out that Inquires are 2 parameter things.
@@ -20,7 +23,7 @@ if (!Array.ap)
     flatten @map (f) ->
       a2.map (a) -> f a
 
-class Inquire
+module.exports = class Inquire
 
   (@op, @key, @val) ~>
 
@@ -72,6 +75,20 @@ class Inquire
   chain: (f) -> @bichain (u, v) -> f v
 
   /*
+    Should be in Fantasy Land
+  */
+  /* Foldable */
+  /* Catamorph all the values into one. */
+  /* Inquire a b -> (b -> c -> c) -> c -> c */
+  # TODO: Need the rest of {Bi-}foldable.
+  foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
+
+  /* Biapplicative */
+  /* Show a key and a value into an Inquire. */
+  /* Inquire a b -> c -> d -> Inquire c d */
+  biof: (k, v) -> new Pred new Eq, k, v
+
+  /*
     Extra algebra stuff.
   */
 
@@ -89,18 +106,7 @@ class Inquire
   /* Inquire a b -> c -> d -> Inquire c d */
   bisupplant: (u, v) -> @bimap (con u), (con v)
 
-  /* Foldable */
-  /* Catamorph all the values into one. */
-  /* Inquire a b -> (b -> c -> c) -> c -> c */
-  # TODO: Need the rest of {Bi-}foldable.
-  foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
-
-  /* Biapplicative */
-  /* Show a key and a value into an Inquire. */
-  /* Inquire a b -> c -> d -> Inquire c d */
-  biof: (k, v) -> new Pred new Eq, k, v
-
-module.exports.Atom = class Atom extends Inquire
+class Atom extends Inquire
 
   to-string: -> ''
 
@@ -142,7 +148,7 @@ module.exports.Atom = class Atom extends Inquire
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> this
 
-module.exports.Pred = class Pred extends Inquire
+class Pred extends Inquire
 
   to-string: -> "#{@key}#{@op}#{@val}"
 
@@ -188,7 +194,7 @@ module.exports.Pred = class Pred extends Inquire
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> f @key, @val
 
-module.exports.Group = class Group extends Inquire
+class Group extends Inquire
 
   to-string: -> "(#{@key})#{@op}(#{@val})"
 
@@ -230,7 +236,7 @@ module.exports.Group = class Group extends Inquire
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> new Group @op, (@key.chain f), @val.chain f
 
-module.exports.Wrap = class Wrap extends Inquire
+class Wrap extends Inquire
 
   to-string: -> "#{@op}(#{@key})"
 
@@ -273,71 +279,42 @@ class GroupBool
 
 class WrapBool
 
-module.exports.Eq = class Eq extends Relation
+class Eq extends Relation
 
   to-string: -> '='
 
-module.exports.Ne = class Ne extends Relation
+class Ne extends Relation
 
   to-string: -> '!='
 
-module.exports.Gt = class Gt extends Relation
+class Gt extends Relation
 
   to-string: -> '>'
 
-module.exports.Ge = class Ge extends Relation
+class Ge extends Relation
 
   to-string: -> '>='
 
-module.exports.Lt = class Lt extends Relation
+class Lt extends Relation
 
   to-string: -> '<'
 
-module.exports.Le = class Le extends Relation
+class Le extends Relation
 
   to-string: -> '<='
 
-module.exports.And = class And extends GroupBool
+class And extends GroupBool
 
   to-string: -> '&'
 
-module.exports.Or = class Or extends GroupBool
+class Or extends GroupBool
 
   to-string: -> ';'
 
-module.exports.NoBool = class NoBool extends WrapBool
+class NoBool extends WrapBool
 
   to-string: -> ''
 
-module.exports.Not = class Not extends WrapBool
+class Not extends WrapBool
 
   to-string: -> '!'
-
-# a -> a
-id = -> it
-
-# (a -> Bool) -> (b -> Bool) -> Inquire a b -> Bool
-module.exports.biany = (f, g, inq) ->
-  inq.bifoldr ((a, c) -> c or f a), ((b, c) -> c or g b), false
-
-# (b -> Bool) -> Inquire a b -> Bool
-module.exports.any = (f, inq) ->
-  inq.bifoldr ((_, c) -> c), f, inq
-
-# (a -> b) -> f a -> f b
-module.exports.lift-a1 = lift-a1 = (f, u) ->
-  u.map (a) -> f a
-
-# (a -> b -> c) -> f a -> f b -> f c
-module.exports.lift-a2 = lift-a2 = (f, u, v) ->
-  u.map (a) -> (b) -> f a, b
-  .ap v
-
-# (a -> b -> c -> d) -> f a -> f b -> f c -> f d
-module.exports.lift-a3 = lift-a3 = (f, u, v, w) ->
-  u.map (a) -> (b) -> (c) -> f a, b, c
-  .ap v
-  .ap w
-
-# a -> b -> a
-module.exports.con = con = (a, b) --> a
