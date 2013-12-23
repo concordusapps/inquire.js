@@ -194,7 +194,7 @@ class Pred extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of or g-val::of
+    if g-val.of or g-val.@@.of
       lift-a3 ((op, key, val) ->
         new Pred op, key, val), (that @op), f-key, g-val
     else ...
@@ -236,14 +236,14 @@ class Group extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of or g-val::of
+    if g-val.of or g-val.@@.of
       lift-a3 ((op, key, val) ->
         new Group op, key, val), (that @op), f-key, g-val
     else ...
 
   /* Combine a function that returns an Inquire with an Inquire. */
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
-  bichain: (f) -> new Group @op, (@key.chain f), @val.chain f
+  bichain: (f) -> new Group @op, (@key.bichain f), @val.bichain f
 
 class Wrap extends Inquire
 
@@ -280,7 +280,7 @@ class Wrap extends Inquire
 
   /* Combine a function that returns an Inquire with an Inquire. */
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
-  bichain: (f) -> new Wrap @op, @key.chain f
+  bichain: (f) -> new Wrap @op, @key.bichain f
 
 class Relation
 
