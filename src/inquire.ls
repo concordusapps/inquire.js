@@ -29,19 +29,42 @@ class Inquire
   not:     -> new Wrap  new Not, this
 
   /*
-    The convention is that all functions prefixed with `bi`,
-    operate on both parts of the inquire.
+    There are a couple of conventions
+      1.  All functions prefixed with `bi` operate on both parts of the inquire.
+      2.  Type signatures have implicit first arguments
+          which are the object being operated upon.
+          E.g.  map :: Inquire a b -> (b -> c) -> Inquire a c
+                means that you pass a function `f :: b -> c` to your Inquire
+                I = new Pred new Ne, 'cat' 'dog'
+                "#{I.map (.toLocaleUpperCase!)}"
+                #=> 'cat!=DOG'
+      3.  Ambiguous type variables don't actually mean anything.
+          You can thank javascript for this.
+          We have no way to enforce this easily either.
+          E.g.  concat :: Inquire a b -> Inquire a b -> Inquire a b
+                But we can concat any thing to an Inquire, unfortunately.
   */
   /*
     Fantasy land stuff.
   */
+  /* Conjoin two Inquires together. */
+  /* Inquire a b -> Inquire a b -> Inquire a b */
   concat: @and
+  /* Create an empty Inquire. */
+  /* Inquire a b -> Inquire a b */
   empty: -> new Atom
+  /* Apply a function to all the vals in an Inquire. */
+  /* Inquire a b -> (b -> c) -> Inquire a c */
   map: -> @bimap id, it
+  /* Shove a value into an Inquire. */
+  /* Inquire a b -> c -> Inquire a c */
   # TODO: This needs to be some default value.
   of: -> @biof '*', it
+  /* Apply a val in an Inquire to a function in an Inquire. */
+  /* Inquire a (b -> c) -> Inquire a b -> Inquire a c */
   ap: @biap
-
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (b -> Inquire a c) -> Inquire a c*/
   /*
     Chain might not actually be right due to predicates.
     TODO: Prove some laws and do more maths.
@@ -53,11 +76,28 @@ class Inquire
   */
 
   /* Functor */
-  /* Replace all values with the passed in value. */
+  /* Map over the keys. */
+  /* Inquire a b -> (a -> c) -> Inquire c b */
+  first: -> @bimap it, id
+  /* Map over the vals. */
+  /* Inquire a b -> (b -> c) -> Inquire a c */
+  second: @map
+  /* Replace all vals with the passed in value. */
+  /* Inquire a b -> c -> Inquire a c */
   supplant: @map . con
+  /* Replace all keys and vals with the passed in value. */
+  /* Inquire a b -> c -> d -> Inquire c d */
   bisupplant: (u, v) -> @bimap (con u), (con v)
+
+  /* Foldable */
+  /* Catamorph all the values into one. */
+  /* Inquire a b -> (b -> c -> c) -> c -> c */
   # TODO: Need the rest of {Bi-}foldable.
   foldr: (f, z) -> @bifoldr ((_, c) -> c), f, z
+
+  /* Biapplicative */
+  /* Show a key and a value into an Inquire. */
+  /* Inquire a b -> c -> d -> Inquire c d */
   biof: (k, v) -> new Pred new Eq, k, v
 
 module.exports.Atom = class Atom extends Inquire
