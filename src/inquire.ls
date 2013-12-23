@@ -63,12 +63,12 @@ class Inquire
   /* Apply a val in an Inquire to a function in an Inquire. */
   /* Inquire a (b -> c) -> Inquire a b -> Inquire a c */
   ap: @biap
-  /* Combine a function that returns an Inquire with an Inquire. */
-  /* Inquire a b -> (b -> Inquire a c) -> Inquire a c*/
   /*
     Chain might not actually be right due to predicates.
     TODO: Prove some laws and do more maths.
   */
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (b -> Inquire a c) -> Inquire a c*/
   chain: (f) -> @bichain (u, v) -> f v
 
   /*
@@ -104,11 +104,19 @@ module.exports.Atom = class Atom extends Inquire
 
   to-string: -> ''
 
+  /* Apply a function `f` to the keys, and `g` to the vals. */
+  /* Inquire a b -> (a -> c) -> (b -> d) -> Inquire c d */
   bimap: (f, g) -> this
 
+  /* Catamorph both sides into a single value. */
+  /* Inquire a b -> (a -> c -> c) -> (b -> c -> c) -> c -> c */
   bifoldr: (f, g, z) -> z
 
+  /* Apply a key and a value in an Inquire to two functions in an Inquire. */
+  /* Inquire (a -> c) (b -> d) -> Inquire a b -> Inquire c d */
   biap:      (i) -> this
+  /* The result of the double dispatch from Pred. */
+  /* Inquire a b -> Inquire (a -> c) (b -> d) -> Inquire c d*/
   biap-pred: (i) -> this
 
   /*
@@ -119,10 +127,19 @@ module.exports.Atom = class Atom extends Inquire
     Then we call the `of` method on whatever was returned,
     this injects our Atom into their context.
   */
+  /*
+    Apply a function to the keys and a function to the values,
+    then swap the applicatives.
+  */
+  /*
+    Applicative f => Inquire a b -> (a -> f c) -> (b -> f d) -> f (Inquire c d)
+  */
   bitraverse: (f, g) ->
     g-val = g this
     if g-val.of or g-val.@@.of then that this else ...
 
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> this
 
 module.exports.Pred = class Pred extends Inquire
@@ -132,14 +149,29 @@ module.exports.Pred = class Pred extends Inquire
   /* Predicates have to shove an identity through the first func for biap. */
   ap: (i) -> (new Pred @op, id, @val).biap i
 
+  /* Apply a function `f` to the keys, and `g` to the vals. */
+  /* Inquire a b -> (a -> c) -> (b -> d) -> Inquire c d */
   bimap: (f, g) -> new Pred @op, (f @key), g @val
 
+  /* Catamorph both sides into a single value. */
+  /* Inquire a b -> (a -> c -> c) -> (b -> c -> c) -> c -> c */
   bifoldr: (f, g, z) -> f @key, g @val, z
 
   /* We can use double dispatch to avoid worrying about what we're ap-ing to. */
+  /* Apply a key and a value in an Inquire to two functions in an Inquire. */
+  /* Inquire (a -> c) (b -> d) -> Inquire a b -> Inquire c d */
   biap:      (i) -> i.biap-pred this
+  /* The result of the double dispatch from Pred. */
+  /* Inquire a b -> Inquire (a -> c) (b -> d) -> Inquire c d*/
   biap-pred: (i) -> new Pred @op, (i.key @key), i.val @val
 
+  /*
+    Apply a function to the keys and a function to the values,
+    then swap the applicatives.
+  */
+  /*
+    Applicative f => Inquire a b -> (a -> f c) -> (b -> f d) -> f (Inquire c d)
+  */
   bitraverse: (f, g) ->
     f-key = f @key
     g-val = g @val
@@ -152,19 +184,36 @@ module.exports.Pred = class Pred extends Inquire
         new Pred op, key, val), (that @op), f-key, g-val
     else ...
 
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> f @key, @val
 
 module.exports.Group = class Group extends Inquire
 
   to-string: -> "(#{@key})#{@op}(#{@val})"
 
+  /* Apply a function `f` to the keys, and `g` to the vals. */
+  /* Inquire a b -> (a -> c) -> (b -> d) -> Inquire c d */
   bimap: (f, g) -> new Group @op, (@key.bimap f, g), @val.bimap f, g
 
+  /* Catamorph both sides into a single value. */
+  /* Inquire a b -> (a -> c -> c) -> (b -> c -> c) -> c -> c */
   bifoldr: (f, g, z) -> @key.bifoldr f, g, @val.bifoldr f, g, z
 
+  /* Apply a key and a value in an Inquire to two functions in an Inquire. */
+  /* Inquire (a -> c) (b -> d) -> Inquire a b -> Inquire c d */
   biap:      (i) -> new Group @op, (@key.biap i), @val.biap i
+  /* The result of the double dispatch from Pred. */
+  /* Inquire a b -> Inquire (a -> c) (b -> d) -> Inquire c d*/
   biap-pred: (i) -> new Group @op, (i.biap @key), i.biap @val
 
+  /*
+    Apply a function to the keys and a function to the values,
+    then swap the applicatives.
+  */
+  /*
+    Applicative f => Inquire a b -> (a -> f c) -> (b -> f d) -> f (Inquire c d)
+  */
   bitraverse: (f, g) ->
     f-key = @key.bitraverse f, g
     g-val = @val.bitraverse f, g
@@ -177,19 +226,36 @@ module.exports.Group = class Group extends Inquire
         new Group op, key, val), (that @op), f-key, g-val
     else ...
 
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> new Group @op, (@key.chain f), @val.chain f
 
 module.exports.Wrap = class Wrap extends Inquire
 
   to-string: -> "#{@op}(#{@key})"
 
+  /* Apply a function `f` to the keys, and `g` to the vals. */
+  /* Inquire a b -> (a -> c) -> (b -> d) -> Inquire c d */
   bimap: (f, g) -> new Wrap @op, @key.bimap f, g
 
+  /* Catamorph both sides into a single value. */
+  /* Inquire a b -> (a -> c -> c) -> (b -> c -> c) -> c -> c */
   bifoldr: (f, g, z) -> @key.bifoldr f, g, z
 
+  /* Apply a key and a value in an Inquire to two functions in an Inquire. */
+  /* Inquire (a -> c) (b -> d) -> Inquire a b -> Inquire c d */
   biap:      (i) -> new Wrap @op, @key.biap i
+  /* The result of the double dispatch from Pred. */
+  /* Inquire a b -> Inquire (a -> c) (b -> d) -> Inquire c d*/
   biap-pred: (i) -> new Wrap @op, i.biap @key
 
+  /*
+    Apply a function to the keys and a function to the values,
+    then swap the applicatives.
+  */
+  /*
+    Applicative f => Inquire a b -> (a -> f c) -> (b -> f d) -> f (Inquire c d)
+  */
   bitraverse: (f, g) ->
     f-key = @key.bitraverse f, g
     /* We need the context of the applicative we're traversing. */
@@ -197,6 +263,8 @@ module.exports.Wrap = class Wrap extends Inquire
       lift-a2 ((op, key) -> new Wrap op, key), (that @op), f-key
     else ...
 
+  /* Combine a function that returns an Inquire with an Inquire. */
+  /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
   bichain: (f) -> new Wrap @op, @key.chain f
 
 class Relation
