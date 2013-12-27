@@ -115,6 +115,11 @@ class Inquire
   /* Inquire a b -> Inquire c d -> Inquire c d */
   biap-second: (i) -> bilift-a2 (flip-con), (flip-con), this, i
 
+  /* Alternative */
+  /* For everything except Atom's just use ourself. */
+  /* Inquire a b -> Inquire a b -> Inquire a b */
+  alt: (i) -> @this
+
   /* Traversable */
   /* Traverse the keys. */
   /* Applicative f => Inquire a (f b) -> (b -> f c) -> f (Inquire a c) */
@@ -144,6 +149,9 @@ class Atom extends Inquire
   /* The result of the double dispatch from Pred. */
   /* Inquire a b -> Inquire (a -> c) (b -> d) -> Inquire c d*/
   biap-pred: (i) -> this
+
+  /* The only alternative to an Atom is to use the other thing. */
+  alt: (i) -> i
 
   /*
     We don't have any type information,

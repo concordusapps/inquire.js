@@ -31,6 +31,10 @@ module.exports.lift-a3 = (t, u, v, w) ->
   .ap v
   .ap w
 
+/* f a -> f a -> f a */
+module.exports.alt = (t, u) ->
+  t.alt u
+
 /* Biapplicative */
 
 /* t a c -> t (a -> b) (c -> d) -> t b d */
