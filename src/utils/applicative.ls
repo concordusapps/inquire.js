@@ -1,10 +1,20 @@
 'use strict'
 
+{con, flip-con, id} = require \../utils.js
+
 /* Applicative */
 
 /* t a -> t (a -> b) -> t b */
 module.exports.ap = (u, t) ->
   t.ap u
+
+/* t a -> t b -> t a */
+module.exports.ap-first = (t, u) ->
+  lift-a2 con, t, u
+
+/* t a -> t b -> t b */
+module.exports.ap-second = (t, u) ->
+  lift-a2 flip-con, t, u
 
 /* (a -> b) -> t a -> t b */
 module.exports.lift-a1 = (t, u) ->
@@ -26,6 +36,14 @@ module.exports.lift-a3 = (t, u, v, w) ->
 /* t a c -> t (a -> b) (c -> d) -> t b d */
 module.exports.biap = (u, t) ->
   t.biap u
+
+/* t a b -> t c d -> t a b */
+module.exports.biap-first = (t, u) ->
+  bilift-a2 con, con, t, u
+
+/* t a b -> t c d -> t c d */
+module.exports.biap-second = (t, u) ->
+  bilift-a2 flip-con, flip-con, t, u
 
 /* (a -> b) -> (c -> d) -> t a c -> t b d */
 module.exports.bilift-a1 = (s, t, u) ->
