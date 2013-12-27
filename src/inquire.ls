@@ -115,13 +115,24 @@ class Inquire
   /* Inquire a b -> Inquire c d -> Inquire c d */
   biap-second: (i) -> bilift-a2 (flip-con), (flip-con), this, i
 
+  /* Traversable */
+  /* Traverse the keys. */
+  /* Applicative f => Inquire a (f b) -> (b -> f c) -> f (Inquire a c) */
+  traverse: (f) -> @bitraverse id, f
+  /* Turn an Inquire of an applicative into an applicative of Inquire. */
+  /* Applicative f => Inquire a (f b) -> f (Inquire a b) */
+  sequence-a: -> @traverse id
+  /* Turn an Inquire of an applicative into an applicative of Inquire. */
+  /* Applicative f => Inquire (f a) (f b) -> f (Inquire a b) */
+  bisequence-a: -> @bitraverse id, id
+
 class Atom extends Inquire
 
   to-string: -> ''
 
   /* Apply a function `f` to the keys, and `g` to the vals. */
   /* Inquire a b -> (a -> c) -> (b -> d) -> Inquire c d */
-  bimap: (f, g) -> this
+  bimap: (f, g) -> thisraverse
 
   /* Catamorph both sides into a single value. */
   /* Inquire a b -> (a -> c -> c) -> (b -> c -> c) -> c -> c */
@@ -151,7 +162,7 @@ class Atom extends Inquire
   */
   bitraverse: (f, g) ->
     g-val = g this
-    if g-val.of or g-val.@@.of then that this else ...
+    if g-val.of or g-val.@@.of or g-val::of then that this else ...
 
   /* Combine a function that returns an Inquire with an Inquire. */
   /* Inquire a b -> (a -> b -> Inquire c d) -> Inquire c d */
@@ -194,7 +205,7 @@ class Pred extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of
+    if g-val.of or g-val.@@.of or g-val::of
       lift-a3 ((op, key, val) ->
         new Pred op, key, val), (that @op), f-key, g-val
     else ...
@@ -236,7 +247,7 @@ class Group extends Inquire
       We need the context of the applicative we're traversing.
       Assume g-val because we might be doing a `traverse`.
     */
-    if g-val.of or g-val.@@.of
+    if g-val.of or g-val.@@.of or g-val::of
       lift-a3 ((op, key, val) ->
         new Group op, key, val), (that @op), f-key, g-val
     else ...
@@ -274,7 +285,7 @@ class Wrap extends Inquire
   bitraverse: (f, g) ->
     f-key = @key.bitraverse f, g
     /* We need the context of the applicative we're traversing. */
-    if f-key.of or f-key.@@.of
+    if f-key.of or f-key.@@.of or f-key::of
       lift-a2 ((op, key) -> new Wrap op, key), (that @op), f-key
     else ...
 
