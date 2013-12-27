@@ -131,6 +131,15 @@ class Inquire
   /* Applicative f => Inquire (f a) (f b) -> f (Inquire a b) */
   bisequence-a: -> @bitraverse id, id
 
+  /* Monad */
+  # TODO: These all need to be double checked.
+  /* Run the first Inquire, throw it away, then run the second. */
+  /* Inquire a b -> Inquire a c -> Inquire a c */
+  then: (i) -> @chain (f) -> i
+  /* Run the first Inquire, throw it away, then run the second. */
+  /* Inquire a b -> Inquire c d -> Inquire c d */
+  bithen: (i) -> @bichain (f, g) -> i
+
 class Atom extends Inquire
 
   to-string: -> ''
