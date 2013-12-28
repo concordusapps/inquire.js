@@ -9,6 +9,8 @@ module.exports.con = (a, b) -> a
 # b -> a -> a
 module.exports.flip-con = (b, a) -> a
 
+module.exports.equivalent = (a, b) -> true
+
 # Some array polyfills.
 if (!Array.of)
   Array.prototype.of = ->
