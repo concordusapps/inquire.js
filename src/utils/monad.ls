@@ -1,14 +1,6 @@
 'use strict'
 
-{con, id} = require \../utils.js
-
-/* m a -> (a -> m b) -> m b */
-module.exports.chain = (m, f) ->
-  m.chain f
-
-/* m a -> m b -> m b */
-module.exports.next = (m, n) ->
-  m.chain con n
+{chain, next} = require \./chain.js
 
 /* Evaluate each action from left to right and collect the results. */
 /* [m a] -> m [a] */
@@ -22,7 +14,7 @@ module.exports.sequence = (ms) ->
 /* Evaluate each action from left to right and ignore the results. */
 /* [m a] -> m () */
 module.exports.sequence_ = (ms) ->
-  k = (m, n) -> m.next n
+  k = (m, n) -> m `next` n
   ms.foldr k, @of null
 
 /* (a -> m b) -> [a] -> m [b] */
@@ -41,25 +33,18 @@ module.exports.for-m = (as, f) ->
 module.exports.for-m_ = (as, f) ->
   map-m_ f, as
 
-/* (a -> m b) -> m a -> m b */
-module.exports.revchain = (f, m) ->
-  chain m, f
+/* Bool -> m () -> m () */
+module.exports.when = (b, m) ->
+  if b then m else m.of null
 
-/* (a -> m b) -> (b -> m c) -> a -> m c */
-module.exports.left-kleisli = (f, g, a) ->
-  f a .chain (b) -> g b
-
-/* (b -> m c) -> (a -> m b) -> a -> m c */
-module.exports.right-kleisli = (g, f, a) ->
-  left-kleisli f, g, a
-
-/* m (m a) -> m a */
-module.exports.join = (mm) ->
-  mm.chain id
+/* Bool -> m () -> m () */
+module.exports.unless = (b, m) ->
+  if b then m.of null else m
 
 /* (a -> b) -> m a -> m b */
 module.exports.lift-m1 = (f, m) ->
-  m `chain` (a) -> m.of f a
+  m `chain` (a) ->
+    m.of f a
 
 /* (a -> b -> c) -> m a -> m b -> m c */
 module.exports.lift-m2 = (f, m, n) ->
