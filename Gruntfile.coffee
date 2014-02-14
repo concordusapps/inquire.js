@@ -19,6 +19,12 @@ module.exports = (grunt) ->
     livescript:
       'lib/inquire.js': 'src/inquire.ls'
 
+    purescript:
+      compile:
+        files:
+          'lib/inquire.js': 'src/**/*.purs'
+
+  grunt.loadNpmTasks 'grunt-purescript'
   grunt.loadNpmTasks 'grunt-livescript'
   grunt.loadNpmTasks 'grunt-browserify'
 
@@ -32,3 +38,5 @@ module.exports = (grunt) ->
     grunt.file.write this.data.dest, parser.generate()
 
   grunt.registerTask 'default', ['livescript', 'jison', 'browserify']
+
+  grunt.registerTask 'pure', ['purescript']

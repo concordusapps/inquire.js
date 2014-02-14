@@ -40,7 +40,8 @@
     "liveify": "~0.3.0",
     "LiveScript": "~1.2.0",
     "mocha": "~1.14.0",
-    "mocha-lcov-reporter": "~0.0.1"
+    "mocha-lcov-reporter": "~0.0.1",
+    "grunt-purescript": "~0.1.2"
   },
   "engines": {
     "node": ">=0.8.22"
