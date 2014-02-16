@@ -23,6 +23,11 @@ module.exports = (grunt) ->
       compile:
         files:
           'lib/inquire.js': 'src/**/*.purs'
+        options:
+          runtimeTypeChecks: true
+          externs: 'lib/inquire.e.ps'
+          browserNamespace: 'wut'
+          entryPoint: 'Inquire'
 
   grunt.loadNpmTasks 'grunt-purescript'
   grunt.loadNpmTasks 'grunt-livescript'
