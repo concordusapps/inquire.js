@@ -9,31 +9,41 @@ module Inquire where
                    | Junc (Inquire k v) JuncOp (Inquire k v)
                    | Wrap WrapOp (Inquire k v)
 
-  data Rel = IEQ
-           | INE
-           | IGT
-           | IGE
-           | ILT
-           | ILE
+  data Rel = EQ
+           | NE
+           | GT
+           | GE
+           | LT
+           | LE
 
-  data JuncOp = IAnd
-              | IOr
+  data JuncOp = And
+              | Or
 
-  data WrapOp = INoBool
-              | INot
+  data WrapOp = NoBool
+              | Not
 
   instance Prelude.Show Rel where
-    show IEQ = "="
-    show INE = "!="
-    show IGT = ">"
-    show IGE = ">="
-    show ILT = "<"
-    show ILE = "<="
+    show EQ = "="
+    show NE = "!="
+    show GT = ">"
+    show GE = ">="
+    show LT = "<"
+    show LE = "<="
+
+  instance Prelude.Show JuncOp where
+    show And = "&"
+    show Or  = ";"
+
+  instance Prelude.Show WrapOp where
+    show NoBool = ""
+    show Not    = "!"
 
   instance (Show k, Show v) => Prelude.Show (Inquire k v) where
     show EmptyAnd = ""
     show EmptyOr = ""
     show (Pred k r v) = show k ++ show r ++ show v
+    show (Junc p o q) = "(" ++ show p ++ ")" ++ show o ++ "(" ++ show q ++ ")"
+    show (Wrap o i)   = show o ++ "(" ++ show i ++ ")"
 
   instance Prelude.Functor (Inquire k) where
     (<$>) _ EmptyAnd = EmptyAnd
@@ -42,20 +52,26 @@ module Inquire where
     (<$>) f (Junc i1 op i2) = Junc (f <$> i1) op (f <$> i2)
     (<$>) f (Wrap op i) = Wrap op (f <$> i)
 
-  instance Algebra.Semigroup (Inquire k v) where
-    (|+|) EmptyAnd EmptyAnd = EmptyAnd
-    (|+|) p EmptyAnd = p
-    (|+|) EmptyAnd p = p
-    (|+|) p q = Junc p IAnd q
+  -- type Andquire k v = Inquire k v
+  -- type Orquire  k v = Inquire k v
 
-  instance Algebra.Monoid (Inquire k v) where
-    ident = EmptyAnd
+  -- instance Algebra.Semigroup (Andquire k v) where
+  --   (|+|) EmptyAnd EmptyAnd = EmptyAnd
+  --   (|+|) p EmptyAnd = p
+  --   (|+|) EmptyAnd p = p
+  --   (|+|) p q = Junc p And q
+
+  -- instance Algebra.Semigroup (Orquire k v) where
+  --   (|+|) EmptyOr EmptyOr = EmptyOr
+  --   (|+|) p EmptyOr = p
+  --   (|+|) EmptyOr p = p
+  --   (|+|) p q = Junc p Or q
+
+  -- instance Algebra.Monoid (Andquire k v) where
+  --   ident = EmptyAnd
 
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  and = (|+|)
+  and i1 i2 = Junc i1 And i2
 
   or :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  or i1 i2 = Junc i1 IOr i2
-
-  (<<$>>) :: forall k v v'. (v -> v') -> Inquire k v -> Inquire k v'
-  (<<$>>) = (<$>)
+  or i1 i2 = Junc i1 Or i2
