@@ -223,3 +223,6 @@ module Inquire where
   foreign import __Prelude_Show_Inquire_Inquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import __Prelude_Functor_Inquire_Inquire :: forall k. {  } -> Prelude.Functor (Inquire.Inquire k)
   foreign import __Prelude_Functor_Inquire_Inquire_$less$dollar$greater :: forall k. forall b. forall a. (a -> b) -> Inquire.Inquire k a -> Inquire.Inquire k b
+  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire_$bar$bar$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire_$bar$amp$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.BooleanAlgebra (Inquire.Inquire k v)

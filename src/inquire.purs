@@ -52,23 +52,17 @@ module Inquire where
     (<$>) f (Junc i1 op i2) = Junc (f <$> i1) op (f <$> i2)
     (<$>) f (Wrap op i) = Wrap op (f <$> i)
 
-  -- type Andquire k v = Inquire k v
-  -- type Orquire  k v = Inquire k v
+  instance Algebra.BooleanAlgebra (Inquire k v) where
+    (|||) EmptyOr EmptyOr = EmptyOr
+    (|||) p       EmptyOr = p
+    (|||) EmptyOr p       = p
+    (|||) p       q       = Junc p Or q
 
-  -- instance Algebra.Semigroup (Andquire k v) where
-  --   (|+|) EmptyAnd EmptyAnd = EmptyAnd
-  --   (|+|) p EmptyAnd = p
-  --   (|+|) EmptyAnd p = p
-  --   (|+|) p q = Junc p And q
+    (|&|) EmptyAnd EmptyAnd = EmptyAnd
+    (|&|) p        EmptyAnd = p
+    (|&|) EmptyAnd p        = p
+    (|&|) p        q        = Junc p And q
 
-  -- instance Algebra.Semigroup (Orquire k v) where
-  --   (|+|) EmptyOr EmptyOr = EmptyOr
-  --   (|+|) p EmptyOr = p
-  --   (|+|) EmptyOr p = p
-  --   (|+|) p q = Junc p Or q
-
-  -- instance Algebra.Monoid (Andquire k v) where
-  --   ident = EmptyAnd
 
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   and i1 i2 = Junc i1 And i2
