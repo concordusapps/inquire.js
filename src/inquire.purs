@@ -63,9 +63,14 @@ module Inquire where
     (|&|) EmptyAnd p        = p
     (|&|) p        q        = Junc p And q
 
-
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   and i1 i2 = Junc i1 And i2
 
   or :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   or i1 i2 = Junc i1 Or i2
+
+  associate :: forall k v. Inquire k v -> Inquire k v
+  associate (Junc p And (Junc q And r)) = Junc (Junc p And q) And r
+  associate (Junc p Or (Junc q Or r))   = Junc (Junc p Or q) Or r
+  associate (Junc (Junc p And q) And r) = Junc p And (Junc q And r)
+  associate (Junc (Junc p Or q) Or r)   = Junc p Or (Junc q Or r)
