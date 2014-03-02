@@ -213,6 +213,8 @@ module Inquire where
   foreign import data Inquire :: * -> * -> *
   foreign import or :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import associate :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import assocRight :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import assocLeft :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import and :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import __Prelude_Show_Inquire_WrapOp_show :: Inquire.WrapOp -> Prim.String
   foreign import __Prelude_Show_Inquire_WrapOp :: {  } -> Prelude.Show Inquire.WrapOp

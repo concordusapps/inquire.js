@@ -71,6 +71,14 @@ module Inquire where
 
   associate :: forall k v. Inquire k v -> Inquire k v
   associate (Junc p And (Junc q And r)) = Junc (Junc p And q) And r
-  associate (Junc p Or (Junc q Or r))   = Junc (Junc p Or q) Or r
+  associate (Junc p Or  (Junc q Or  r)) = Junc (Junc p Or  q) Or  r
   associate (Junc (Junc p And q) And r) = Junc p And (Junc q And r)
-  associate (Junc (Junc p Or q) Or r)   = Junc p Or (Junc q Or r)
+  associate (Junc (Junc p Or  q) Or  r) = Junc p Or  (Junc q Or  r)
+
+  assocLeft :: forall k v. Inquire k v-> Inquire k v
+  assocLeft (Junc p And (Junc q And r)) = Junc (Junc p And q) And r
+  assocLeft (Junc p Or  (Junc q Or  r)) = Junc (Junc p Or  q) Or  r
+
+  assocRight :: forall k v. Inquire k v-> Inquire k v
+  assocRight (Junc (Junc p And q) And r) = Junc p And (Junc q And r)
+  assocRight (Junc (Junc p Or  q) Or  r) = Junc p Or  (Junc q Or  r)
