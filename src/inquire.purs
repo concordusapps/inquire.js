@@ -82,3 +82,11 @@ module Inquire where
   assocRight :: forall k v. Inquire k v-> Inquire k v
   assocRight (Junc (Junc p And q) And r) = Junc p And (Junc q And r)
   assocRight (Junc (Junc p Or  q) Or  r) = Junc p Or  (Junc q Or  r)
+
+  commute :: forall k v. Inquire k v -> Inquire k v
+  commute (Junc p And q) = Junc q And p
+  commute (Junc p Or  q) = Junc q Or  p
+
+  distribute :: forall k v. Inquire k v -> Inquire k v
+  distribute (Junc p And (Junc q Or  r)) = Junc (Junc p Or  q) And (Junc p Or  r)
+  distribute (Junc p Or  (Junc q And r)) = Junc (Junc p And q) Or  (Junc p And r)
