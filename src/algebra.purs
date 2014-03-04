@@ -56,10 +56,13 @@ module Algebra where
     top :: a
     bottom :: a
 
+  infixr 4 |~|
   -- BoundedLattice where every element has a complement.
   class ComplementedLattice a where
     (|~|) :: a -> a
 
+  infixr 5 |&|
+  infixr 5 |||
   -- Complemented DistributiveLattice
   class BooleanAlgebra a where
     (|&|) :: a -> a -> a
