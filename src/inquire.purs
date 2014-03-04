@@ -53,12 +53,14 @@ module Inquire where
     (<$>) f (Wrap op i) = Wrap op (f <$> i)
 
   instance Algebra.BooleanAlgebra (Inquire k v) where
-    (|||) EmptyOr EmptyOr = EmptyOr
-    (|||) p       EmptyOr = p
-    (|||) EmptyOr p       = p
-    (|||) p       q       = Junc p Or q
+    (|||) EmptyAnd p        = EmptyAnd
+    (|||) p        EmptyAnd = EmptyAnd
+    (|||) p        EmptyOr  = p
+    (|||) EmptyOr  p        = p
+    (|||) p        q        = Junc p Or q
 
-    (|&|) EmptyAnd EmptyAnd = EmptyAnd
+    (|&|) EmptyOr  p        = EmptyOr
+    (|&|) p        EmptyOr  = EmptyOr
     (|&|) p        EmptyAnd = p
     (|&|) EmptyAnd p        = p
     (|&|) p        q        = Junc p And q
@@ -68,6 +70,8 @@ module Inquire where
 
   or :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   or i1 i2 = Junc i1 Or i2
+
+  -- These should all be part of BooleanAlgebra, but no bueno at this momento.
 
   associate :: forall k v. Inquire k v -> Inquire k v
   associate (Junc p And (Junc q And r)) = Junc (Junc p And q) And r
@@ -90,3 +94,7 @@ module Inquire where
   distribute :: forall k v. Inquire k v -> Inquire k v
   distribute (Junc p And (Junc q Or  r)) = Junc (Junc p Or  q) And (Junc p Or  r)
   distribute (Junc p Or  (Junc q And r)) = Junc (Junc p And q) Or  (Junc p And r)
+
+  codistribute :: forall k v. Inquire k v -> Inquire k v
+  codistribute (Junc (Junc p Or  q) And (Junc p Or  r)) = Junc p And (Junc q Or  r)
+  codistribute (Junc (Junc p And q) Or  (Junc p And r)) = Junc p Or  (Junc q And r)
