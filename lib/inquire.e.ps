@@ -211,6 +211,13 @@ module Inquire where
   foreign import data Rel :: *
   foreign import data JuncOp :: *
   foreign import data Inquire :: * -> * -> *
+  foreign import pred :: forall v. forall k. { val :: v, rel :: Inquire.Rel, key :: k } -> Inquire.Inquire k v
+  foreign import ne :: forall t2404. forall t2399. forall t2398. { val :: t2398, key :: t2399 | t2404 } -> Inquire.Inquire t2399 t2398
+  foreign import lt :: forall t2414. forall t2409. forall t2408. { val :: t2408, key :: t2409 | t2414 } -> Inquire.Inquire t2409 t2408
+  foreign import le :: forall t2424. forall t2419. forall t2418. { val :: t2418, key :: t2419 | t2424 } -> Inquire.Inquire t2419 t2418
+  foreign import gt :: forall t2458. forall t2453. forall t2452. { val :: t2452, key :: t2453 | t2458 } -> Inquire.Inquire t2453 t2452
+  foreign import ge :: forall t2476. forall t2471. forall t2470. { val :: t2470, key :: t2471 | t2476 } -> Inquire.Inquire t2471 t2470
+  foreign import eq :: forall t2502. forall t2497. forall t2496. { val :: t2496, key :: t2497 | t2502 } -> Inquire.Inquire t2497 t2496
   foreign import __Prelude_Show_Inquire_WrapOp_show :: Inquire.WrapOp -> Prim.String
   foreign import __Prelude_Show_Inquire_WrapOp :: {  } -> Prelude.Show Inquire.WrapOp
   foreign import __Prelude_Show_Inquire_Rel_show :: Inquire.Rel -> Prim.String
@@ -219,6 +226,7 @@ module Inquire where
   foreign import __Prelude_Show_Inquire_JuncOp :: {  } -> Prelude.Show Inquire.JuncOp
   foreign import __Prelude_Show_Inquire_Inquire :: forall k. forall v. Prelude.Show k -> Prelude.Show v -> Prelude.Show (Inquire.Inquire k v)
   foreign import __Prelude_Show_Inquire_Inquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
+  foreign import gen :: forall v. forall k. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import __Prelude_Functor_Inquire_Inquire :: forall k. {  } -> Prelude.Functor (Inquire.Inquire k)
   foreign import __Prelude_Functor_Inquire_Inquire_$less$dollar$greater :: forall k. forall b. forall a. (a -> b) -> Inquire.Inquire k a -> Inquire.Inquire k b
   foreign import __Prelude_Eq_Inquire_WrapOp_$eq$eq :: Inquire.WrapOp -> Inquire.WrapOp -> Prim.Boolean

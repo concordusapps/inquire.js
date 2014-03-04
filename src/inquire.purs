@@ -105,6 +105,37 @@ module Inquire where
     (|&|) EmptyAnd p        = p
     (|&|) p        q        = Junc p And q
 
+  -- FIXME
+  -- There should be some better way to `generate` from js.
+  -- This depends on compiler details, which is horribly fragile.
+  foreign import generate "function generate(i) {\
+                          \  var showDict = {\
+                          \    show: function(k) {\
+                          \      return k.toString();\
+                          \    }\
+                          \  };\
+                          \  return gen(showDict)(showDict)(i);\
+                          \}" :: forall k v. Inquire k v -> String
+
+  gen :: forall k v. (Show k, Show v) => Inquire k v -> String
+  gen i = show i
+
+  pred :: forall k v. {key :: k, val :: v, rel :: Rel} -> Inquire k v
+  pred o = Pred o.key o.rel o.val
+
+  eq :: forall k v. {key :: k, val :: v} -> Inquire k v
+  eq o = pred {key: o.key, rel: EQ, val: o.val}
+  ne :: forall k v. {key :: k, val :: v} -> Inquire k v
+  ne o = pred {key: o.key, rel: NE, val: o.val}
+  gt :: forall k v. {key :: k, val :: v} -> Inquire k v
+  gt o = pred {key: o.key, rel: GT, val: o.val}
+  ge :: forall k v. {key :: k, val :: v} -> Inquire k v
+  ge o = pred {key: o.key, rel: GE, val: o.val}
+  lt :: forall k v. {key :: k, val :: v} -> Inquire k v
+  lt o = pred {key: o.key, rel: LT, val: o.val}
+  le :: forall k v. {key :: k, val :: v} -> Inquire k v
+  le o = pred {key: o.key, rel: LE, val: o.val}
+
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   and i1 i2 = i1 |&| i2
 
@@ -122,7 +153,7 @@ module Inquire where
 
   -- These should all be part of BooleanAlgebra, but no bueno at this momento.
 
-  absorb :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire k v -> Inquire k v
+  absorb :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
   absorb (Junc p And (Junc p' Or  _)) | p == p' = p
   absorb (Junc p Or  (Junc p' And _)) | p == p' = p
 
@@ -152,6 +183,6 @@ module Inquire where
   codistribute (Junc (Junc p Or  q) And (Junc p Or  r)) = p |&| (q ||| r)
   codistribute (Junc (Junc p And q) Or  (Junc p And r)) = p ||| (q |&| r)
 
-  idempotent :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire k v -> Inquire k v
+  idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
   idempotent (Junc p And p') | p == p' = p
   idempotent (Junc p Or  p') | p == p' = p
