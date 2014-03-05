@@ -101,6 +101,11 @@ module Data.Maybe where
   foreign import __Prelude_Applicative_Data_Maybe_Maybe_pure :: forall a. a -> Data.Maybe.Maybe a
   foreign import __Prelude_Applicative_Data_Maybe_Maybe_$less$times$greater :: forall b. forall a. Data.Maybe.Maybe (a -> b) -> Data.Maybe.Maybe a -> Data.Maybe.Maybe b
   foreign import __Prelude_Applicative_Data_Maybe_Maybe :: {  } -> Prelude.Applicative Data.Maybe.Maybe
+module Data.Functor where
+  type BiFunctor f = { $less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> f a b -> f c d }
+module Data.Foldable where
+  type Foldable f = { foldr :: forall b. forall a. (a -> b -> b) -> b -> f a -> b }
+  type BiFoldable f = { bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> f a b -> c }
 module Data.Enum where
   type Enum a = { fromEnum :: a -> Prim.Number, toEnum :: Prim.Number -> Maybe a }
 module Data.Either where
@@ -212,12 +217,12 @@ module Inquire where
   foreign import data JuncOp :: *
   foreign import data Inquire :: * -> * -> *
   foreign import pred :: forall v. forall k. { val :: v, rel :: Inquire.Rel, key :: k } -> Inquire.Inquire k v
-  foreign import ne :: forall t2404. forall t2399. forall t2398. { val :: t2398, key :: t2399 | t2404 } -> Inquire.Inquire t2399 t2398
-  foreign import lt :: forall t2414. forall t2409. forall t2408. { val :: t2408, key :: t2409 | t2414 } -> Inquire.Inquire t2409 t2408
-  foreign import le :: forall t2424. forall t2419. forall t2418. { val :: t2418, key :: t2419 | t2424 } -> Inquire.Inquire t2419 t2418
-  foreign import gt :: forall t2458. forall t2453. forall t2452. { val :: t2452, key :: t2453 | t2458 } -> Inquire.Inquire t2453 t2452
-  foreign import ge :: forall t2476. forall t2471. forall t2470. { val :: t2470, key :: t2471 | t2476 } -> Inquire.Inquire t2471 t2470
-  foreign import eq :: forall t2502. forall t2497. forall t2496. { val :: t2496, key :: t2497 | t2502 } -> Inquire.Inquire t2497 t2496
+  foreign import ne :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
+  foreign import lt :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
+  foreign import le :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
+  foreign import gt :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
+  foreign import ge :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
+  foreign import eq :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import __Prelude_Show_Inquire_WrapOp_show :: Inquire.WrapOp -> Prim.String
   foreign import __Prelude_Show_Inquire_WrapOp :: {  } -> Prelude.Show Inquire.WrapOp
   foreign import __Prelude_Show_Inquire_Rel_show :: Inquire.Rel -> Prim.String
@@ -243,6 +248,12 @@ module Inquire where
   foreign import __Prelude_Eq_Inquire_Inquire_$div$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
   foreign import absorb :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import idempotent :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import __Data_Functor_BiFunctor_Inquire_Inquire :: {  } -> Data.Functor.BiFunctor Inquire.Inquire
+  foreign import __Data_Functor_BiFunctor_Inquire_Inquire_$less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> Inquire.Inquire a b -> Inquire.Inquire c d
+  foreign import __Data_Foldable_Foldable_Inquire_Inquire :: forall k. {  } -> Data.Foldable.Foldable (Inquire.Inquire k)
+  foreign import __Data_Foldable_Foldable_Inquire_Inquire_foldr :: forall k. forall b. forall a. (a -> b -> b) -> b -> Inquire.Inquire k a -> b
+  foreign import __Data_Foldable_BiFoldable_Inquire_Inquire :: {  } -> Data.Foldable.BiFoldable Inquire.Inquire
+  foreign import __Data_Foldable_BiFoldable_Inquire_Inquire_bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> Inquire.Inquire a b -> c
   foreign import __Algebra_ComplementedLattice_Inquire_Inquire_$bar$tilde$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import __Algebra_ComplementedLattice_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.ComplementedLattice (Inquire.Inquire k v)
   foreign import neg :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v

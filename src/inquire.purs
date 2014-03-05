@@ -2,6 +2,8 @@ module Inquire where
 
   import Prelude
   import Algebra
+  import Data.Foldable
+  import Data.Functor
 
   data Inquire k v = EmptyAnd
                    | EmptyOr
@@ -81,11 +83,32 @@ module Inquire where
     show (Wrap o i)   = show o ++ "(" ++ show i ++ ")"
 
   instance Prelude.Functor (Inquire k) where
-    (<$>) _ EmptyAnd = EmptyAnd
-    (<$>) _ EmptyOr = EmptyOr
-    (<$>) f (Pred k r v) = Pred k r (f v)
+    (<$>) _ EmptyAnd        = EmptyAnd
+    (<$>) _ EmptyOr         = EmptyOr
+    (<$>) f (Pred k r v)    = Pred k r (f v)
     (<$>) f (Junc i1 op i2) = Junc (f <$> i1) op (f <$> i2)
-    (<$>) f (Wrap op i) = Wrap op (f <$> i)
+    (<$>) f (Wrap op i)     = Wrap op (f <$> i)
+
+  instance Data.Functor.BiFunctor Inquire where
+    (<$$>) _ _ EmptyAnd        = EmptyAnd
+    (<$$>) _ _ EmptyOr         = EmptyOr
+    (<$$>) f g (Pred k r v)    = Pred (f k) r (g v)
+    (<$$>) f g (Junc i1 op i2) = Junc ((<$$>) f g i1) op ((<$$>) f g i2)
+    (<$$>) f g (Wrap op i)     = Wrap op ((<$$>) f g i)
+
+  instance Data.Foldable.Foldable (Inquire k) where
+    foldr _ z EmptyAnd     = z
+    foldr _ z EmptyOr      = z
+    foldr f z (Pred _ _ v) = v `f` z
+    foldr f z (Junc l _ r) = foldr f (foldr f z r) l
+    foldr f z (Wrap _ i)   = foldr f z i
+
+  instance Data.Foldable.BiFoldable Inquire where
+    bifoldr _ _ z EmptyAnd     = z
+    bifoldr _ _ z EmptyOr      = z
+    bifoldr f g z (Pred k _ v) = k `f` (v `g` z)
+    bifoldr f g z (Junc l _ r) = bifoldr f g (bifoldr f g z r) l
+    bifoldr f g z (Wrap _ i)   = bifoldr f g z i
 
   instance Algebra.ComplementedLattice (Inquire k v) where
     (|~|) EmptyAnd = EmptyOr
