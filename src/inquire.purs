@@ -2,10 +2,8 @@ module Inquire where
 
   import Prelude
   import Algebra
-  import Data.Array ((:), zipWith)
   import Data.Foldable
   import Data.Functor
-  import Data.Tuple
 
   data Inquire k v = EmptyAnd
                    | EmptyOr
@@ -204,31 +202,6 @@ module Inquire where
   equiv :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   equiv p q = (p |&| q) ||| ((|~|) p |&| (|~|) q)
 
-  -- Utilities for working with Inquire.
-  toObj :: forall k v. Inquire k v -> {keys :: [k], vals :: [v]}
-  toObj i =
-    let updateVals = (\v o -> objExtend o {vals: v : o.vals}) in
-    let updateKeys = (\k o -> objExtend o {keys: k : o.keys}) in
-    bifoldr updateKeys updateVals {keys: [], vals: []} i
-
-  keys :: forall k v. Inquire k v -> [k]
-  keys i = (toObj i).keys
-
-  vals :: forall k v. Inquire k v -> [v]
-  vals i = (toObj i).vals
-
-  toTuple :: forall k v. Inquire k v -> [Tuple k v]
-  toTuple i = zip (keys i) (vals i)
-
-  -- The ideal type would be
-  -- toArray :: forall k v. Inquire k v -> [[k, v]]
-  toArray i = zipWith (\x y -> [x,y]) (keys i) (vals i)
-
-  -- The ideal type would be
-  -- fromArray :: forall k v. [[k, v]] -> Inquire k v
-  fromArray [] = EmptyAnd
-  fromArray ([x,y]:zs) = (fromArray zs) `and` (x `eq` y)
-
   -- These should all be part of BooleanAlgebra, but no bueno at this momento.
 
   absorb :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
@@ -264,3 +237,35 @@ module Inquire where
   idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
   idempotent (Junc p AND p') | p == p' = p
   idempotent (Junc p OR  p') | p == p' = p
+
+module Inquire.Utils where
+
+  import Inquire
+  import Data.Array ((:), zipWith)
+  import Data.Foldable
+  import Data.Tuple
+
+  -- Utilities for working with Inquire.
+  toObj :: forall k v. Inquire k v -> {keys :: [k], vals :: [v]}
+  toObj i =
+    let updateVals = (\v o -> objExtend o {vals: v : o.vals}) in
+    let updateKeys = (\k o -> objExtend o {keys: k : o.keys}) in
+    bifoldr updateKeys updateVals {keys: [], vals: []} i
+
+  keys :: forall k v. Inquire k v -> [k]
+  keys i = (toObj i).keys
+
+  vals :: forall k v. Inquire k v -> [v]
+  vals i = (toObj i).vals
+
+  toTuple :: forall k v. Inquire k v -> [Tuple k v]
+  toTuple i = zip (keys i) (vals i)
+
+  -- The ideal type would be
+  -- toArray :: forall k v. Inquire k v -> [[k, v]]
+  toArray i = zipWith (\x y -> [x,y]) (keys i) (vals i)
+
+  -- The ideal type would be
+  -- fromArray :: forall k v. [[k, v]] -> Inquire k v
+  fromArray []         = EmptyAnd
+  fromArray ([x,y]:zs) = (fromArray zs) `and` (x `eq` y)

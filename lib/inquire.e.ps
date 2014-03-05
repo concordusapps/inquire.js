@@ -260,11 +260,6 @@ module Inquire where
   foreign import __Data_Foldable_Foldable_Inquire_Inquire_foldr :: forall k. forall b. forall a. (a -> b -> b) -> b -> Inquire.Inquire k a -> b
   foreign import __Data_Foldable_BiFoldable_Inquire_Inquire :: {  } -> Data.Foldable.BiFoldable Inquire.Inquire
   foreign import __Data_Foldable_BiFoldable_Inquire_Inquire_bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> Inquire.Inquire a b -> c
-  foreign import toObj :: forall v. forall k. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
-  foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
-  foreign import vals :: forall v. forall k. Inquire.Inquire k v -> [v]
-  foreign import toArray :: forall t2637. Inquire.Inquire t2637 t2637 -> [[t2637]]
-  foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
   foreign import __Algebra_ComplementedLattice_Inquire_Inquire_$bar$tilde$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import __Algebra_ComplementedLattice_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.ComplementedLattice (Inquire.Inquire k v)
   foreign import neg :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
@@ -272,7 +267,6 @@ module Inquire where
   foreign import __Algebra_BooleanAlgebra_Inquire_Inquire_$bar$amp$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import __Algebra_BooleanAlgebra_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.BooleanAlgebra (Inquire.Inquire k v)
   foreign import and :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import fromArray :: forall t2912. [[t2912]] -> Inquire.Inquire t2912 t2912
   foreign import assocLeft :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import assocRight :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import associate :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
@@ -282,3 +276,10 @@ module Inquire where
   foreign import equiv :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import implies :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import or :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+module Inquire.Utils where
+  foreign import toObj :: forall v. forall k. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
+  foreign import vals :: forall v. forall k. Inquire.Inquire k v -> [v]
+  foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
+  foreign import toArray :: forall t3409. Inquire.Inquire t3409 t3409 -> [[t3409]]
+  foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
+  foreign import fromArray :: forall t3432. [[t3432]] -> Inquire.Inquire t3432 t3432
