@@ -1,6 +1,5 @@
 module Prelude where
   type Show a = { show :: a -> Prim.String }
-  foreign import data Ref :: * -> *
   type Read a = { read :: Prim.String -> a }
   type Ord a = { $greater$eq :: a -> a -> Prim.Boolean, $less$eq :: a -> a -> Prim.Boolean, $greater :: a -> a -> Prim.Boolean, $less :: a -> a -> Prim.Boolean }
   type Num a = { negate :: a -> a, $percent :: a -> a -> a, $div :: a -> a -> a, $times :: a -> a -> a, $minus :: a -> a -> a, $plus :: a -> a -> a }
@@ -12,71 +11,65 @@ module Prelude where
   type Bits b = { complement :: b -> b, zshr :: b -> Prim.Number -> b, shr :: b -> Prim.Number -> b, shl :: b -> Prim.Number -> b, $up :: b -> b -> b, $bar :: b -> b -> b, $amp :: b -> b -> b }
   type Applicative f = { $less$times$greater :: forall b. forall a. f (a -> b) -> f a -> f b, pure :: forall a. a -> f a }
   type Alternative f = { $less$bar$greater :: forall a. f a -> f a -> f a, empty :: forall a. f a }
-  foreign import liftRef :: forall b. forall a. (a -> a -> b) -> Prelude.Ref a -> Prelude.Ref a -> b
-  foreign import refEq :: forall a. Prelude.Ref a -> Prelude.Ref a -> Prim.Boolean
-  foreign import refIneq :: forall a. Prelude.Ref a -> Prelude.Ref a -> Prim.Boolean
+  foreign import showString_show :: Prim.String -> Prim.String
+  foreign import showString :: {  } -> Prelude.Show Prim.String
+  foreign import showNumber_show :: Prim.Number -> Prim.String
+  foreign import showNumber :: {  } -> Prelude.Show Prim.Number
+  foreign import showBoolean_show :: Prim.Boolean -> Prim.String
+  foreign import showBoolean :: {  } -> Prelude.Show Prim.Boolean
+  foreign import readString_read :: Prim.String -> Prim.String
+  foreign import readString :: {  } -> Prelude.Read Prim.String
+  foreign import readNumber_read :: Prim.String -> Prim.Number
+  foreign import readNumber :: {  } -> Prelude.Read Prim.Number
+  foreign import readBoolean_read :: Prim.String -> Prim.Boolean
+  foreign import readBoolean :: {  } -> Prelude.Read Prim.Boolean
+  foreign import ordNumber_$less$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import ordNumber_$less :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import ordNumber_$greater$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import ordNumber_$greater :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import ordNumber :: {  } -> Prelude.Ord Prim.Number
+  foreign import numNumber_negate :: Prim.Number -> Prim.Number
+  foreign import numNumber_$times :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import numNumber_$plus :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import numNumber_$percent :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import numNumber_$minus :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import numNumber_$div :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import numNumber :: {  } -> Prelude.Num Prim.Number
+  foreign import functorFromApplicative_$less$dollar$greater :: forall f. (Prelude.Applicative (f)) => forall b. forall a. (a -> b) -> f a -> f b
+  foreign import functorFromApplicative :: forall f. Prelude.Applicative f -> Prelude.Functor f
   foreign import flip :: forall c. forall b. forall a. (a -> b -> c) -> b -> a -> c
+  foreign import eqString_$eq$eq :: Prim.String -> Prim.String -> Prim.Boolean
+  foreign import eqString_$div$eq :: Prim.String -> Prim.String -> Prim.Boolean
+  foreign import eqString :: {  } -> Prelude.Eq Prim.String
+  foreign import eqNumber_$eq$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import eqNumber_$div$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
+  foreign import eqNumber :: {  } -> Prelude.Eq Prim.Number
+  foreign import eqBoolean_$eq$eq :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+  foreign import eqBoolean_$div$eq :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+  foreign import eqBoolean :: {  } -> Prelude.Eq Prim.Boolean
   foreign import const :: forall b. forall a. a -> b -> a
-  foreign import __Prelude_Show_Prim_String_show :: Prim.String -> Prim.String
-  foreign import __Prelude_Show_Prim_String :: {  } -> Prelude.Show Prim.String
-  foreign import __Prelude_Show_Prim_Number_show :: Prim.Number -> Prim.String
-  foreign import __Prelude_Show_Prim_Number :: {  } -> Prelude.Show Prim.Number
-  foreign import __Prelude_Show_Prim_Boolean_show :: Prim.Boolean -> Prim.String
-  foreign import __Prelude_Show_Prim_Boolean :: {  } -> Prelude.Show Prim.Boolean
-  foreign import __Prelude_Read_Prim_String_read :: Prim.String -> Prim.String
-  foreign import __Prelude_Read_Prim_String :: {  } -> Prelude.Read Prim.String
-  foreign import __Prelude_Read_Prim_Number_read :: Prim.String -> Prim.Number
-  foreign import __Prelude_Read_Prim_Number :: {  } -> Prelude.Read Prim.Number
-  foreign import __Prelude_Read_Prim_Boolean_read :: Prim.String -> Prim.Boolean
-  foreign import __Prelude_Read_Prim_Boolean :: {  } -> Prelude.Read Prim.Boolean
-  foreign import __Prelude_Ord_Prim_Number_$less$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Ord_Prim_Number_$less :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Ord_Prim_Number_$greater$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Ord_Prim_Number_$greater :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Ord_Prim_Number :: {  } -> Prelude.Ord Prim.Number
-  foreign import __Prelude_Num_Prim_Number_negate :: Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number_$times :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number_$plus :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number_$percent :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number_$minus :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number_$div :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Num_Prim_Number :: {  } -> Prelude.Num Prim.Number
-  foreign import __Prelude_Functor_var_$less$dollar$greater :: forall f. (Prelude.Applicative (f)) => forall b. forall a. (a -> b) -> f a -> f b
-  foreign import __Prelude_Functor_var :: forall f. Prelude.Applicative f -> Prelude.Functor f
-  foreign import __Prelude_Eq_Prim_String_$eq$eq :: Prim.String -> Prim.String -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_String_$div$eq :: Prim.String -> Prim.String -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_String :: {  } -> Prelude.Eq Prim.String
-  foreign import __Prelude_Eq_Prim_Number_$eq$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Number_$div$eq :: Prim.Number -> Prim.Number -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Number :: {  } -> Prelude.Eq Prim.Number
-  foreign import __Prelude_Eq_Prim_Boolean_$eq$eq :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Boolean_$div$eq :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Boolean :: {  } -> Prelude.Eq Prim.Boolean
-  foreign import __Prelude_Eq_Prelude_Ref_$eq$eq :: forall a. Prelude.Ref a -> Prelude.Ref a -> Prim.Boolean
-  foreign import __Prelude_Eq_Prelude_Ref_$div$eq :: forall a. Prelude.Ref a -> Prelude.Ref a -> Prim.Boolean
-  foreign import __Prelude_Eq_Prelude_Ref :: forall a. {  } -> Prelude.Eq (Prelude.Ref a)
-  foreign import __Prelude_Category_Prim_Function_id :: forall t. t -> t
-  foreign import __Prelude_Category_Prim_Function_$less$less$less :: forall d. forall c. forall b. (c -> d) -> (b -> c) -> b -> d
-  foreign import __Prelude_Category_Prim_Function_$greater$greater$greater :: forall d. forall c. forall b. (b -> c) -> (c -> d) -> b -> d
-  foreign import __Prelude_Category_Prim_Function :: {  } -> Prelude.Category Prim.Function
-  foreign import __Prelude_BoolLike_Prim_Boolean_not :: Prim.Boolean -> Prim.Boolean
-  foreign import __Prelude_BoolLike_Prim_Boolean_$bar$bar :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
-  foreign import __Prelude_BoolLike_Prim_Boolean_$amp$amp :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
-  foreign import __Prelude_BoolLike_Prim_Boolean :: {  } -> Prelude.BoolLike Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Array_$eq$eq :: forall a. (Prelude.Eq (a)) => [a] -> [a] -> Prim.Boolean
-  foreign import __Prelude_Eq_Prim_Array :: forall a. Prelude.Eq a -> Prelude.Eq [a]
-  foreign import __Prelude_Eq_Prim_Array_$div$eq :: forall a. (Prelude.Eq (a)) => [a] -> [a] -> Prim.Boolean
-  foreign import __Prelude_Bits_Prim_Number_zshr :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_shr :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_shl :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_complement :: Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_$up :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_$bar :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number_$amp :: Prim.Number -> Prim.Number -> Prim.Number
-  foreign import __Prelude_Bits_Prim_Number :: {  } -> Prelude.Bits Prim.Number
-  foreign import __Prelude_Applicative_var_pure :: forall m. (Prelude.Monad (m)) => forall a. a -> m a
-  foreign import __Prelude_Applicative_var_$less$times$greater :: forall m. (Prelude.Monad (m)) => forall b. forall a. m (a -> b) -> m a -> m b
-  foreign import __Prelude_Applicative_var :: forall m. Prelude.Monad m -> Prelude.Applicative m
+  foreign import categoryArr_id :: forall t. t -> t
+  foreign import categoryArr_$less$less$less :: forall d. forall c. forall b. (c -> d) -> (b -> c) -> b -> d
+  foreign import categoryArr_$greater$greater$greater :: forall d. forall c. forall b. (b -> c) -> (c -> d) -> b -> d
+  foreign import categoryArr :: {  } -> Prelude.Category Prim.Function
+  foreign import boolLikeBoolean_not :: Prim.Boolean -> Prim.Boolean
+  foreign import boolLikeBoolean_$bar$bar :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+  foreign import boolLikeBoolean_$amp$amp :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+  foreign import boolLikeBoolean :: {  } -> Prelude.BoolLike Prim.Boolean
+  foreign import eqArray_$eq$eq :: forall a. (Prelude.Eq (a)) => [a] -> [a] -> Prim.Boolean
+  foreign import eqArray :: forall a. Prelude.Eq a -> Prelude.Eq [a]
+  foreign import eqArray_$div$eq :: forall a. (Prelude.Eq (a)) => [a] -> [a] -> Prim.Boolean
+  foreign import bitsNumber_zshr :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber_shr :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber_shl :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber_complement :: Prim.Number -> Prim.Number
+  foreign import bitsNumber_$up :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber_$bar :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber_$amp :: Prim.Number -> Prim.Number -> Prim.Number
+  foreign import bitsNumber :: {  } -> Prelude.Bits Prim.Number
+  foreign import applicativeFromMonad_pure :: forall m. (Prelude.Monad (m)) => forall a. a -> m a
+  foreign import applicativeFromMonad_$less$times$greater :: forall m. (Prelude.Monad (m)) => forall b. forall a. m (a -> b) -> m a -> m b
+  foreign import applicativeFromMonad :: forall m. Prelude.Monad m -> Prelude.Applicative m
   foreign import ($) :: forall b. forall a. (a -> b) -> a -> b
   foreign import (#) :: forall b. forall a. a -> (a -> b) -> b
 module Math where
@@ -89,90 +82,103 @@ module Data.String where
 
 module Data.Maybe where
   foreign import data Maybe :: * -> *
+  foreign import showMaybe_show :: forall a. (Prelude.Show (a)) => Data.Maybe.Maybe a -> Prim.String
+  foreign import showMaybe :: forall a. Prelude.Show a -> Prelude.Show (Data.Maybe.Maybe a)
+  foreign import monadMaybe_$$return :: forall a. a -> Data.Maybe.Maybe a
   foreign import maybe :: forall b. forall a. b -> (a -> b) -> Data.Maybe.Maybe a -> b
+  foreign import monadMaybe_$greater$greater$eq :: forall b. forall a. Data.Maybe.Maybe a -> (a -> Data.Maybe.Maybe b) -> Data.Maybe.Maybe b
+  foreign import monadMaybe :: {  } -> Prelude.Monad Data.Maybe.Maybe
+  foreign import functorMaybe_$less$dollar$greater :: forall b. forall a. (a -> b) -> Data.Maybe.Maybe a -> Data.Maybe.Maybe b
+  foreign import functorMaybe :: {  } -> Prelude.Functor Data.Maybe.Maybe
   foreign import fromMaybe :: forall a. a -> Data.Maybe.Maybe a -> a
-  foreign import __Prelude_Show_Data_Maybe_Maybe_show :: forall a. (Prelude.Show (a)) => Data.Maybe.Maybe a -> Prim.String
-  foreign import __Prelude_Show_Data_Maybe_Maybe :: forall a. Prelude.Show a -> Prelude.Show (Data.Maybe.Maybe a)
-  foreign import __Prelude_Monad_Data_Maybe_Maybe_$greater$greater$eq :: forall b. forall a. Data.Maybe.Maybe a -> (a -> Data.Maybe.Maybe b) -> Data.Maybe.Maybe b
-  foreign import __Prelude_Monad_Data_Maybe_Maybe_$$return :: forall a. a -> Data.Maybe.Maybe a
-  foreign import __Prelude_Monad_Data_Maybe_Maybe :: {  } -> Prelude.Monad Data.Maybe.Maybe
-  foreign import __Prelude_Functor_Data_Maybe_Maybe_$less$dollar$greater :: forall b. forall a. (a -> b) -> Data.Maybe.Maybe a -> Data.Maybe.Maybe b
-  foreign import __Prelude_Functor_Data_Maybe_Maybe :: {  } -> Prelude.Functor Data.Maybe.Maybe
-  foreign import __Prelude_Applicative_Data_Maybe_Maybe_pure :: forall a. a -> Data.Maybe.Maybe a
-  foreign import __Prelude_Applicative_Data_Maybe_Maybe_$less$times$greater :: forall b. forall a. Data.Maybe.Maybe (a -> b) -> Data.Maybe.Maybe a -> Data.Maybe.Maybe b
-  foreign import __Prelude_Applicative_Data_Maybe_Maybe :: {  } -> Prelude.Applicative Data.Maybe.Maybe
+  foreign import applicativeMaybe_pure :: forall a. a -> Data.Maybe.Maybe a
+  foreign import applicativeMaybe_$less$times$greater :: forall b. forall a. Data.Maybe.Maybe (a -> b) -> Data.Maybe.Maybe a -> Data.Maybe.Maybe b
+  foreign import applicativeMaybe :: {  } -> Prelude.Applicative Data.Maybe.Maybe
 module Data.Functor where
   type BiFunctor f = { $less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> f a b -> f c d }
-module Data.Foldable where
-  type Foldable f = { foldr :: forall b. forall a. (a -> b -> b) -> b -> f a -> b }
-  type BiFoldable f = { bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> f a b -> c }
+module Data.Eq where
+  foreign import data Ref :: * -> *
+  foreign import liftRef :: forall b. forall a. (a -> a -> b) -> Data.Eq.Ref a -> Data.Eq.Ref a -> b
+  foreign import refEq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+  foreign import refIneq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+  foreign import eqRef_$eq$eq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+  foreign import eqRef_$div$eq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+  foreign import eqRef :: forall a. {  } -> Prelude.Eq (Data.Eq.Ref a)
 module Data.Enum where
-  type Enum a = { fromEnum :: a -> Prim.Number, toEnum :: Prim.Number -> Maybe a }
+  type Enum a = { fromEnum :: a -> Prim.Number, toEnum :: Prim.Number -> Data.Maybe.Maybe a }
 module Data.Either where
   foreign import data Either :: * -> * -> *
+  foreign import showEither_show :: forall a. forall b. (Prelude.Show (a),Prelude.Show (b)) => Data.Either.Either a b -> Prim.String
+  foreign import showEither :: forall a. forall b. Prelude.Show a -> Prelude.Show b -> Prelude.Show (Data.Either.Either a b)
+  foreign import monadEither_$$return :: forall e. forall a. a -> Data.Either.Either e a
+  foreign import functorEither_$less$dollar$greater :: forall a. forall b. forall a0. (a0 -> b) -> Data.Either.Either a a0 -> Data.Either.Either a b
+  foreign import functorEither :: forall a. {  } -> Prelude.Functor (Data.Either.Either a)
   foreign import either :: forall c. forall b. forall a. (a -> c) -> (b -> c) -> Data.Either.Either a b -> c
-  foreign import __Prelude_Show_Data_Either_Either_show :: forall a. forall b. (Prelude.Show (a),Prelude.Show (b)) => Data.Either.Either a b -> Prim.String
-  foreign import __Prelude_Show_Data_Either_Either :: forall a. forall b. Prelude.Show a -> Prelude.Show b -> Prelude.Show (Data.Either.Either a b)
-  foreign import __Prelude_Monad_Data_Either_Either_$greater$greater$eq :: forall e. forall b. forall a. Data.Either.Either e a -> (a -> Data.Either.Either e b) -> Data.Either.Either e b
-  foreign import __Prelude_Monad_Data_Either_Either_$$return :: forall e. forall a. a -> Data.Either.Either e a
-  foreign import __Prelude_Monad_Data_Either_Either :: forall e. {  } -> Prelude.Monad (Data.Either.Either e)
-  foreign import __Prelude_Functor_Data_Either_Either_$less$dollar$greater :: forall a. forall b. forall a0. (a0 -> b) -> Data.Either.Either a a0 -> Data.Either.Either a b
-  foreign import __Prelude_Functor_Data_Either_Either :: forall a. {  } -> Prelude.Functor (Data.Either.Either a)
-  foreign import __Prelude_Applicative_Data_Either_Either_pure :: forall e. forall a. a -> Data.Either.Either e a
-  foreign import __Prelude_Applicative_Data_Either_Either_$less$times$greater :: forall e. forall b. forall a. Data.Either.Either e (a -> b) -> Data.Either.Either e a -> Data.Either.Either e b
-  foreign import __Prelude_Applicative_Data_Either_Either :: forall e. {  } -> Prelude.Applicative (Data.Either.Either e)
+  foreign import monadEither_$greater$greater$eq :: forall e. forall b. forall a. Data.Either.Either e a -> (a -> Data.Either.Either e b) -> Data.Either.Either e b
+  foreign import monadEither :: forall e. {  } -> Prelude.Monad (Data.Either.Either e)
+  foreign import applicativeEither_pure :: forall e. forall a. a -> Data.Either.Either e a
+  foreign import applicativeEither_$less$times$greater :: forall e. forall b. forall a. Data.Either.Either e (a -> b) -> Data.Either.Either e a -> Data.Either.Either e b
+  foreign import applicativeEither :: forall e. {  } -> Prelude.Applicative (Data.Either.Either e)
 module Data.Array.Unsafe where
   foreign import tail :: forall a. [a] -> [a]
   foreign import head :: forall a. [a] -> a
 module Data.Array where
   foreign import tail :: forall a. [a] -> Data.Maybe.Maybe [a]
   foreign import singleton :: forall a. a -> [a]
+  foreign import monadArray_$$return :: forall a. a -> [a]
   foreign import isEmpty :: forall a. [a] -> Prim.Boolean
   foreign import head :: forall a. [a] -> Data.Maybe.Maybe a
   foreign import foldr :: forall b. forall a. (a -> b -> a) -> a -> [b] -> a
   foreign import foldl :: forall b. forall a. (b -> a -> b) -> b -> [a] -> b
   foreign import find :: forall a. (a -> Prim.Boolean) -> [a] -> Data.Maybe.Maybe a
+  foreign import drop :: forall a. Prim.Number -> [a] -> [a]
   foreign import concatMap :: forall b. forall a. [a] -> (a -> [b]) -> [b]
+  foreign import monadArray_$greater$greater$eq :: forall b. forall a. [a] -> (a -> [b]) -> [b]
+  foreign import monadArray :: {  } -> Prelude.Monad Prim.Array
   foreign import any :: forall a. (a -> Prim.Boolean) -> [a] -> Prim.Boolean
+  foreign import alternativeArray_empty :: forall a. [a]
+  foreign import alternativeArray_$less$bar$greater :: forall a. [a] -> [a] -> [a]
+  foreign import alternativeArray :: {  } -> Prelude.Alternative Prim.Array
   foreign import all :: forall a. (a -> Prim.Boolean) -> [a] -> Prim.Boolean
-  foreign import __Prelude_Monad_Prim_Array_$greater$greater$eq :: forall b. forall a. [a] -> (a -> [b]) -> [b]
-  foreign import __Prelude_Monad_Prim_Array_$$return :: forall a. a -> [a]
-  foreign import __Prelude_Monad_Prim_Array :: {  } -> Prelude.Monad Prim.Array
-  foreign import __Prelude_Alternative_Prim_Array_empty :: forall a. [a]
-  foreign import __Prelude_Alternative_Prim_Array_$less$bar$greater :: forall a. [a] -> [a] -> [a]
-  foreign import __Prelude_Alternative_Prim_Array :: {  } -> Prelude.Alternative Prim.Array
   foreign import (:) :: forall a. a -> [a] -> [a]
   foreign import filter :: forall a. (a -> Prim.Boolean) -> [a] -> [a]
   foreign import map :: forall b. forall a. (a -> b) -> [a] -> [b]
-  foreign import __Prelude_Functor_Prim_Array_$less$dollar$greater :: forall b. forall a. (a -> b) -> [a] -> [b]
-  foreign import __Prelude_Functor_Prim_Array :: {  } -> Prelude.Functor Prim.Array
-  foreign import __Prelude_Show_Prim_Array_show :: forall a. (Prelude.Show (a)) => [a] -> Prim.String
-  foreign import __Prelude_Show_Prim_Array :: forall a. Prelude.Show a -> Prelude.Show [a]
+  foreign import functorArray_$less$dollar$greater :: forall b. forall a. (a -> b) -> [a] -> [b]
+  foreign import functorArray :: {  } -> Prelude.Functor Prim.Array
+  foreign import showArray_show :: forall a. (Prelude.Show (a)) => [a] -> Prim.String
+  foreign import showArray :: forall a. Prelude.Show a -> Prelude.Show [a]
   foreign import range :: Prim.Number -> Prim.Number -> [Prim.Number]
+  foreign import take :: forall a. Prim.Number -> [a] -> [a]
   foreign import zipWith :: forall c. forall b. forall a. (a -> b -> c) -> [a] -> [b] -> [c]
 module Data.Monoid where
   type Monoid m = { $less$greater :: m -> m -> m, mempty :: m }
+  foreign import monoidString_mempty :: Prim.String
+  foreign import monoidString_$less$greater :: Prim.String -> Prim.String -> Prim.String
+  foreign import monoidString :: {  } -> Data.Monoid.Monoid Prim.String
+  foreign import monoidArray_mempty :: forall a. [a]
+  foreign import monoidArray_$less$greater :: forall a. [a] -> [a] -> [a]
+  foreign import monoidArray :: forall a. {  } -> Data.Monoid.Monoid [a]
   foreign import mconcat :: forall m. (Data.Monoid.Monoid (m)) => [m] -> m
-  foreign import __Data_Monoid_Monoid_Prim_String_mempty :: Prim.String
-  foreign import __Data_Monoid_Monoid_Prim_String_$less$greater :: Prim.String -> Prim.String -> Prim.String
-  foreign import __Data_Monoid_Monoid_Prim_String :: {  } -> Data.Monoid.Monoid Prim.String
-  foreign import __Data_Monoid_Monoid_Prim_Array_mempty :: forall a. [a]
-  foreign import __Data_Monoid_Monoid_Prim_Array_$less$greater :: forall a. [a] -> [a] -> [a]
-  foreign import __Data_Monoid_Monoid_Prim_Array :: forall a. {  } -> Data.Monoid.Monoid [a]
+module Data.Foldable where
+  type Foldable f = { foldl :: forall b. forall a. (b -> a -> b) -> b -> f a -> b, foldr :: forall b. forall a. (a -> b -> b) -> b -> f a -> b }
+  type BiFoldable f = { bifoldl :: forall c. forall b. forall a. (c -> a -> c) -> (c -> b -> c) -> c -> f a b -> c, bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> f a b -> c }
+  foreign import foldMap :: forall m. forall f. forall a. (Data.Foldable.Foldable (f),Data.Monoid.Monoid (m)) => (a -> m) -> f a -> m
 module Data.Tuple where
   foreign import data Tuple :: * -> * -> *
   foreign import zip :: forall b. forall a. [a] -> [b] -> [Data.Tuple.Tuple a b]
   foreign import unzip :: forall b. forall a. [Data.Tuple.Tuple a b] -> Data.Tuple.Tuple [a] [b]
   foreign import uncurry :: forall c. forall b. forall a. (a -> b -> c) -> Data.Tuple.Tuple a b -> c
+  foreign import showTuple_show :: forall a. forall b. (Prelude.Show (a),Prelude.Show (b)) => Data.Tuple.Tuple a b -> Prim.String
+  foreign import showTuple :: forall a. forall b. Prelude.Show a -> Prelude.Show b -> Prelude.Show (Data.Tuple.Tuple a b)
   foreign import curry :: forall c. forall b. forall a. (Data.Tuple.Tuple a b -> c) -> a -> b -> c
-  foreign import __Prelude_Show_Data_Tuple_Tuple_show :: forall a. forall b. (Prelude.Show (a),Prelude.Show (b)) => Data.Tuple.Tuple a b -> Prim.String
-  foreign import __Prelude_Show_Data_Tuple_Tuple :: forall a. forall b. Prelude.Show a -> Prelude.Show b -> Prelude.Show (Data.Tuple.Tuple a b)
 module Control.Monad.Eff where
   foreign import data Eff :: # ! -> * -> *
-  type Pure a = forall e. Eff e a
-  foreign import __Prelude_Monad_Control_Monad_Eff_Eff_$greater$greater$eq :: forall e. forall b. forall a. Control.Monad.Eff.Eff e a -> (a -> Control.Monad.Eff.Eff e b) -> Control.Monad.Eff.Eff e b
-  foreign import __Prelude_Monad_Control_Monad_Eff_Eff_$$return :: forall e. forall a. a -> Control.Monad.Eff.Eff e a
-  foreign import __Prelude_Monad_Control_Monad_Eff_Eff :: forall e. {  } -> Prelude.Monad (Control.Monad.Eff.Eff e)
+  type Pure a = forall e. Control.Monad.Eff.Eff e a
+  foreign import monadEff_$greater$greater$eq :: forall e. forall b. forall a. Control.Monad.Eff.Eff e a -> (a -> Control.Monad.Eff.Eff e b) -> Control.Monad.Eff.Eff e b
+  foreign import monadEff_$$return :: forall e. forall a. a -> Control.Monad.Eff.Eff e a
+  foreign import monadEff :: forall e. {  } -> Prelude.Monad (Control.Monad.Eff.Eff e)
+module Control.Monad.Eff.Unsafe where
+
 module Control.Monad.Error where
   foreign import data Error :: * -> !
 module Control.Monad.ST where
@@ -190,6 +196,7 @@ module Random where
 module Control.Monad where
   foreign import when :: forall m. (Prelude.Monad (m)) => Prim.Boolean -> m {  } -> m {  }
   foreign import sequence :: forall a. forall m. (Prelude.Monad (m)) => [m a] -> m [a]
+  foreign import zipWithM :: forall c. forall b. forall a. forall m. (Prelude.Monad (m)) => (a -> b -> m c) -> [a] -> [b] -> m [c]
   foreign import replicateM :: forall a. forall m. (Prelude.Monad (m)) => Prim.Number -> m a -> m [a]
   foreign import mapM :: forall b. forall a. forall m. (Prelude.Monad (m)) => (a -> m b) -> [a] -> m [b]
   foreign import join :: forall a. forall m. (Prelude.Monad (m)) => m (m a) -> m a
@@ -216,70 +223,80 @@ module Inquire where
   foreign import data Rel :: *
   foreign import data JuncOp :: *
   foreign import data Inquire :: * -> * -> *
+  foreign import showWrapOp_show :: Inquire.WrapOp -> Prim.String
+  foreign import showWrapOp :: {  } -> Prelude.Show Inquire.WrapOp
+  foreign import showRel_show :: Inquire.Rel -> Prim.String
+  foreign import showRel :: {  } -> Prelude.Show Inquire.Rel
+  foreign import showJuncOp_show :: Inquire.JuncOp -> Prim.String
+  foreign import showJuncOp :: {  } -> Prelude.Show Inquire.JuncOp
+  foreign import showInquire :: forall k. forall v. Prelude.Show k -> Prelude.Show v -> Prelude.Show (Inquire.Inquire k v)
+  foreign import showInquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import pred :: forall v. forall k. { val :: v, rel :: Inquire.Rel, key :: k } -> Inquire.Inquire k v
   foreign import neObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import ne :: forall v. forall k. k -> v -> Inquire.Inquire k v
+  foreign import monoidInquire_mempty :: forall k. forall v. Inquire.Inquire k v
+  foreign import monoidInquire_$less$greater :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import monoidInquire :: forall k. forall v. {  } -> Data.Monoid.Monoid (Inquire.Inquire k v)
   foreign import ltObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import lt :: forall v. forall k. k -> v -> Inquire.Inquire k v
   foreign import leObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import le :: forall v. forall k. k -> v -> Inquire.Inquire k v
   foreign import gtObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import gt :: forall v. forall k. k -> v -> Inquire.Inquire k v
+  foreign import gen :: forall v. forall k. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import geObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import ge :: forall v. forall k. k -> v -> Inquire.Inquire k v
+  foreign import functorInquire :: forall k. {  } -> Prelude.Functor (Inquire.Inquire k)
+  foreign import functorInquire_$less$dollar$greater :: forall k. forall b. forall a. (a -> b) -> Inquire.Inquire k a -> Inquire.Inquire k b
+  foreign import foldableInquire :: forall k. {  } -> Data.Foldable.Foldable (Inquire.Inquire k)
+  foreign import foldableInquire_foldr :: forall k. forall b. forall a. (a -> b -> b) -> b -> Inquire.Inquire k a -> b
+  foreign import foldableInquire_foldl :: forall k. forall b. forall a. (b -> a -> b) -> b -> Inquire.Inquire k a -> b
+  foreign import eqWrapOp_$eq$eq :: Inquire.WrapOp -> Inquire.WrapOp -> Prim.Boolean
+  foreign import eqWrapOp :: {  } -> Prelude.Eq Inquire.WrapOp
+  foreign import eqWrapOp_$div$eq :: Inquire.WrapOp -> Inquire.WrapOp -> Prim.Boolean
+  foreign import eqRel_$eq$eq :: Inquire.Rel -> Inquire.Rel -> Prim.Boolean
+  foreign import eqRel :: {  } -> Prelude.Eq Inquire.Rel
+  foreign import eqRel_$div$eq :: Inquire.Rel -> Inquire.Rel -> Prim.Boolean
   foreign import eqObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
-  foreign import eq :: forall v. forall k. k -> v -> Inquire.Inquire k v
-  foreign import __Prelude_Show_Inquire_WrapOp_show :: Inquire.WrapOp -> Prim.String
-  foreign import __Prelude_Show_Inquire_WrapOp :: {  } -> Prelude.Show Inquire.WrapOp
-  foreign import __Prelude_Show_Inquire_Rel_show :: Inquire.Rel -> Prim.String
-  foreign import __Prelude_Show_Inquire_Rel :: {  } -> Prelude.Show Inquire.Rel
-  foreign import __Prelude_Show_Inquire_JuncOp_show :: Inquire.JuncOp -> Prim.String
-  foreign import __Prelude_Show_Inquire_JuncOp :: {  } -> Prelude.Show Inquire.JuncOp
-  foreign import __Prelude_Show_Inquire_Inquire :: forall k. forall v. Prelude.Show k -> Prelude.Show v -> Prelude.Show (Inquire.Inquire k v)
-  foreign import __Prelude_Show_Inquire_Inquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
-  foreign import gen :: forall v. forall k. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
-  foreign import __Prelude_Functor_Inquire_Inquire :: forall k. {  } -> Prelude.Functor (Inquire.Inquire k)
-  foreign import __Prelude_Functor_Inquire_Inquire_$less$dollar$greater :: forall k. forall b. forall a. (a -> b) -> Inquire.Inquire k a -> Inquire.Inquire k b
-  foreign import __Prelude_Eq_Inquire_WrapOp_$eq$eq :: Inquire.WrapOp -> Inquire.WrapOp -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_WrapOp :: {  } -> Prelude.Eq Inquire.WrapOp
-  foreign import __Prelude_Eq_Inquire_WrapOp_$div$eq :: Inquire.WrapOp -> Inquire.WrapOp -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_Rel_$eq$eq :: Inquire.Rel -> Inquire.Rel -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_Rel :: {  } -> Prelude.Eq Inquire.Rel
-  foreign import __Prelude_Eq_Inquire_Rel_$div$eq :: Inquire.Rel -> Inquire.Rel -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_JuncOp_$eq$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_JuncOp :: {  } -> Prelude.Eq Inquire.JuncOp
-  foreign import __Prelude_Eq_Inquire_JuncOp_$div$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_Inquire :: forall k. forall v. Prelude.Eq k -> Prelude.Eq v -> Prelude.Eq (Inquire.Inquire k v)
-  foreign import __Prelude_Eq_Inquire_Inquire_$eq$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
-  foreign import __Prelude_Eq_Inquire_Inquire_$div$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
-  foreign import absorb :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import eqJuncOp_$eq$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
+  foreign import eqJuncOp :: {  } -> Prelude.Eq Inquire.JuncOp
+  foreign import eqJuncOp_$div$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
+  foreign import eqInquire :: forall k. forall v. Prelude.Eq k -> Prelude.Eq v -> Prelude.Eq (Inquire.Inquire k v)
+  foreign import eqInquire_$eq$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
+  foreign import eqInquire_$div$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
   foreign import idempotent :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import __Data_Functor_BiFunctor_Inquire_Inquire :: {  } -> Data.Functor.BiFunctor Inquire.Inquire
-  foreign import __Data_Functor_BiFunctor_Inquire_Inquire_$less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> Inquire.Inquire a b -> Inquire.Inquire c d
-  foreign import __Data_Foldable_Foldable_Inquire_Inquire :: forall k. {  } -> Data.Foldable.Foldable (Inquire.Inquire k)
-  foreign import __Data_Foldable_Foldable_Inquire_Inquire_foldr :: forall k. forall b. forall a. (a -> b -> b) -> b -> Inquire.Inquire k a -> b
-  foreign import __Data_Foldable_BiFoldable_Inquire_Inquire :: {  } -> Data.Foldable.BiFoldable Inquire.Inquire
-  foreign import __Data_Foldable_BiFoldable_Inquire_Inquire_bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> Inquire.Inquire a b -> c
-  foreign import __Algebra_ComplementedLattice_Inquire_Inquire_$bar$tilde$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import __Algebra_ComplementedLattice_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.ComplementedLattice (Inquire.Inquire k v)
+  foreign import eq :: forall v. forall k. k -> v -> Inquire.Inquire k v
+  foreign import complementedLatticeInquire_$bar$tilde$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import complementedLatticeInquire :: forall k. forall v. {  } -> Algebra.ComplementedLattice (Inquire.Inquire k v)
   foreign import neg :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire_$bar$bar$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire_$bar$amp$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import __Algebra_BooleanAlgebra_Inquire_Inquire :: forall k. forall v. {  } -> Algebra.BooleanAlgebra (Inquire.Inquire k v)
-  foreign import and :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import assocLeft :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import assocRight :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
-  foreign import associate :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import booleanAlgebraInquire_$bar$bar$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import booleanAlgebraInquire_$bar$amp$bar :: forall k. forall v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import booleanAlgebraInquire :: forall k. forall v. {  } -> Algebra.BooleanAlgebra (Inquire.Inquire k v)
   foreign import codistribute :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import commute :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import distribute :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import equiv :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import implies :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import or :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-module Inquire.Utils where
+  foreign import biFunctorInquire :: {  } -> Data.Functor.BiFunctor Inquire.Inquire
+  foreign import biFunctorInquire_$less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> Inquire.Inquire a b -> Inquire.Inquire c d
+  foreign import biFoldableInquire :: {  } -> Data.Foldable.BiFoldable Inquire.Inquire
+  foreign import biFoldableInquire_bifoldr :: forall c. forall b. forall a. (a -> c -> c) -> (b -> c -> c) -> c -> Inquire.Inquire a b -> c
+  foreign import biFoldableInquire_bifoldl :: forall c. forall b. forall a. (c -> a -> c) -> (c -> b -> c) -> c -> Inquire.Inquire a b -> c
+  foreign import associate :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import assocRight :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import assocLeft :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import and :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import absorb :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v
+module Inquire.Combinators where
   foreign import toObj :: forall v. forall k. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
   foreign import vals :: forall v. forall k. Inquire.Inquire k v -> [v]
+  foreign import remove' :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => (Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import removeAllI :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import removeI :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
-  foreign import toArray :: forall t3409. Inquire.Inquire t3409 t3409 -> [[t3409]]
+  foreign import toArray :: forall t3764. Inquire.Inquire t3764 t3764 -> [[t3764]]
   foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
-  foreign import fromArray :: forall t3432. [[t3432]] -> Inquire.Inquire t3432 t3432
+  foreign import fromArray :: forall t3787. [[t3787]] -> Inquire.Inquire t3787 t3787
+  foreign import findI :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
+  foreign import filterVals :: forall v. forall k. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
