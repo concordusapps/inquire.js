@@ -40,3 +40,9 @@ module Data.Traversable where
 
   sequence :: forall a f t. (Applicative f, Traversable t) => t (f a) -> f (t a)
   sequence t = traverse id t
+
+  class BiTraversable t where
+    bitraverse :: forall a b c d f. (Applicative f) => (a -> f c) -> (b -> f d) -> t a b -> f (t c d)
+
+  bisequence :: forall a b f t. (Applicative f, BiTraversable t) => t (f a) (f b) -> f (t a b)
+  bisequence t = bitraverse id id t

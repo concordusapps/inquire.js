@@ -123,11 +123,18 @@ module Inquire where
     bifoldl f g z i = bifoldr (flip f) (flip g) z i
 
   instance traversableInquire :: Traversable (Inquire k) where
-    traverse f EmptyAnd = pure EmptyAnd
-    traverse f EmptyOr  = pure EmptyOr
+    traverse _ EmptyAnd = pure EmptyAnd
+    traverse _ EmptyOr  = pure EmptyOr
     traverse f (Pred k r v) = Pred k r <$> f v
-    traverse f (Junc l o r) = Junc <$> (traverse f l) <*> pure o <*> (traverse f r)
-    traverse f (Wrap o i)   = Wrap o <$> (traverse f i)
+    traverse f (Junc l o r) = Junc <$> traverse f l <*> pure o <*> traverse f r
+    traverse f (Wrap o i)   = Wrap o <$> traverse f i
+
+  instance bitraversableInquire :: BiTraversable Inquire where
+    bitraverse _ _ EmptyAnd = pure EmptyAnd
+    bitraverse _ _ EmptyOr  = pure EmptyOr
+    bitraverse f g (Pred k r v) = Pred <$> f k <*> pure r <*> g v
+    bitraverse f g (Junc l o r) = Junc <$> bitraverse f g l <*> pure o <*> bitraverse f g r
+    bitraverse f g (Wrap o i)   = Wrap o <$> bitraverse f g i
 
   instance complementedLatticeInquire :: Algebra.ComplementedLattice (Inquire k v) where
     (|~|) EmptyAnd = EmptyOr
@@ -284,13 +291,20 @@ module Inquire.Combinators where
   toTuple i = zip (keys i) (vals i)
 
   -- The ideal type would be
-  -- toArray :: forall k v. Inquire k v -> [[k, v]]
-  toArray i = zipWith (\x y -> [x,y]) (keys i) (vals i)
+  -- toArrayPair :: forall k v. Inquire k v -> [[k, v]]
+  toArrayPair i = zipWith (\x y -> [x,y]) (keys i) (vals i)
+
+  toArrayObj :: forall k v. Inquire k v -> [{key :: k, val :: v}]
+  toArrayObj i = zipWith (\x y -> {key: x, val: y}) (keys i) (vals i)
 
   -- The ideal type would be
-  -- fromArray :: forall k v. [[k, v]] -> Inquire k v
-  fromArray []         = EmptyAnd
-  fromArray ([x,y]:zs) = (fromArray zs) `and` (x `eq` y)
+  -- fromArrayPair :: forall k v. [[k, v]] -> Inquire k v
+  fromArrayPair []         = EmptyAnd
+  fromArrayPair ([x,y]:zs) = (fromArrayPair zs) `and` (x `eq` y)
+
+  fromArrayObj :: forall k v. [{key :: k, val :: v}] -> Inquire k v
+  fromArrayObj []                        = EmptyAnd
+  fromArrayObj ({ key = x, val = y }:zs) = (fromArrayObj zs) `and` (x `eq` y)
 
   -- This should be implemented with a foldr or some such,
   -- but the kind wont work out.
@@ -322,26 +336,28 @@ module Inquire.Combinators where
   removeAll :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
   removeAll = remove' (\x y -> true)
 
+
+
   foreign import unsafeFind "function unsafeFind(v) {\
-                      \  return function(i) {\
-                      \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                      \    return find(_ps.Prelude.eqString({}))(v)(i);\
-                      \  }\
-                      \}" :: forall k v. v -> Inquire k v -> Maybe (Inquire k v)
+                            \  return function(i) {\
+                            \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
+                            \    return find(_ps.Prelude.eqString({}))(v)(i);\
+                            \  }\
+                            \}" :: forall k v. v -> Inquire k v -> Maybe (Inquire k v)
 
   foreign import unsafeRemove "function unsafeRemove(i1) {\
-                        \  return function(i2) {\
-                        \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                        \    return remove(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
-                        \  }\
-                        \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
+                              \  return function(i2) {\
+                              \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
+                              \    return remove(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
+                              \  }\
+                              \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
 
   foreign import unsafeRemoveAll "function unsafeRemoveAll(i1) {\
-                           \  return function(i2) {\
-                           \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                           \    return removeAll(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
-                           \  }\
-                           \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
+                                 \  return function(i2) {\
+                                 \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
+                                 \    return removeAll(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
+                                 \  }\
+                                 \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
 
 module Inquire.Zipper where
 

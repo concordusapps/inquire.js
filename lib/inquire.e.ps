@@ -167,7 +167,9 @@ module Data.Foldable where
   foreign import foldMap :: forall m. forall f. forall a. (Data.Foldable.Foldable (f),Data.Monoid.Monoid (m)) => (a -> m) -> f a -> m
 module Data.Traversable where
   type Traversable t = { traverse :: forall f. forall b. forall a. (Prelude.Applicative (f)) => (a -> f b) -> t a -> f (t b) }
+  type BiTraversable t = { bitraverse :: forall f. forall d. forall c. forall b. forall a. (Prelude.Applicative (f)) => (a -> f c) -> (b -> f d) -> t a b -> f (t c d) }
   foreign import sequence :: forall t. forall f. forall a. (Prelude.Applicative (f),Data.Traversable.Traversable (t)) => t (f a) -> f (t a)
+  foreign import bisequence :: forall t. forall f. forall b. forall a. (Prelude.Applicative (f),Data.Traversable.BiTraversable (t)) => t (f a) (f b) -> f (t a b)
 module Data.Tuple where
   foreign import data Tuple :: * -> * -> *
   foreign import zip :: forall b. forall a. [a] -> [b] -> [Data.Tuple.Tuple a b]
@@ -285,6 +287,8 @@ module Inquire where
   foreign import equiv :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import implies :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import or :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import bitraversableInquire :: {  } -> Data.Traversable.BiTraversable Inquire.Inquire
+  foreign import bitraversableInquire_bitraverse :: forall f. forall d. forall c. forall b. forall a. (Prelude.Applicative (f)) => (a -> f c) -> (b -> f d) -> Inquire.Inquire a b -> f (Inquire.Inquire c d)
   foreign import biFunctorInquire :: {  } -> Data.Functor.BiFunctor Inquire.Inquire
   foreign import biFunctorInquire_$less$dollar$dollar$greater :: forall d. forall c. forall b. forall a. (a -> c) -> (b -> d) -> Inquire.Inquire a b -> Inquire.Inquire c d
   foreign import biFoldableInquire :: {  } -> Data.Foldable.BiFoldable Inquire.Inquire
@@ -302,9 +306,11 @@ module Inquire.Combinators where
   foreign import removeAll :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import remove :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
-  foreign import toArray :: forall t3998. Inquire.Inquire t3998 t3998 -> [[t3998]]
+  foreign import toArrayObj :: forall v. forall k. Inquire.Inquire k v -> [{ val :: v, key :: k }]
+  foreign import toArrayPair :: forall t4258. Inquire.Inquire t4258 t4258 -> [[t4258]]
   foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
-  foreign import fromArray :: forall t4021. [[t4021]] -> Inquire.Inquire t4021 t4021
+  foreign import fromArrayPair :: forall t4281. [[t4281]] -> Inquire.Inquire t4281 t4281
+  foreign import fromArrayObj :: forall v. forall k. [{ val :: v, key :: k }] -> Inquire.Inquire k v
   foreign import find :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
   foreign import filterVals :: forall v. forall k. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 module Inquire.Zipper where
