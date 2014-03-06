@@ -5,6 +5,7 @@ module Inquire where
   import Data.Foldable
   import Data.Functor
   import Data.Monoid
+  import Data.Traversable
 
   data Inquire k v = EmptyAnd
                    | EmptyOr
@@ -120,6 +121,13 @@ module Inquire where
     bifoldr f g z (Wrap _ i)   = bifoldr f g z i
 
     bifoldl f g z i = bifoldr (flip f) (flip g) z i
+
+  instance traversableInquire :: Traversable (Inquire k) where
+    traverse f EmptyAnd = pure EmptyAnd
+    traverse f EmptyOr  = pure EmptyOr
+    traverse f (Pred k r v) = Pred k r <$> f v
+    traverse f (Junc l o r) = Junc <$> (traverse f l) <*> pure o <*> (traverse f r)
+    traverse f (Wrap o i)   = Wrap o <$> (traverse f i)
 
   instance complementedLatticeInquire :: Algebra.ComplementedLattice (Inquire k v) where
     (|~|) EmptyAnd = EmptyOr
@@ -308,29 +316,78 @@ module Inquire.Combinators where
   remove' p i i' | i == i' = EmptyAnd
   remove' p i i'           = i'
 
-  removeI :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
-  removeI = remove' (==)
+  remove :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
+  remove = remove' (==)
 
-  removeAllI :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
-  removeAllI = remove' (\x y -> true)
+  removeAll :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
+  removeAll = remove' (\x y -> true)
 
-  foreign import find "function find(v) {\
+  foreign import unsafeFind "function unsafeFind(v) {\
                       \  return function(i) {\
                       \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
                       \    return findI(_ps.Prelude.eqString({}))(v)(i);\
                       \  }\
                       \}" :: forall k v. v -> Inquire k v -> Maybe (Inquire k v)
 
-  foreign import remove "function remove(i1) {\
+  foreign import unsafeRemove "function unsafeRemove(i1) {\
                         \  return function(i2) {\
                         \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                        \    return removeI(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
+                        \    return remove(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
                         \  }\
                         \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
 
-  foreign import removeAll "function removeAll(i1) {\
+  foreign import unsafeRemoveAll "function unsafeRemoveAll(i1) {\
                            \  return function(i2) {\
                            \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                           \    return removeAllI(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
+                           \    return removeAll(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);\
                            \  }\
                            \}" :: forall k v. v -> Inquire k v -> Inquire k v -> Inquire k v
+
+module Inquire.Zipper where
+
+  {-
+    Since we don't have `syz` yet, we're going to roll our own zipper.
+
+    We follow McBride and take the derivative of our type,
+    taking some notational liberties.
+
+    I = 2 + x + I^2 + I
+    0 = 2 + x + I^2
+    I' =  1 + 2I*I' + I'
+    I' = -1/(2I)
+
+    I(kv) = 1 + kv^2 + kv
+
+    d(I(kv))/d(kv) = d(1 + kv^2 + kv)/d(kv)
+    I'(kv) = 1 + 2kv
+
+    So we want our zipper to be:
+    data InquireZ k v = Hole k v
+                      | Left k v
+                      | Right k v
+  -}
+
+  import Prelude
+  import Data.Maybe
+  import Data.Traversable
+  import Inquire
+
+  data InquireZ t a = Top (t a)
+                    | Zipper a (Maybe a -> InquireZ t a)
+
+  data Cont r a = Cont { runCont :: (a -> r) -> r }
+
+  instance monadCont :: Prelude.Monad (Cont r) where
+    return x = Cont { runCont: \f -> f x }
+    (>>=) (Cont {runCont = c}) f = Cont { runCont: \k -> c (\a -> let Cont {runCont = c'} = (f a) in c' k) }
+
+  reset :: forall r. Cont r r -> r
+  reset m = let Cont { runCont = m' } = m in m' id
+
+  shift :: forall a r. ((a -> r) -> Cont r r) -> Cont r a
+  shift e = Cont { runCont: \k -> reset (e k) }
+
+  toInquireZ :: forall k v. Inquire k v -> InquireZ k v
+  toInquireZ i =
+    reset $ traverse (shift (\k -> return $ Zipper i (k <<< (maybe i id)))) >>= (return <<< Top)
+

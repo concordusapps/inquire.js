@@ -21,3 +21,15 @@ module Data.Functor where
 
   class BiFunctor f where
     (<$$>) :: forall a b c d. (a -> c) -> (b -> d) -> f a b -> f c d
+
+module Data.Traversable where
+
+  import Prelude
+  import Data.Foldable
+
+  -- class (Data.Foldable.Foldable t, Data.Functor.Functor t) => Traversable t where
+  class Traversable t where
+    traverse :: forall a b f. (Applicative f) => (a -> f b) -> t a -> f (t b)
+
+  sequence :: forall a f t. (Applicative f, Traversable t) => t (f a) -> f (t a)
+  sequence t = traverse id t
