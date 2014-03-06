@@ -6,22 +6,9 @@
 
 [![NPM](https://nodei.co/npm/inquire.png?compact=true)](https://nodei.co/npm/inquire/)
 
-[![browser support](https://ci.testling.com/concordusapps/inquire.js.png)](https://ci.testling.com/concordusapps/inquire.js)
-
 
 Inquire allows you to generate advanced query strings.
 Currently supports [armet][armet] syntax query strings.
-
-### Fantasy Land Compliant
-[![Fantasy Land](https://raw.github.com/concordusapps/inquire.js/master/images/fantasy-land.png)](https://github.com/puffnfresh/fantasy-land)
-
-#### Algebras
-* Semigroup
-* Monoid
-* Functor
-* Applicative
-* Chain
-* Monad
 
 ## Installation
 
@@ -30,14 +17,6 @@ Inquire is available on the npm registry: [inquire][inquire]
 You can install it with npm.
 
     npm install inquire
-
-Run the tests.
-
-    npm test
-
-Check the coverage.
-
-    npm run cover
 
 ## The Problem
 
@@ -68,27 +47,33 @@ Our `GET` request becomes:
 We need a better way to generate query strings for [armet][armet]'s consumption.
 Inquire allows you do the same query without trying to man-handle the string.
 
+```purescript
+import Inquire
+
+query = (("color" `eq` "red") |&| ("width" `gt` "30")) ||| ("sides" `le` "12") ||| (("shape" `eq` "square") |&| (("color" `ne` "black") ||| ("user" `eq` "bob")))
+url = "/api/shape?" ++ show query
+-- url => "/api/shape?(color=red&width>30);sides<=12;(shape=square&(color!=black;user=bob))"
+```
+
 LiveScript:
 
 ```livescript
-query = inquire(inquire \color, \red .and inquire.gt \width, 30)
-.or inquire.lte \sides, 12
-.or (inquire \shape, \square .and (inquire.neq \color, \black .or \user, \bob))
-url = "/api/shape/#{query.generate!}"
-# url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
+require! I: \inquire.Inquire
+query = I.or(I.or(I.and(I.eq(\color)(\red))(I.gt(\width)(30)))(I.le(\sides)(12)))(I.and(I.eq(\shape)(\square))(I.or(I.ne(\color)(\black))(I.eq(\user)(\bob))))
+url = "/api/shape?#{I.generate query}"
+# url => '/api/shape?(color=red&width>30);sides<=12;(shape=square&(color!=black;user=bob))'
 ```
 
 Javascript:
 
 ```javascript
-query = inquire(inquire('color', 'red').and(inquire.gt('width', 30)))
-.or(inquire.lte('sides', 12))
-.or(inquire('shape', 'square').and(inquire.neq('color', 'black').or('user', 'bob')));
-url = "/api/shape/" + query.generate();
-// url => /api/shape?(color=red&(width>30));(sides<=12);(shape=square&(color!=black;user=bob))
+var I = require('inquire').Inquire;
+var query = I.or(I.or(I.and(I.eq('color')('red'))(I.gt('width')(30)))(I.le('sides')(12)))(I.and(I.eq('shape')('square'))(I.or(I.ne('color')('black'))(I.eq('user')('bob'))))
+var url = '/api/shape?' + I.generate(query)
+// url => '/api/shape?(color=red&width>30);sides<=12;(shape=square&(color!=black;user=bob))'
 ```
 
-Note: At this time, inquire does not optimize away parens.
+Note: Inquire removes as many parens as logically possible.
 
 ## Usage
 
