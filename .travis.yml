@@ -6,9 +6,3 @@ node_js:
 branches:
   only:
     - master
-
-script:
-  - npm run coverage
-
-after_script:
-  - npm run coveralls
