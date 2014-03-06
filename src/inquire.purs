@@ -236,6 +236,9 @@ module Inquire where
   equiv :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   equiv p q = (p |&| q) ||| ((|~|) p |&| (|~|) q)
 
+  xor :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
+  xor p q = (p |&| (|~|) q) ||| ((|~|) p |&| q)
+
   -- These should all be part of BooleanAlgebra, but no bueno at this momento.
 
   absorb :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v

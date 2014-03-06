@@ -287,6 +287,7 @@ module Inquire where
   foreign import equiv :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import implies :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import or :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+  foreign import xor :: forall v. forall k. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import bitraversableInquire :: {  } -> Data.Traversable.BiTraversable Inquire.Inquire
   foreign import bitraversableInquire_bitraverse :: forall f. forall d. forall c. forall b. forall a. (Prelude.Applicative (f)) => (a -> f c) -> (b -> f d) -> Inquire.Inquire a b -> f (Inquire.Inquire c d)
   foreign import biFunctorInquire :: {  } -> Data.Functor.BiFunctor Inquire.Inquire
@@ -307,9 +308,9 @@ module Inquire.Combinators where
   foreign import remove :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
   foreign import toArrayObj :: forall v. forall k. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-  foreign import toArrayPair :: forall t4344. Inquire.Inquire t4344 t4344 -> [[t4344]]
+  foreign import toArrayPair :: forall t4360. Inquire.Inquire t4360 t4360 -> [[t4360]]
   foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
-  foreign import fromArrayPair :: forall t4367. [[t4367]] -> Inquire.Inquire t4367 t4367
+  foreign import fromArrayPair :: forall t4383. [[t4383]] -> Inquire.Inquire t4383 t4383
   foreign import fromArrayObj :: forall v. forall k. [{ val :: v, key :: k }] -> Inquire.Inquire k v
   foreign import find :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
   foreign import filterVals :: forall v. forall k. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
