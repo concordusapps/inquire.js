@@ -81,8 +81,16 @@ module Inquire where
     show EmptyAnd = ""
     show EmptyOr = ""
     show (Pred k r v) = show k ++ show r ++ show v
-    show (Junc p o q) = "(" ++ show p ++ ")" ++ show o ++ "(" ++ show q ++ ")"
-    show (Wrap o i)   = show o ++ "(" ++ show i ++ ")"
+    show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
+    show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
+    show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
+    show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
+    show (Junc l@(Junc _ o _) o' r) | o == o'   = show l ++ show o ++ "(" ++ show r ++ ")"
+    show (Junc l o r@(Junc _ o' _)) | o == o'   = "(" ++ show l ++ ")" ++ show o ++ show r
+    show (Junc l o r)                           = "(" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
+    show (Wrap NOBOOL i@(Wrap _ _)) = show i
+    show (Wrap o i@(Wrap NOBOOL _))   = show i
+    show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
 
   instance functorInquire :: Prelude.Functor (Inquire k) where
     (<$>) _ EmptyAnd        = EmptyAnd

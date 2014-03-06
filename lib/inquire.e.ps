@@ -238,8 +238,6 @@ module Inquire where
   foreign import showRel :: {  } -> Prelude.Show Inquire.Rel
   foreign import showJuncOp_show :: Inquire.JuncOp -> Prim.String
   foreign import showJuncOp :: {  } -> Prelude.Show Inquire.JuncOp
-  foreign import showInquire :: forall k. forall v. Prelude.Show k -> Prelude.Show v -> Prelude.Show (Inquire.Inquire k v)
-  foreign import showInquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import pred :: forall v. forall k. { val :: v, rel :: Inquire.Rel, key :: k } -> Inquire.Inquire k v
   foreign import neObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import ne :: forall v. forall k. k -> v -> Inquire.Inquire k v
@@ -252,7 +250,6 @@ module Inquire where
   foreign import le :: forall v. forall k. k -> v -> Inquire.Inquire k v
   foreign import gtObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import gt :: forall v. forall k. k -> v -> Inquire.Inquire k v
-  foreign import gen :: forall v. forall k. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import geObj :: forall v. forall k. { val :: v, key :: k } -> Inquire.Inquire k v
   foreign import ge :: forall v. forall k. k -> v -> Inquire.Inquire k v
   foreign import functorInquire :: forall k. {  } -> Prelude.Functor (Inquire.Inquire k)
@@ -270,6 +267,9 @@ module Inquire where
   foreign import eqJuncOp_$eq$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
   foreign import eqJuncOp :: {  } -> Prelude.Eq Inquire.JuncOp
   foreign import eqJuncOp_$div$eq :: Inquire.JuncOp -> Inquire.JuncOp -> Prim.Boolean
+  foreign import showInquire_show :: forall k. forall v. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
+  foreign import showInquire :: forall k. forall v. Prelude.Show k -> Prelude.Show v -> Prelude.Show (Inquire.Inquire k v)
+  foreign import gen :: forall v. forall k. (Prelude.Show (k),Prelude.Show (v)) => Inquire.Inquire k v -> Prim.String
   foreign import eqInquire :: forall k. forall v. Prelude.Eq k -> Prelude.Eq v -> Prelude.Eq (Inquire.Inquire k v)
   foreign import eqInquire_$eq$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
   foreign import eqInquire_$div$eq :: forall k. forall v. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean
@@ -307,9 +307,9 @@ module Inquire.Combinators where
   foreign import remove :: forall v. forall k. (Prelude.Eq (k),Prelude.Eq (v)) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
   foreign import keys :: forall v. forall k. Inquire.Inquire k v -> [k]
   foreign import toArrayObj :: forall v. forall k. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-  foreign import toArrayPair :: forall t4258. Inquire.Inquire t4258 t4258 -> [[t4258]]
+  foreign import toArrayPair :: forall t4344. Inquire.Inquire t4344 t4344 -> [[t4344]]
   foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
-  foreign import fromArrayPair :: forall t4281. [[t4281]] -> Inquire.Inquire t4281 t4281
+  foreign import fromArrayPair :: forall t4367. [[t4367]] -> Inquire.Inquire t4367 t4367
   foreign import fromArrayObj :: forall v. forall k. [{ val :: v, key :: k }] -> Inquire.Inquire k v
   foreign import find :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
   foreign import filterVals :: forall v. forall k. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
