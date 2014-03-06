@@ -336,8 +336,6 @@ module Inquire.Combinators where
   removeAll :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v
   removeAll = remove' (\x y -> true)
 
-
-
   foreign import unsafeFind "function unsafeFind(v) {\
                             \  return function(i) {\
                             \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
@@ -438,6 +436,22 @@ module Inquire.Zipper where
   zipUp (Zip { hole = r, context = (R o l):p }) =
     Just $ Zip $ { hole: Junc l o r, context: p }
   zipUp _ = Nothing
+
+  type Movement k v = InquireZ k v -> Maybe (InquireZ k v)
+
+  -- Advanced movement.
+
+  zipMost :: forall k v. Movement k v -> InquireZ k v -> InquireZ k v
+  zipMost f iz = maybe iz (zipMost f) $ f iz
+
+  zipUpmost :: forall k v. InquireZ k v -> InquireZ k v
+  zipUpmost = zipMost zipUp
+
+  zipLeftmost :: forall k v. InquireZ k v -> InquireZ k v
+  zipLeftmost = zipMost zipLeft
+
+  zipRightmost :: forall k v. InquireZ k v -> InquireZ k v
+  zipRightmost = zipMost zipRight
 
   -- Manipulation
 

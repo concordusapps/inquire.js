@@ -316,9 +316,14 @@ module Inquire.Combinators where
 module Inquire.Zipper where
   foreign import data Context :: * -> * -> *
   foreign import data InquireZ :: * -> * -> *
+  type Movement k v = Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import zipUp :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import zipRight :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+  foreign import zipMost :: forall v. forall k. Inquire.Zipper.Movement k v -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
+  foreign import zipRightmost :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
+  foreign import zipUpmost :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
   foreign import zipLeft :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+  foreign import zipLeftmost :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
   foreign import zipDown :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import toInquireZ :: forall v. forall k. Inquire.Inquire k v -> Inquire.Zipper.InquireZ k v
   foreign import modify :: forall v. forall k. (Inquire.Inquire k v -> Inquire.Inquire k v) -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
