@@ -305,14 +305,17 @@ module Inquire.Combinators where
   foreign import toArray :: forall t3998. Inquire.Inquire t3998 t3998 -> [[t3998]]
   foreign import toTuple :: forall v. forall k. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
   foreign import fromArray :: forall t4021. [[t4021]] -> Inquire.Inquire t4021 t4021
-  foreign import findI :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
+  foreign import find :: forall v. forall k. (Prelude.Eq (v)) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
   foreign import filterVals :: forall v. forall k. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 module Inquire.Zipper where
-  foreign import data Path :: * -> * -> *
+  foreign import data Context :: * -> * -> *
   foreign import data InquireZ :: * -> * -> *
   foreign import zipUp :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import zipRight :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import zipLeft :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import zipDown :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
   foreign import toInquireZ :: forall v. forall k. Inquire.Inquire k v -> Inquire.Zipper.InquireZ k v
+  foreign import modify :: forall v. forall k. (Inquire.Inquire k v -> Inquire.Inquire k v) -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
+  foreign import getHole :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
+  foreign import query :: forall v. forall k. forall a. (Inquire.Inquire k v -> a) -> Inquire.Zipper.InquireZ k v -> a
   foreign import fromInquireZ :: forall v. forall k. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v

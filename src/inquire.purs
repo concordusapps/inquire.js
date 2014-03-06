@@ -301,12 +301,12 @@ module Inquire.Combinators where
   filterVals p i            = i
 
   -- This is a right based find.
-  findI :: forall k v. (Eq v) => v -> Inquire k v -> Maybe (Inquire k v)
-  findI v (Pred k r v') | v == v' = Just (Pred k r v)
-  findI v (Pred k r v')           = Nothing
-  findI v (Junc l _ r)            = maybe (findI v l) Just (findI v r)
-  findI v (Wrap _ i)              = findI v i
-  findI _ _                       = Nothing
+  find :: forall k v. (Eq v) => v -> Inquire k v -> Maybe (Inquire k v)
+  find v (Pred k r v') | v == v' = Just (Pred k r v)
+  find v (Pred k r v')           = Nothing
+  find v (Junc l _ r)            = maybe (find v l) Just (find v r)
+  find v (Wrap _ i)              = find v i
+  find _ _                       = Nothing
 
   remove' :: forall k v. (Eq k, Eq v) => (Inquire k v -> Inquire k v -> Boolean) -> Inquire k v -> Inquire k v -> Inquire k v
   remove' p i (Junc l o r) =
@@ -325,7 +325,7 @@ module Inquire.Combinators where
   foreign import unsafeFind "function unsafeFind(v) {\
                       \  return function(i) {\
                       \    /* We use String's eq typeclass because it uses `unsafeRefEq`*/\
-                      \    return findI(_ps.Prelude.eqString({}))(v)(i);\
+                      \    return find(_ps.Prelude.eqString({}))(v)(i);\
                       \  }\
                       \}" :: forall k v. v -> Inquire k v -> Maybe (Inquire k v)
 
@@ -377,44 +377,60 @@ module Inquire.Zipper where
     Wrap NOT (Junc (Pred cat EQ good) OR (Pred 3 GT 4))
   -}
 
-  data Path k v = L JuncOp (Inquire k v)
-                | R JuncOp (Inquire k v)
-                | D WrapOp
+  data Context k v = L JuncOp (Inquire k v)
+                   | R JuncOp (Inquire k v)
+                   | D WrapOp
 
-  data InquireZ k v = Zip { hole :: Inquire k v
-                          , path :: [Path k v]
+  data InquireZ k v = Zip { hole    :: Inquire k v
+                          , context :: [Context k v]
                           }
 
+  -- Injection and projection.
+
   toInquireZ :: forall k v. Inquire k v -> InquireZ k v
-  toInquireZ i = Zip { hole: i, path: [] }
+  toInquireZ i = Zip { hole: i, context: [] }
 
   fromInquireZ :: forall k v. InquireZ k v -> Inquire k v
-  fromInquireZ (Zip { hole = i, path = [] }) = i
+  fromInquireZ (Zip { hole = i, context = [] }) = i
   fromInquireZ iz = maybe EmptyAnd fromInquireZ $ zipUp iz
 
+  -- Basic movement.
+
   zipLeft :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
-  zipLeft (Zip { hole = Junc l o r, path = p }) =
-    Just $ Zip $ { hole: l, path: (L o r):p }
+  zipLeft (Zip { hole = Junc l o r, context = p }) =
+    Just $ Zip $ { hole: l, context: (L o r):p }
   zipLeft _ = Nothing
 
   zipRight :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
-  zipRight (Zip { hole = Junc l o r, path = p }) =
-    Just $ Zip $ { hole: r, path: (R o l):p }
+  zipRight (Zip { hole = Junc l o r, context = p }) =
+    Just $ Zip $ { hole: r, context: (R o l):p }
   zipRight _ = Nothing
 
   -- Zip down into a `Wrap`, or go to the right of a `Junc`.
   zipDown :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
-  zipDown (Zip { hole = Wrap o i, path = p }) =
-    Just $ Zip $ { hole: i, path: (D o):p }
+  zipDown (Zip { hole = Wrap o i, context = p }) =
+    Just $ Zip $ { hole: i, context: (D o):p }
   zipDown iz@(Zip { hole = Junc l o r}) = zipRight iz
   zipDown _ = Nothing
 
   -- Zip up out of a `Wrap`, or out of a `Junc`.
   zipUp :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
-  zipUp (Zip { hole = i, path = (D o):p }) =
-    Just $ Zip $ { hole: Wrap o i, path: p }
-  zipUp (Zip { hole = l, path = (L o r):p }) =
-    Just $ Zip $ { hole: Junc l o r, path: p }
-  zipUp (Zip { hole = r, path = (R o l):p }) =
-    Just $ Zip $ { hole: Junc l o r, path: p }
+  zipUp (Zip { hole = i, context = (D o):p }) =
+    Just $ Zip $ { hole: Wrap o i, context: p }
+  zipUp (Zip { hole = l, context = (L o r):p }) =
+    Just $ Zip $ { hole: Junc l o r, context: p }
+  zipUp (Zip { hole = r, context = (R o l):p }) =
+    Just $ Zip $ { hole: Junc l o r, context: p }
   zipUp _ = Nothing
+
+  -- Manipulation
+
+  getHole :: forall k v. InquireZ k v -> Inquire k v
+  getHole (Zip { hole = i }) = i
+
+  query :: forall a k v. (Inquire k v -> a) -> InquireZ k v -> a
+  query f = f <<< getHole
+
+  -- This looks an awful lot like a functor.
+  modify :: forall k v. (Inquire k v -> Inquire k v) -> InquireZ k v -> InquireZ k v
+  modify f (Zip z@{ hole = i }) = Zip (z { hole = f i })
