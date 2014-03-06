@@ -19,15 +19,22 @@ module Data.Foldable where
 
 module Data.Functor where
 
+  import Prelude
+
   class BiFunctor f where
     (<$$>) :: forall a b c d. (a -> c) -> (b -> d) -> f a b -> f c d
+
+  first :: forall a b c f. (BiFunctor f) => (a -> b) -> f a c -> f b c
+  first f = f <$$> id
+
+  second :: forall a b c f. (BiFunctor f) => (a -> c) -> f b a -> f b c
+  second f = id <$$> f
 
 module Data.Traversable where
 
   import Prelude
   import Data.Foldable
 
-  -- class (Data.Foldable.Foldable t, Data.Functor.Functor t) => Traversable t where
   class Traversable t where
     traverse :: forall a b f. (Applicative f) => (a -> f b) -> t a -> f (t b)
 

@@ -361,33 +361,60 @@ module Inquire.Zipper where
     d(I(kv))/d(kv) = d(1 + kv^2 + kv)/d(kv)
     I'(kv) = 1 + 2kv
 
-    So we want our zipper to be:
+    So we want our zipper to be similar to:
     data InquireZ k v = Hole k v
                       | Left k v
                       | Right k v
   -}
 
   import Prelude
+  import Data.Array ((:))
+  import Data.Either
   import Data.Maybe
-  import Data.Traversable
   import Inquire
 
-  data InquireZ t a = Top (t a)
-                    | Zipper a (Maybe a -> InquireZ t a)
+  {-
+    Wrap NOT (Junc (Pred cat EQ good) OR (Pred 3 GT 4))
+  -}
 
-  data Cont r a = Cont { runCont :: (a -> r) -> r }
+  data Path k v = L JuncOp (Inquire k v)
+                | R JuncOp (Inquire k v)
+                | D WrapOp
 
-  instance monadCont :: Prelude.Monad (Cont r) where
-    return x = Cont { runCont: \f -> f x }
-    (>>=) (Cont {runCont = c}) f = Cont { runCont: \k -> c (\a -> let Cont {runCont = c'} = (f a) in c' k) }
-
-  reset :: forall r. Cont r r -> r
-  reset m = let Cont { runCont = m' } = m in m' id
-
-  shift :: forall a r. ((a -> r) -> Cont r r) -> Cont r a
-  shift e = Cont { runCont: \k -> reset (e k) }
+  data InquireZ k v = Zip { hole :: Inquire k v
+                          , path :: [Path k v]
+                          }
 
   toInquireZ :: forall k v. Inquire k v -> InquireZ k v
-  toInquireZ i =
-    reset $ traverse (shift (\k -> return $ Zipper i (k <<< (maybe i id)))) >>= (return <<< Top)
+  toInquireZ i = Zip { hole: i, path: [] }
 
+  fromInquireZ :: forall k v. InquireZ k v -> Inquire k v
+  fromInquireZ (Zip { hole = i, path = [] }) = i
+  fromInquireZ iz = maybe EmptyAnd fromInquireZ $ zipUp iz
+
+  zipLeft :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipLeft (Zip { hole = Junc l o r, path = p }) =
+    Just $ Zip $ { hole: l, path: (L o r):p }
+  zipLeft _ = Nothing
+
+  zipRight :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipRight (Zip { hole = Junc l o r, path = p }) =
+    Just $ Zip $ { hole: r, path: (R o l):p }
+  zipRight _ = Nothing
+
+  -- Zip down into a `Wrap`, or go to the right of a `Junc`.
+  zipDown :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipDown (Zip { hole = Wrap o i, path = p }) =
+    Just $ Zip $ { hole: i, path: (D o):p }
+  zipDown iz@(Zip { hole = Junc l o r}) = zipRight iz
+  zipDown _ = Nothing
+
+  -- Zip up out of a `Wrap`, or out of a `Junc`.
+  zipUp :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipUp (Zip { hole = i, path = (D o):p }) =
+    Just $ Zip $ { hole: Wrap o i, path: p }
+  zipUp (Zip { hole = l, path = (L o r):p }) =
+    Just $ Zip $ { hole: Junc l o r, path: p }
+  zipUp (Zip { hole = r, path = (R o l):p }) =
+    Just $ Zip $ { hole: Junc l o r, path: p }
+  zipUp _ = Nothing
