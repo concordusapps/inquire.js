@@ -1,5 +1,17 @@
 # Changelog
 
+### 0.4.0
+#### 03/06/14
+- Complete revamp in PureScript.
+- No longer Fantasy Land compliant.
+- Is now a {Bi,}{Foldable,Functor,Traversable} and a BooleanAlgebra
+- Simplified dependencies.
+- Increased capabilities immensely.
+- Increased maintainability immensely.
+- Increased documentation immensely.
+- No coverage.
+- No tests.
+
 ### 0.3.2
 #### 09/10/13
 - Added Fantasy Land algebra (Applicative, Monad).
