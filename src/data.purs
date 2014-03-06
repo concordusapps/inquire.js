@@ -24,6 +24,12 @@ module Data.Functor where
   class BiFunctor f where
     (<$$>) :: forall a b c d. (a -> c) -> (b -> d) -> f a b -> f c d
 
+  map :: forall a b f. (Functor f) => (a -> b) -> f a -> f b
+  map = (<$>)
+
+  bimap :: forall a b c d f. (BiFunctor f) => (a -> c) -> (b -> d) -> f a b -> f c d
+  bimap = (<$$>)
+
   first :: forall a b c f. (BiFunctor f) => (a -> b) -> f a c -> f b c
   first f = f <$$> id
 

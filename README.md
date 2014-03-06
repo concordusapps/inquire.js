@@ -36,12 +36,34 @@ Currently supports [armet][armet] syntax query strings.
         * [xor](#xor)
         * [absorb](#absorb)
         * [associate](#associate)
-        * [assocLeft](#assocLeft)
-        * [assocRight](#assocRight)
+        * [assocLeft](#assocleft)
+        * [assocRight](#assocright)
         * [commute](#commute)
         * [distribute](#distribute)
         * [codistribute](#codistribute)
         * [idempotent](#idempotent)
+    * [Construction](#construction)
+        * [fromArrayPair](#fromarraypair)
+        * [fromArrayObj](#fromarrayobj)
+    * [Modification](#modification)
+        * [foldr](#foldr)
+        * [foldl](#foldl)
+        * [map](#map)
+        * [filterByKey](#filterbykey)
+        * [filterByVal](#filterbyval)
+        * [findByKey](#findbykey)
+        * [findByVal](#findbyval)
+        * [remove](#remove)
+        * [remove](#remove)
+        * [removeAll](#removeall)
+        * [replaceValByKey](#replacevalbykey)
+        * [replaceValByVal](#replacevalbyval)
+        * [unsafeFindByKey](#unsafefindbykey)
+        * [unsafeFindByVal](#unsafefindbyval)
+        * [unsafeRemove](#unsaferemove)
+        * [unsafeRemoveAll](#unsaferemoveall)
+        * [unsafeReplaceValByKey](#unsafereplacevalbykey)
+        * [unsafeReplaceValByVal](#unsafereplacevalbyval)
 
 ## Installation
 
@@ -314,7 +336,187 @@ Simplifies the Inquire with the Idempotency rule.
 
 `p OR p` => `p`
 
+#### Construction
+
+Creating new Inquires is done with either single `key` `val` arguments,
+an array of `[key, val]` pairs,
+or an array of `{key: k, val: v}` objects.
+
+The [predicate combinators](#predicate-combinators) above correspond to the single `key`, `val` option.
+
+###### fromArrayPair :: [[k, v]] -> Inquire k v
+
+This constructs an Inquire with the default relation of `==` for all predicates,
+and the default junction of `&` for all combinations of predicates.
+
+###### fromArrayObj :: [{key: k, val: v}] -> Inquire k v
+
+This constructs an Inquire with the default relation of `==` for all predicates,
+and the default junction of `&` for all combinations of predicates.
+This expects each object to have two entries: `key` and `val`.
+These should correspond to the intended predicate `key` and `val`.
+
+This constructs an Inquire with the default relation of `==` for all predicates,
+and the default junction of `&` for all combinations of predicates.
+
+#### Modification
+
+Since Inquire is also a `Foldable` and `Functor`,
+it provides the ability to `fold` and `map` over all of `val`s, respectively.
+These operations are similar to the native `reduce` and `map` for javascript arrays,
+the [fantasy land](fantasy land) specification,
+or something you might get from a library like underscore.
+So, if you can use `Array.map`, `_.reduceRight` or similar,
+you already know how to use these functions.
+
+###### foldr :: (v -> v' -> v') -> v' -> Inquire k v -> v'
+
+This is a right associative "catamorphism".
+What that means is that it takes each value and joins it to the next given the supplied function.
+
+The first argument is a binary function.
+The second argument is the initial value.
+The last argument is the Inquire.
+
+###### foldl :: (v' -> v -> v') -> v' -> Inquire k v -> v'
+
+This is a left associative "catamorphism".
+What that means is that it takes each value and joins it to the next given the supplied function.
+
+The first argument is a binary function.
+The second argument is the initial value.
+The last argument is the Inquire.
+
+###### map :: (v -> v') -> Inquire k v -> Inquire k v'
+
+This will modify every value in the Inquire with the given function.
+
+There are a few modification combinators available.
+
+###### filterByKey :: (k -> Boolean) -> Inquire k v -> Inquire k v
+
+Removes all predicates that fail the supplied boolean test.
+The first argument must be a function that tests a `key` and returns a boolean.
+
+###### filterByVal :: (v -> Boolean) -> Inquire k v -> Inquire k v
+
+Removes all predicates that fail the supplied boolean test.
+The first argument must be a function that tests a `val` and returns a boolean.
+
+###### findByKey :: k -> Inquire k v -> Maybe (Inquire k v)
+
+Searches for the first element which has the specified `key`.
+If successful, will return a `Just predicate`.
+If unsuccessful, will return a `Nothing`.
+
+This is biased to the right.
+
+###### findByVal :: v -> Inquire k v -> Maybe (Inquire k v)
+
+Searches for the first element which has the specified `val`.
+If successful, will return a `Just predicate`.
+If unsuccessful, will return a `Nothing`.
+
+This is biased to the right.
+
+###### remove' :: (Inquire k v -> Inquire k v -> Boolean) -> Inquire k v -> Inquire k v -> Inquire k v
+
+Helper function for `remove` and `removeAll`.
+Requires a binary function that takes two inquires and returns a boolean indicating whether the to continue removal.
+
+###### remove :: Inquire k v -> Inquire k v -> Inquire k v
+
+Removes the rightmost instance of the first Inquire from the second Inquire.
+
+###### removeAll :: Inquire k v -> Inquire k v -> Inquire k v
+
+Removes every instance of the first Inquire from the second Inquire.
+
+###### replaceValByKey :: v -> k -> Inquire k v -> Inquire k v
+
+Replaces each Inquire that has the specified `key` with the given `val`.
+The first argument is the `val` to replace with.
+The second argument is the `key` to test with.
+
+###### replaceValByVal :: v -> v -> Inquire k v -> Inquire k v
+
+Replaces each Inquire that has the specified `val` with the given `val`.
+The first argument is the `val` to replace with.
+The second argument is the `val` to test with.
+
+###### unsafeFindByKey :: k -> Inquire k v -> Maybe (Inquire k v)
+
+Unsafe version of [findByKey](#findByKey).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeFindByVal :: v -> Inquire k v -> Maybe (Inquire k v)
+
+Unsafe version of [findByVal](#findByVal).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeRemove :: Inquire k v -> Inquire k v -> Inquire k v
+
+Unsafe version of [remove](#remove).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeRemoveAll :: Inquire k v -> Inquire k v -> Inquire k v
+
+Unsafe version of [removeAll](#removeAll).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeReplaceValByKey :: v -> k -> Inquire k v -> Inquire k v
+
+Unsafe version of [replaceValByKey](#replaceValByKey).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeReplaceValByVal :: v -> v -> Inquire k v -> Inquire k v
+
+Unsafe version of [replaceValByVal](#replaceValByVal).
+This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
+AKA `===` in javascript.
+
+So it could fail depending on what the values are.
+Use with caution!
+
+However, it provides a nice wrapper around the safe version.
+i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
 
 [armet]: http://armet.github.io/
 [inquire]: https://npmjs.org/package/inquire
+[fantasy land]: https://github.com/fantasyland/fantasy-land
