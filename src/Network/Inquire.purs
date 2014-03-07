@@ -1,4 +1,19 @@
-module Inquire where
+module Inquire
+  ( Inquire(..)
+  , Rel(..)
+  , JuncOp(..)
+  , WrapOp(..)
+  , and
+  , or
+  , neg
+  , eq
+  , ne
+  , gt
+  , ge
+  , lt
+  , le
+  , objExtend
+  ) where
 
   import Prelude
   import Algebra ((|&|), (|||), BooleanAlgebra, (|~|), ComplementedLattice)
@@ -179,15 +194,43 @@ module Inquire where
   -- Purescript is depending on an extends on the object.
   foreign import objExtend
     "function objExtend(oldO) {\
-    \  return function(newO) {\
+    \  function betterTypeof(x) {\
+    \    return {}.toString.call(x).slice(8, -1);\
+    \  };\
+    \  function deepObj(x) {\
     \    var obj = {};\
-    \    for (var k in oldO) {\
-    \      obj[k] = oldO[k];\
-    \    }\
-    \    for (var k in newO) {\
-    \      obj[k] = newO[k];\
-    \    }\
+    \    Object.getOwnPropertyNames(x).forEach(function(key) {\
+    \      var val = x[key];\
+    \      if (betterTypeof(val) === 'Object') {\
+    \        obj[key] = deepObj(val);\
+    \      } else if (betterTypeof(val) === 'Array') {\
+    \        obj[key] = deepArray(val);\
+    \      } else {\
+    \        obj[key] = val;\
+    \      }\
+    \    });\
     \    return obj;\
+    \  };\
+    \  function deepArray(x) {\
+    \    var arr = [];\
+    \    x.forEach(function(val) {\
+    \      if (betterTypeof(val) === 'Object') {\
+    \        arr.push(deepObj(val));\
+    \      } else if (betterTypeof(val) === 'Array') {\
+    \        arr.push(deepArray(val));\
+    \      } else {\
+    \        arr.push(val);\
+    \      }\
+    \    });\
+    \    return arr;\
+    \  };\
+    \  return function(newO) {\
+    \    var obj0 = deepObj(oldO);\
+    \    var obj1 = deepObj(newO);\
+    \    Object.getOwnPropertyNames(obj1).forEach(function(key) {\
+    \      obj0[key] = obj1[key];\
+    \    });\
+    \    return obj0;\
     \  }\
     \}" :: forall r r' r''. { | r} -> { | r'} -> { | r''}
 
