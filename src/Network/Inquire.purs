@@ -1,22 +1,6 @@
-module Inquire
-  ( Inquire(..)
-  , Rel(..)
-  , JuncOp(..)
-  , WrapOp(..)
-  , and
-  , or
-  , neg
-  , eq
-  , ne
-  , gt
-  , ge
-  , lt
-  , le
-  , objExtend
-  ) where
+module Inquire where
 
   import Prelude
-  import Algebra ((|&|), (|||), BooleanAlgebra, (|~|), ComplementedLattice)
   import Data.Foldable
   import Data.Functor
   import Data.Monoid
@@ -159,23 +143,22 @@ module Inquire
     bitraverse f g (Junc l o r) = Junc <$> bitraverse f g l <*> pure o <*> bitraverse f g r
     bitraverse f g (Wrap o i)   = Wrap o <$> bitraverse f g i
 
-  instance complementedLatticeInquire :: Algebra.ComplementedLattice (Inquire k v) where
-    (|~|) EmptyAnd = EmptyOr
-    (|~|) EmptyOr  = EmptyAnd
-    (|~|) p        = Wrap NOT p
+  instance boolLikeInquire :: BoolLike (Inquire k v) where
+    (||) EmptyAnd p        = EmptyAnd
+    (||) p        EmptyAnd = EmptyAnd
+    (||) p        EmptyOr  = p
+    (||) EmptyOr  p        = p
+    (||) p        q        = Junc p OR q
 
-  instance booleanAlgebraInquire :: Algebra.BooleanAlgebra (Inquire k v) where
-    (|||) EmptyAnd p        = EmptyAnd
-    (|||) p        EmptyAnd = EmptyAnd
-    (|||) p        EmptyOr  = p
-    (|||) EmptyOr  p        = p
-    (|||) p        q        = Junc p OR q
+    (&&) EmptyOr  p        = EmptyOr
+    (&&) p        EmptyOr  = EmptyOr
+    (&&) p        EmptyAnd = p
+    (&&) EmptyAnd p        = p
+    (&&) p        q        = Junc p AND q
 
-    (|&|) EmptyOr  p        = EmptyOr
-    (|&|) p        EmptyOr  = EmptyOr
-    (|&|) p        EmptyAnd = p
-    (|&|) EmptyAnd p        = p
-    (|&|) p        q        = Junc p AND q
+    not EmptyAnd = EmptyOr
+    not EmptyOr  = EmptyAnd
+    not p        = Wrap NOT p
 
   -- FIXME
   -- There should be some better way to `generate` from js.
@@ -189,50 +172,6 @@ module Inquire
     \  };\
     \  return gen(showDict)(showDict)(i);\
     \}" :: forall k v. Inquire k v -> String
-
-  -- FIXME
-  -- Purescript is depending on an extends on the object.
-  foreign import objExtend
-    "function objExtend(oldO) {\
-    \  function betterTypeof(x) {\
-    \    return {}.toString.call(x).slice(8, -1);\
-    \  };\
-    \  function deepObj(x) {\
-    \    var obj = {};\
-    \    Object.getOwnPropertyNames(x).forEach(function(key) {\
-    \      var val = x[key];\
-    \      if (betterTypeof(val) === 'Object') {\
-    \        obj[key] = deepObj(val);\
-    \      } else if (betterTypeof(val) === 'Array') {\
-    \        obj[key] = deepArray(val);\
-    \      } else {\
-    \        obj[key] = val;\
-    \      }\
-    \    });\
-    \    return obj;\
-    \  };\
-    \  function deepArray(x) {\
-    \    var arr = [];\
-    \    x.forEach(function(val) {\
-    \      if (betterTypeof(val) === 'Object') {\
-    \        arr.push(deepObj(val));\
-    \      } else if (betterTypeof(val) === 'Array') {\
-    \        arr.push(deepArray(val));\
-    \      } else {\
-    \        arr.push(val);\
-    \      }\
-    \    });\
-    \    return arr;\
-    \  };\
-    \  return function(newO) {\
-    \    var obj0 = deepObj(oldO);\
-    \    var obj1 = deepObj(newO);\
-    \    Object.getOwnPropertyNames(obj1).forEach(function(key) {\
-    \      obj0[key] = obj1[key];\
-    \    });\
-    \    return obj0;\
-    \  }\
-    \}" :: forall r r' r''. { | r} -> { | r'} -> { | r''}
 
   gen :: forall k v. (Show k, Show v) => Inquire k v -> String
   gen i = show i
@@ -267,22 +206,22 @@ module Inquire
   leObj o = pred {key: o.key, rel: LE, val: o.val}
 
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  and i1 i2 = i1 |&| i2
+  and i1 i2 = i1 && i2
 
   or :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  or i1 i2 = i1 ||| i2
+  or i1 i2 = i1 || i2
 
   neg :: forall k v. Inquire k v -> Inquire k v
-  neg p = (|~|) p
+  neg i = not i
 
   implies :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  implies p q = (|~|) p ||| q
+  implies p q = not p || q
 
   equiv :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  equiv p q = (p |&| q) ||| ((|~|) p |&| (|~|) q)
+  equiv p q = (p && q) || (not p && not q)
 
   xor :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
-  xor p q = (p |&| (|~|) q) ||| ((|~|) p |&| q)
+  xor p q = (p && not q) || (not p && q)
 
   -- These should all be part of BooleanAlgebra, but no bueno at this momento.
 
@@ -291,30 +230,30 @@ module Inquire
   absorb (Junc p OR  (Junc p' AND _)) | p == p' = p
 
   associate :: forall k v. Inquire k v -> Inquire k v
-  associate (Junc p AND (Junc q AND r)) = (p |&| q) |&| r
-  associate (Junc p OR  (Junc q OR  r)) = (p ||| q) ||| r
-  associate (Junc (Junc p AND q) AND r) = p |&| (q |&| r)
-  associate (Junc (Junc p OR  q) OR  r) = p ||| (q ||| r)
+  associate (Junc p AND (Junc q AND r)) = (p && q) && r
+  associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
+  associate (Junc (Junc p AND q) AND r) = p && (q && r)
+  associate (Junc (Junc p OR  q) OR  r) = p || (q || r)
 
   assocLeft :: forall k v. Inquire k v-> Inquire k v
-  assocLeft (Junc p AND (Junc q AND r)) = (p |&| q) |&| r
-  assocLeft (Junc p OR  (Junc q OR  r)) = (p ||| q) ||| r
+  assocLeft (Junc p AND (Junc q AND r)) = (p && q) && r
+  assocLeft (Junc p OR  (Junc q OR  r)) = (p || q) || r
 
   assocRight :: forall k v. Inquire k v-> Inquire k v
-  assocRight (Junc (Junc p AND q) AND r) = p |&| (q |&| r)
-  assocRight (Junc (Junc p OR  q) OR  r) = p ||| (q ||| r)
+  assocRight (Junc (Junc p AND q) AND r) = p && (q && r)
+  assocRight (Junc (Junc p OR  q) OR  r) = p || (q || r)
 
   commute :: forall k v. Inquire k v -> Inquire k v
-  commute (Junc p AND q) = q |&| p
-  commute (Junc p OR  q) = q ||| p
+  commute (Junc p AND q) = q && p
+  commute (Junc p OR  q) = q || p
 
   distribute :: forall k v. Inquire k v -> Inquire k v
-  distribute (Junc p AND (Junc q OR  r)) = (p ||| q) |&| (p ||| r)
-  distribute (Junc p OR  (Junc q AND r)) = (p |&| q) ||| (p |&| r)
+  distribute (Junc p AND (Junc q OR  r)) = (p || q) && (p || r)
+  distribute (Junc p OR  (Junc q AND r)) = (p && q) || (p && r)
 
   codistribute :: forall k v. Inquire k v -> Inquire k v
-  codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p |&| (q ||| r)
-  codistribute (Junc (Junc p AND q) OR  (Junc p AND r)) = p ||| (q |&| r)
+  codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)
+  codistribute (Junc (Junc p AND q) OR  (Junc p AND r)) = p || (q && r)
 
   idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
   idempotent (Junc p AND p') | p == p' = p

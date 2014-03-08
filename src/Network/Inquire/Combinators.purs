@@ -12,8 +12,8 @@ module Inquire.Combinators where
   -- Utilities for working with Inquire.
   toObj :: forall k v. Inquire k v -> {keys :: [k], vals :: [v]}
   toObj i =
-    let updateVals = (\v o -> objExtend o {vals: v : o.vals}) in
-    let updateKeys = (\k o -> objExtend o {keys: k : o.keys}) in
+    let updateVals = (\v o -> o {vals = v : o.vals}) in
+    let updateKeys = (\k o -> o {keys = k : o.keys}) in
     bifoldr updateKeys updateVals {keys: [], vals: []} i
 
   keys :: forall k v. Inquire k v -> [k]
