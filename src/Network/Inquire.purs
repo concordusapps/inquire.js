@@ -112,8 +112,10 @@ module Inquire
   instance showInquire :: (Prelude.Show k, Prelude.Show v) => Prelude.Show (Inquire k v) where
     show EmptyAnd = ""
     show EmptyOr = ""
-    show (Pred k r v) = show k ++ show r ++ show v
+    show (Pred k r v) = encodeURIComponent (show k) ++ show r ++ encodeURIComponent (show v)
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
+    show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
+    show (Junc l@(Junc _ o' _) o r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
     show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
@@ -205,6 +207,9 @@ module Inquire
     \  };\
     \  return gen(showDict)(showDict)(i);\
     \}" :: forall k v. Inquire k v -> String
+
+  foreign import encodeURI :: String -> String
+  foreign import encodeURIComponent :: String -> String
 
   gen :: forall k v. (Show k, Show v) => Inquire k v -> String
   gen i = show i

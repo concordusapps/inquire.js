@@ -1,164 +1,467 @@
 module Text.Parsing.Read where
+class Read a where
+  read :: Prim.String -> a
+foreign import readNumberImpl :: Prim.String -> Prim.Number
+foreign import instance readString :: Text.Parsing.Read.Read Prim.String
+foreign import instance readBoolean :: Text.Parsing.Read.Read Prim.Boolean
+foreign import instance readNumber :: Text.Parsing.Read.Read Prim.Number
 module Prelude where
+infixr 9 >>>
+infixr 9 <<<
+infixr 0 $
+infixl 0 #
+infixl 4 <$>
+infixl 4 <*>
+infixl 3 <|>
+infixl 1 >>=
+infixl 7 *
+infixl 7 /
+infixl 7 %
+infixl 6 -
+infixl 6 +
+infixl 4 ==
+infixl 4 /=
+infixl 4 <
+infixl 4 >
+infixl 4 <=
+infixl 4 >=
+infixl 10 &
+infixl 10 |
+infixl 10 ^
+infixl 8 !!
+infixr 2 ||
+infixr 3 &&
+infixr 5 ++
+class BoolLike b where
+  (&&) :: b -> b -> b
+  (||) :: b -> b -> b
+  not :: b -> b
+class Bits b where
+  (&) :: b -> b -> b
+  (|) :: b -> b -> b
+  (^) :: b -> b -> b
+  shl :: b -> Prim.Number -> b
+  shr :: b -> Prim.Number -> b
+  zshr :: b -> Prim.Number -> b
+  complement :: b -> b
+class Ord a where
+  (<) :: a -> a -> Prim.Boolean
+  (>) :: a -> a -> Prim.Boolean
+  (<=) :: a -> a -> Prim.Boolean
+  (>=) :: a -> a -> Prim.Boolean
+class Eq a where
+  (==) :: a -> a -> Prim.Boolean
+  (/=) :: a -> a -> Prim.Boolean
+class Num a where
+  (+) :: a -> a -> a
+  (-) :: a -> a -> a
+  (*) :: a -> a -> a
+  (/) :: a -> a -> a
+  (%) :: a -> a -> a
+  negate :: a -> a
+class Monad m where
+  return :: forall a. a -> m a
+  (>>=) :: forall a b. m a -> (a -> m b) -> m b
+class Alternative f where
+  empty :: forall a. f a
+  (<|>) :: forall a. f a -> f a -> f a
+class Applicative f where
+  pure :: forall a. a -> f a
+  (<*>) :: forall a b. f (a -> b) -> f a -> f b
+class Functor f where
+  (<$>) :: forall a b. (a -> b) -> f a -> f b
+class Show a where
+  show :: a -> Prim.String
+class Category a where
+  id :: forall t. a t t
+  (<<<) :: forall b c d. a c d -> a b c -> a b d
+  (>>>) :: forall b c d. a b c -> a c d -> a b d
+foreign import (++) :: Prim.String -> Prim.String -> Prim.String
+foreign import boolNot :: Prim.Boolean -> Prim.Boolean
+foreign import boolOr :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+foreign import boolAnd :: Prim.Boolean -> Prim.Boolean -> Prim.Boolean
+foreign import (!!) :: forall a. [a] -> Prim.Number -> a
+foreign import numComplement :: Prim.Number -> Prim.Number
+foreign import numXor :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numOr :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numAnd :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numZshr :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numShr :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numShl :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numGreaterEq :: Prim.Number -> Prim.Number -> Prim.Boolean
+foreign import numGreater :: Prim.Number -> Prim.Number -> Prim.Boolean
+foreign import numLessEq :: Prim.Number -> Prim.Number -> Prim.Boolean
+foreign import numLess :: Prim.Number -> Prim.Number -> Prim.Boolean
+foreign import unsafeRefIneq :: forall a. a -> a -> Prim.Boolean
+foreign import unsafeRefEq :: forall a. a -> a -> Prim.Boolean
+foreign import numNegate :: Prim.Number -> Prim.Number
+foreign import numMod :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numDiv :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numMul :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numSub :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import numAdd :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import showNumberImpl :: Prim.Number -> Prim.String
 foreign import (#) :: forall a b. a -> (a -> b) -> b
 foreign import ($) :: forall a b. (a -> b) -> a -> b
 foreign import const :: forall a b. a -> b -> a
 foreign import flip :: forall a b c. (a -> b -> c) -> b -> a -> c
+foreign import instance categoryArr :: Prelude.Category Prim.Function
+foreign import instance showString :: Prelude.Show Prim.String
+foreign import instance showBoolean :: Prelude.Show Prim.Boolean
+foreign import instance showNumber :: Prelude.Show Prim.Number
+foreign import instance functorFromApplicative :: (Prelude.Applicative f) => Prelude.Functor f
+foreign import instance applicativeFromMonad :: (Prelude.Monad m) => Prelude.Applicative m
+foreign import instance numNumber :: Prelude.Num Prim.Number
+foreign import instance eqString :: Prelude.Eq Prim.String
+foreign import instance eqNumber :: Prelude.Eq Prim.Number
+foreign import instance eqBoolean :: Prelude.Eq Prim.Boolean
+foreign import instance eqArray :: (Prelude.Eq a) => Prelude.Eq [a]
+foreign import instance ordNumber :: Prelude.Ord Prim.Number
+foreign import instance bitsNumber :: Prelude.Bits Prim.Number
+foreign import instance boolLikeBoolean :: Prelude.BoolLike Prim.Boolean
 module Math where
+foreign import sqrt2 :: Prim.Number
+foreign import sqrt1_2 :: Prim.Number
+foreign import pi :: Prim.Number
+foreign import log10e :: Prim.Number
+foreign import log2e :: Prim.Number
+foreign import ln10 :: Prim.Number
+foreign import ln2 :: Prim.Number
+foreign import e :: Prim.Number
+foreign import tan :: Prim.Number -> Prim.Number
+foreign import sqrt :: Prim.Number -> Prim.Number
+foreign import sin :: Prim.Number -> Prim.Number
+foreign import round :: Prim.Number -> Prim.Number
+foreign import pow :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import min :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import max :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import log :: Prim.Number -> Prim.Number
+foreign import floor :: Prim.Number -> Prim.Number
+foreign import exp :: Prim.Number -> Prim.Number
+foreign import cos :: Prim.Number -> Prim.Number
+foreign import aceil :: Prim.Number -> Prim.Number
+foreign import atan2 :: Prim.Number -> Prim.Number -> Prim.Number
+foreign import atan :: Prim.Number -> Prim.Number
+foreign import asin :: Prim.Number -> Prim.Number
+foreign import acos :: Prim.Number -> Prim.Number
+foreign import abs :: Prim.Number -> Prim.Number
 module Global where
-foreign import decodeURI :: Prim.String -> Prim.String
-foreign import decodeURIComponent :: Prim.String -> Prim.String
-foreign import encodeURI :: Prim.String -> Prim.String
-foreign import encodeURIComponent :: Prim.String -> Prim.String
-foreign import isFinite :: Prim.Number -> Prim.Boolean
 foreign import isNaN :: Prim.Number -> Prim.Boolean
-foreign import parseFloat :: Prim.String -> Prim.Number
+foreign import decodeURI :: Prim.String -> Prim.String
+foreign import encodeURI :: Prim.String -> Prim.String
+foreign import decodeURIComponent :: Prim.String -> Prim.String
+foreign import encodeURIComponent :: Prim.String -> Prim.String
 foreign import parseInt :: Prim.String -> Prim.Number
+foreign import parseFloat :: Prim.String -> Prim.Number
+foreign import isFinite :: Prim.Number -> Prim.Boolean
+foreign import toPrecision :: Prim.Number -> Prim.Number -> Prim.String
+foreign import toFixed :: Prim.Number -> Prim.Number -> Prim.String
+foreign import toExponential :: Prim.Number -> Prim.String
+foreign import infinity :: Prim.Number
+foreign import nan :: Prim.Number
 module Data.String.Regex where
 foreign import data Regex :: *
+foreign import search :: Data.String.Regex.Regex -> Prim.String -> Prim.Number
+foreign import replaceR :: Data.String.Regex.Regex -> Prim.String -> Prim.String -> Prim.String
+foreign import match :: Data.String.Regex.Regex -> Prim.String -> [Prim.String]
+foreign import test :: Data.String.Regex.Regex -> Prim.String -> Prim.Boolean
+foreign import regex :: Prim.String -> Prim.String -> Data.String.Regex.Regex
 module Data.String where
+foreign import trim :: Prim.String -> Prim.String
+foreign import toUpper :: Prim.String -> Prim.String
+foreign import toLower :: Prim.String -> Prim.String
+foreign import substring :: Prim.Number -> Prim.Number -> Prim.String -> Prim.String
+foreign import substr :: Prim.Number -> Prim.Number -> Prim.String -> Prim.String
+foreign import split :: Prim.String -> Prim.String -> [Prim.String]
+foreign import sliceS :: Prim.Number -> Prim.Number -> Prim.String -> Prim.String
+foreign import replace :: Prim.String -> Prim.String -> Prim.String -> Prim.String
+foreign import localeCompare :: Prim.String -> Prim.String -> Prim.Number
+foreign import lastIndexOfS :: Prim.String -> Prim.String -> Prim.Number
+foreign import indexOfS :: Prim.String -> Prim.String -> Prim.Number
+foreign import charAt :: Prim.Number -> Prim.String -> Prim.String
+foreign import lengthS :: Prim.String -> Prim.Number
 module Data.Maybe where
-foreign import data Maybe :: * -> *
+data Maybe a = Nothing  | Just a
 foreign import fromMaybe :: forall a. a -> Data.Maybe.Maybe a -> a
 foreign import maybe :: forall a b. b -> (a -> b) -> Data.Maybe.Maybe a -> b
+foreign import instance monadMaybe :: Prelude.Monad Data.Maybe.Maybe
+foreign import instance applicativeMaybe :: Prelude.Applicative Data.Maybe.Maybe
+foreign import instance functorMaybe :: Prelude.Functor Data.Maybe.Maybe
+foreign import instance showMaybe :: (Prelude.Show a) => Prelude.Show (Data.Maybe.Maybe a)
+foreign import instance eqMaybe :: (Prelude.Eq a) => Prelude.Eq (Data.Maybe.Maybe a)
 module Data.Functor where
-foreign import bimap :: forall a b c d f. (Data.Functor.BiFunctor f) => (a -> c) -> (b -> d) -> f a b -> f c d
-foreign import first :: forall a b c f. (Data.Functor.BiFunctor f) => (a -> b) -> f a c -> f b c
-foreign import map :: forall a b f. (Prelude.Functor f) => (a -> b) -> f a -> f b
+class BiFunctor f where
+  (<$$>) :: forall a b c d. (a -> c) -> (b -> d) -> f a b -> f c d
 foreign import second :: forall a b c f. (Data.Functor.BiFunctor f) => (a -> c) -> f b a -> f b c
+foreign import first :: forall a b c f. (Data.Functor.BiFunctor f) => (a -> b) -> f a c -> f b c
+foreign import bimap :: forall a b c d f. (Data.Functor.BiFunctor f) => (a -> c) -> (b -> d) -> f a b -> f c d
+foreign import map :: forall a b f. (Prelude.Functor f) => (a -> b) -> f a -> f b
 module Data.Eq where
-foreign import data Ref :: * -> *
-foreign import liftRef :: forall a b. (a -> a -> b) -> Data.Eq.Ref a -> Data.Eq.Ref a -> b
-foreign import refEq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+data Ref a = Ref a
 foreign import refIneq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+foreign import refEq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
+foreign import liftRef :: forall a b. (a -> a -> b) -> Data.Eq.Ref a -> Data.Eq.Ref a -> b
+foreign import instance eqRef :: Prelude.Eq (Data.Eq.Ref a)
 module Data.Enum where
+class Enum a where
+  toEnum :: Prim.Number -> Data.Maybe.Maybe a
+  fromEnum :: a -> Prim.Number
 module Data.Either where
-foreign import data Either :: * -> * -> *
+data Either a b = Left a | Right b
 foreign import either :: forall a b c. (a -> c) -> (b -> c) -> Data.Either.Either a b -> c
+foreign import instance monadEither :: Prelude.Monad (Data.Either.Either e)
+foreign import instance applicativeEither :: Prelude.Applicative (Data.Either.Either e)
+foreign import instance functorEither :: Prelude.Functor (Data.Either.Either a)
+foreign import instance showEither :: (Prelude.Show a, Prelude.Show b) => Prelude.Show (Data.Either.Either a b)
+foreign import instance eqEither :: (Prelude.Eq a, Prelude.Eq b) => Prelude.Eq (Data.Either.Either a b)
 module Data.Array.Unsafe where
-foreign import head :: forall a. [a] -> a
 foreign import tail :: forall a. [a] -> [a]
+foreign import head :: forall a. [a] -> a
 module Data.Array where
-foreign import (:) :: forall a. a -> [a] -> [a]
+infixr 6 :
+foreign import take :: forall a. Prim.Number -> [a] -> [a]
+foreign import drop :: forall a. Prim.Number -> [a] -> [a]
 foreign import all :: forall a. (a -> Prim.Boolean) -> [a] -> Prim.Boolean
 foreign import any :: forall a. (a -> Prim.Boolean) -> [a] -> Prim.Boolean
-foreign import concatMap :: forall a b. [a] -> (a -> [b]) -> [b]
-foreign import drop :: forall a. Prim.Number -> [a] -> [a]
-foreign import filter :: forall a. (a -> Prim.Boolean) -> [a] -> [a]
+foreign import zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
+foreign import range :: Prim.Number -> Prim.Number -> [Prim.Number]
+foreign import isEmpty :: forall a. [a] -> Prim.Boolean
 foreign import find :: forall a. (a -> Prim.Boolean) -> [a] -> Data.Maybe.Maybe a
+foreign import filter :: forall a. (a -> Prim.Boolean) -> [a] -> [a]
+foreign import concatMap :: forall a b. [a] -> (a -> [b]) -> [b]
+foreign import singleton :: forall a. a -> [a]
+foreign import (:) :: forall a. a -> [a] -> [a]
+foreign import updateAt :: forall a. Prim.Number -> a -> [a] -> [a]
+foreign import deleteAt :: forall a. Prim.Number -> Prim.Number -> [a] -> [a]
+foreign import insertAt :: forall a. Prim.Number -> a -> [a] -> [a]
+foreign import sort :: forall a. [a] -> [a]
+foreign import slice :: forall a. Prim.Number -> Prim.Number -> [a] -> [a]
+foreign import shift :: forall a. [a] -> [a]
+foreign import reverse :: forall a. [a] -> [a]
+foreign import push :: forall a. [a] -> a -> [a]
+foreign import joinWith :: [Prim.String] -> Prim.String -> Prim.String
+foreign import joinS :: [Prim.String] -> Prim.String
+foreign import concat :: forall a. [a] -> [a] -> [a]
+foreign import lastIndexOf :: forall a. [a] -> a -> Prim.Number
+foreign import indexOf :: forall a. [a] -> a -> Prim.Number
+foreign import length :: forall a. [a] -> Prim.Number
 foreign import foldl :: forall a b. (b -> a -> b) -> b -> [a] -> b
 foreign import foldr :: forall a b. (a -> b -> a) -> a -> [b] -> a
-foreign import head :: forall a. [a] -> Data.Maybe.Maybe a
-foreign import isEmpty :: forall a. [a] -> Prim.Boolean
 foreign import map :: forall a b. (a -> b) -> [a] -> [b]
-foreign import range :: Prim.Number -> Prim.Number -> [Prim.Number]
-foreign import singleton :: forall a. a -> [a]
 foreign import tail :: forall a. [a] -> Data.Maybe.Maybe [a]
-foreign import take :: forall a. Prim.Number -> [a] -> [a]
-foreign import zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
+foreign import head :: forall a. [a] -> Data.Maybe.Maybe a
+foreign import instance showArray :: (Prelude.Show a) => Prelude.Show [a]
+foreign import instance monadArray :: Prelude.Monad Prim.Array
+foreign import instance functorArray :: Prelude.Functor Prim.Array
+foreign import instance alternativeArray :: Prelude.Alternative Prim.Array
 module Data.Monoid where
+infixr 6 <>
+class Monoid m where
+  mempty :: m
+  (<>) :: m -> m -> m
 foreign import mconcat :: forall m. (Data.Monoid.Monoid m) => [m] -> m
+foreign import instance monoidString :: Data.Monoid.Monoid Prim.String
+foreign import instance monoidArray :: Data.Monoid.Monoid [a]
 module Data.Foldable where
+class BiFoldable f where
+  bifoldr :: forall a b c. (a -> c -> c) -> (b -> c -> c) -> c -> f a b -> c
+  bifoldl :: forall a b c. (c -> a -> c) -> (c -> b -> c) -> c -> f a b -> c
+class Foldable f where
+  foldr :: forall a b. (a -> b -> b) -> b -> f a -> b
+  foldl :: forall a b. (b -> a -> b) -> b -> f a -> b
 foreign import foldMap :: forall a f m. (Data.Foldable.Foldable f, Data.Monoid.Monoid m) => (a -> m) -> f a -> m
 module Data.Traversable where
+class BiTraversable t where
+  bitraverse :: forall a b c d f. (Prelude.Applicative f) => (a -> f c) -> (b -> f d) -> t a b -> f (t c d)
+class Traversable t where
+  traverse :: forall a b f. (Prelude.Applicative f) => (a -> f b) -> t a -> f (t b)
 foreign import bisequence :: forall a b f t. (Prelude.Applicative f, Data.Traversable.BiTraversable t) => t (f a) (f b) -> f (t a b)
 foreign import sequence :: forall a f t. (Prelude.Applicative f, Data.Traversable.Traversable t) => t (f a) -> f (t a)
 module Inquire where
-foreign import data Inquire :: * -> * -> *
-foreign import data JuncOp :: *
-foreign import data Rel :: *
-foreign import data WrapOp :: *
-foreign import absorb :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import and :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import assocLeft :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import assocRight :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import associate :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import codistribute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import commute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import distribute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import eq :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import eqObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
-foreign import equiv :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import ge :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import geObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
-foreign import gen :: forall k v. (Prelude.Show k, Prelude.Show v) => Inquire.Inquire k v -> Prim.String
-foreign import gt :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import gtObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+data WrapOp  = NOBOOL  | NOT 
+data JuncOp  = AND  | OR 
+data Rel  = EQ  | NE  | GT  | GE  | LT  | LE 
+data Inquire k v = EmptyAnd  | EmptyOr  | Pred k Inquire.Rel v | Junc (Inquire.Inquire k v) Inquire.JuncOp (Inquire.Inquire k v) | Wrap Inquire.WrapOp (Inquire.Inquire k v)
 foreign import idempotent :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import codistribute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import distribute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import commute :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import assocRight :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import assocLeft :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import associate :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import absorb :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import xor :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import equiv :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import implies :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import le :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import leObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
-foreign import lt :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import ltObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
-foreign import ne :: forall k v. k -> v -> Inquire.Inquire k v
-foreign import neObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
 foreign import neg :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import or :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import xor :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import and :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import leObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import ltObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import geObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import gtObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import neObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import eqObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
+foreign import le :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import lt :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import ge :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import gt :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import ne :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import eq :: forall k v. k -> v -> Inquire.Inquire k v
+foreign import generate :: forall k v. Inquire.Inquire k v -> Prim.String
+foreign import gen :: forall k v. (Prelude.Show k, Prelude.Show v) => Inquire.Inquire k v -> Prim.String
+foreign import instance eqRel :: Prelude.Eq Inquire.Rel
+foreign import instance eqJuncOp :: Prelude.Eq Inquire.JuncOp
+foreign import instance eqWrapOp :: Prelude.Eq Inquire.WrapOp
+foreign import instance eqInquire :: (Prelude.Eq k, Prelude.Eq v) => Prelude.Eq (Inquire.Inquire k v)
+foreign import instance showRel :: Prelude.Show Inquire.Rel
+foreign import instance showJuncOp :: Prelude.Show Inquire.JuncOp
+foreign import instance showWrapOp :: Prelude.Show Inquire.WrapOp
+foreign import instance showInquire :: (Prelude.Show k, Prelude.Show v) => Prelude.Show (Inquire.Inquire k v)
+foreign import instance functorInquire :: Prelude.Functor (Inquire.Inquire k)
+foreign import instance monoidInquire :: Data.Monoid.Monoid (Inquire.Inquire k v)
+foreign import instance biFunctorInquire :: Data.Functor.BiFunctor Inquire.Inquire
+foreign import instance foldableInquire :: Data.Foldable.Foldable (Inquire.Inquire k)
+foreign import instance biFoldableInquire :: Data.Foldable.BiFoldable Inquire.Inquire
+foreign import instance traversableInquire :: Data.Traversable.Traversable (Inquire.Inquire k)
+foreign import instance bitraversableInquire :: Data.Traversable.BiTraversable Inquire.Inquire
+foreign import instance boolLikeInquire :: Prelude.BoolLike (Inquire.Inquire k v)
 module Data.Tuple where
-foreign import data Tuple :: * -> * -> *
-foreign import curry :: forall a b c. (Data.Tuple.Tuple a b -> c) -> a -> b -> c
-foreign import uncurry :: forall a b c. (a -> b -> c) -> Data.Tuple.Tuple a b -> c
+data Tuple a b = Tuple a b
 foreign import unzip :: forall a b. [Data.Tuple.Tuple a b] -> Data.Tuple.Tuple [a] [b]
 foreign import zip :: forall a b. [a] -> [b] -> [Data.Tuple.Tuple a b]
+foreign import uncurry :: forall a b c. (a -> b -> c) -> Data.Tuple.Tuple a b -> c
+foreign import curry :: forall a b c. (Data.Tuple.Tuple a b -> c) -> a -> b -> c
+foreign import instance showTuple :: (Prelude.Show a, Prelude.Show b) => Prelude.Show (Data.Tuple.Tuple a b)
+foreign import instance eqTuple :: (Prelude.Eq a, Prelude.Eq b) => Prelude.Eq (Data.Tuple.Tuple a b)
 module Inquire.Combinators where
-foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import unsafeReplaceValByVal :: forall k v. v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import unsafeReplaceValByKey :: forall k v. v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import unsafeRemoveAll :: forall k v. v -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import unsafeRemove :: forall k v. v -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import unsafeFindByVal :: forall k v. v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
+foreign import unsafeFindByKey :: forall k v. v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
+foreign import map :: forall a b f. (Prelude.Functor f) => (a -> b) -> f a -> f b
+foreign import bimap :: forall a b c d f. (Data.Functor.BiFunctor f) => (a -> c) -> (b -> d) -> f a b -> f c d
+foreign import replaceValByVal :: forall k v. (Prelude.Eq v) => v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import replaceValByKey :: forall k v. (Prelude.Eq k) => v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import removeAll :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import remove :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import findByKey :: forall k v. (Prelude.Eq k) => k -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
 foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
+foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Inquire.Inquire k v
-foreign import fromArrayPair :: forall t3921. [[t3921]] -> Inquire.Inquire t3921 t3921
-foreign import keys :: forall k v. Inquire.Inquire k v -> [k]
-foreign import remove :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import removeAll :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import replaceValByKey :: forall k v. (Prelude.Eq k) => v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import replaceValByVal :: forall k v. (Prelude.Eq v) => v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
+foreign import fromArrayPair :: forall t3993. [[t3993]] -> Inquire.Inquire t3993 t3993
 foreign import toArrayObj :: forall k v. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t3898. Inquire.Inquire t3898 t3898 -> [[t3898]]
-foreign import toObj :: forall k v. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
+foreign import toArrayPair :: forall t3970. Inquire.Inquire t3970 t3970 -> [[t3970]]
 foreign import toTuple :: forall k v. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Inquire.Inquire k v -> [v]
+foreign import keys :: forall k v. Inquire.Inquire k v -> [k]
+foreign import toObj :: forall k v. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
 module Inquire.Zipper where
-foreign import data InquireZ :: * -> * -> *
-foreign import fromInquireZ :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
-foreign import getHole :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
+data InquireZ k v = Zip { context :: [Inquire.Zipper.Context k v], hole :: Inquire.Inquire k v }
 foreign import modify :: forall k v. (Inquire.Inquire k v -> Inquire.Inquire k v) -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
 foreign import query :: forall a k v. (Inquire.Inquire k v -> a) -> Inquire.Zipper.InquireZ k v -> a
-foreign import toInquireZ :: forall k v. Inquire.Inquire k v -> Inquire.Zipper.InquireZ k v
-foreign import zipDown :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
-foreign import zipLeft :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
-foreign import zipLeftmost :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
-foreign import zipMost :: forall k v. Inquire.Zipper.Movement k v -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
-foreign import zipRight :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import getHole :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
 foreign import zipRightmost :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
-foreign import zipUp :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import zipLeftmost :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
 foreign import zipUpmost :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
+foreign import zipMost :: forall k v. Inquire.Zipper.Movement k v -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
+foreign import zipUp :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import zipDown :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import zipRight :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import zipLeft :: forall k v. Inquire.Zipper.InquireZ k v -> Data.Maybe.Maybe (Inquire.Zipper.InquireZ k v)
+foreign import fromInquireZ :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
+foreign import toInquireZ :: forall k v. Inquire.Inquire k v -> Inquire.Zipper.InquireZ k v
 module Control.Monad.Eff where
+type Pure a = forall e. Control.Monad.Eff.Eff e a
 foreign import data Eff :: # ! -> * -> *
-foreign import data Pure :: * -> *
+foreign import foreachE :: forall e a. [a] -> (a -> Control.Monad.Eff.Eff e {  }) -> Control.Monad.Eff.Eff e {  }
+foreign import forE :: forall e. Prim.Number -> Prim.Number -> (Prim.Number -> Control.Monad.Eff.Eff e {  }) -> Control.Monad.Eff.Eff e {  }
+foreign import whileE :: forall e a. Control.Monad.Eff.Eff e Prim.Boolean -> Control.Monad.Eff.Eff e a -> Control.Monad.Eff.Eff e {  }
+foreign import untilE :: forall e. Control.Monad.Eff.Eff e Prim.Boolean -> Control.Monad.Eff.Eff e {  }
+foreign import runPure :: forall a. Control.Monad.Eff.Pure a -> a
+foreign import bindEff :: forall e a b. Control.Monad.Eff.Eff e a -> (a -> Control.Monad.Eff.Eff e b) -> Control.Monad.Eff.Eff e b
+foreign import retEff :: forall e a. a -> Control.Monad.Eff.Eff e a
+foreign import instance monadEff :: Prelude.Monad (Control.Monad.Eff.Eff e)
 module Control.Monad.Eff.Unsafe where
+foreign import unsafeInterleaveEff :: forall eff1 eff2 a. Control.Monad.Eff.Eff eff1 a -> Control.Monad.Eff.Eff eff2 a
 module Control.Monad.Error where
 foreign import data Error :: * -> !
+foreign import catchError :: forall e r a. (e -> Control.Monad.Eff.Eff r a) -> Control.Monad.Eff.Eff (err :: Control.Monad.Error.Error e | r) a -> Control.Monad.Eff.Eff r a
+foreign import throwError :: forall a e r. e -> Control.Monad.Eff.Eff (err :: Control.Monad.Error.Error e | r) a
 module Control.Monad.ST where
-foreign import data ST :: * -> !
 foreign import data STArray :: * -> * -> *
 foreign import data STRef :: * -> * -> *
+foreign import data ST :: * -> !
+foreign import runSTArray :: forall a r. (forall h. Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) (Control.Monad.ST.STArray h a)) -> Control.Monad.Eff.Eff r [a]
+foreign import runST :: forall a r. (forall h. Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a) -> Control.Monad.Eff.Eff r a
+foreign import pokeSTArray :: forall a h r. Control.Monad.ST.STArray h a -> Prim.Number -> a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a
+foreign import peekSTArray :: forall a h r. Control.Monad.ST.STArray h a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a
+foreign import newSTArray :: forall a h r. Prim.Number -> a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) (Control.Monad.ST.STArray h a)
+foreign import writeSTRef :: forall a h r. Control.Monad.ST.STRef h a -> a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a
+foreign import modifySTRef :: forall a h r. Control.Monad.ST.STRef h a -> (a -> a) -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a
+foreign import readSTRef :: forall a h r. Control.Monad.ST.STRef h a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) a
+foreign import newSTRef :: forall a h r. a -> Control.Monad.Eff.Eff (st :: Control.Monad.ST.ST h | r) (Control.Monad.ST.STRef h a)
 module Data.IORef where
 foreign import data IORef :: * -> *
 foreign import data Ref :: !
+foreign import unsafeRunIORef :: forall eff a. Control.Monad.Eff.Eff (ref :: Data.IORef.Ref | eff) a -> Control.Monad.Eff.Eff eff a
+foreign import writeIORef :: forall s r. Data.IORef.IORef s -> s -> Control.Monad.Eff.Eff (ref :: Data.IORef.Ref | r) {  }
+foreign import modifyIORef :: forall s r. Data.IORef.IORef s -> (s -> s) -> Control.Monad.Eff.Eff (ref :: Data.IORef.Ref | r) {  }
+foreign import readIORef :: forall s r. Data.IORef.IORef s -> Control.Monad.Eff.Eff (ref :: Data.IORef.Ref | r) s
+foreign import newIORef :: forall s r. s -> Control.Monad.Eff.Eff (ref :: Data.IORef.Ref | r) (Data.IORef.IORef s)
 module Debug.Trace where
 foreign import data Trace :: !
 foreign import print :: forall a r. (Prelude.Show a) => a -> Control.Monad.Eff.Eff (trace :: Debug.Trace.Trace | r) {  }
+foreign import trace :: forall r. Prim.String -> Control.Monad.Eff.Eff (trace :: Debug.Trace.Trace | r) {  }
 module Random where
 foreign import data Random :: !
+foreign import random :: forall e. Control.Monad.Eff.Eff (random :: Random.Random | e) Prim.Number
 module Control.Monad where
-foreign import (<=<) :: forall m a b c. (Prelude.Monad m) => (b -> m c) -> (a -> m b) -> a -> m c
-foreign import (>=>) :: forall m a b c. (Prelude.Monad m) => (a -> m b) -> (b -> m c) -> a -> m c
+infixr 1 >=>
+infixr 1 <=<
+foreign import zipWithM :: forall m a b c. (Prelude.Monad m) => (a -> b -> m c) -> [a] -> [b] -> m [c]
+foreign import when :: forall m. (Prelude.Monad m) => Prim.Boolean -> m {  } -> m {  }
 foreign import foldM :: forall m a b. (Prelude.Monad m) => (a -> b -> m a) -> a -> [b] -> m a
 foreign import join :: forall m a. (Prelude.Monad m) => m (m a) -> m a
+foreign import sequence :: forall m a. (Prelude.Monad m) => [m a] -> m [a]
+foreign import (<=<) :: forall m a b c. (Prelude.Monad m) => (b -> m c) -> (a -> m b) -> a -> m c
+foreign import (>=>) :: forall m a b c. (Prelude.Monad m) => (a -> m b) -> (b -> m c) -> a -> m c
 foreign import mapM :: forall m a b. (Prelude.Monad m) => (a -> m b) -> [a] -> m [b]
 foreign import replicateM :: forall m a. (Prelude.Monad m) => Prim.Number -> m a -> m [a]
-foreign import sequence :: forall m a. (Prelude.Monad m) => [m a] -> m [a]
-foreign import when :: forall m. (Prelude.Monad m) => Prim.Boolean -> m {  } -> m {  }
-foreign import zipWithM :: forall m a b c. (Prelude.Monad m) => (a -> b -> m c) -> [a] -> [b] -> m [c]
 module Algebra where
+infixr 4 |~|
+infixr 5 |&|
+infixr 5 |||
+class BooleanAlgebra a where
+  (|&|) :: a -> a -> a
+  (|||) :: a -> a -> a
+class ComplementedLattice a where
+  (|~|) :: a -> a
+class BoundedLattice a where
+  top :: a
+  bottom :: a
+class DistributiveLattice a where
+class Lattice a where
+class Semilattice a where
+  (|\/|) :: a -> a -> a
+class Field a where
+  recip :: a -> a
+  (|/|) :: a -> a -> a
+class Ring a where
+class Rig a where
+  zero :: a
+  one :: a
+class Rng a where
+  (|-|) :: a -> a -> a
+class Semiring a where
+  (|*|) :: a -> a -> a
+  (|**|) :: a -> a -> a
+class Group a where
+  inverse :: a -> a
+class Monoid a where
+  ident :: a
+class Semigroup a where
+  (|+|) :: a -> a -> a

@@ -64,6 +64,7 @@ Currently supports [armet][armet] syntax query strings.
         * [unsafeRemoveAll](#unsaferemoveall)
         * [unsafeReplaceValByKey](#unsafereplacevalbykey)
         * [unsafeReplaceValByVal](#unsafereplacevalbyval)
+* [Examples](#examples)
 
 ## Installation
 
@@ -518,6 +519,77 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
+## Examples
+
+So let's say we've got a Todo list available at some endpoint.
+We'd like to retrieve all of the items in the list that are due after tax day 2014.
+We'll use moment to make things a bit easier.
+
+```javascript
+> inquire = require('inquire')
+> I = inquire.Inquire
+> moment = require('moment')
+> query0 = I.gt('due')(moment('Apr 15, 2014'))
+> I.generate(query0)
+'due>Tue%20Apr%2015%202014%2000%3A00%3A00%20GMT-0700'
+```
+
+Later on if you decide to change the date value,
+there are combinators that make it much easier than doing this by hand:
+
+```javascript
+> IC = inquire.Inquire_Combinators
+> query1 = IC.unsafeReplaceValByKey('tonight')('due')(query0)
+> I.generate(query1)
+'due>tonight'
+```
+
+Maybe instead you want to move the cut-off point a month sooner, so March 15, 2014.
+This can be done using the fact that Inquire is a Functor.
+
+```javascript
+> prevMonth = function(x) { return moment(x).subtract('month', 1); }
+> query2 = IC.map(prevMonth)(query0)
+> I.generate(query2)
+'due>Sat%20Mar%2015%202014%2000%3A00%3A00%20GMT-0700'
+```
+
+Of course, this will fail miserably if you have more values that aren't moments.
+The more robust way currently is to use the Zipper.
+Let's start by making our query a bit bigger and seeing it fail.
+
+```javascript
+> query3 = I.and(query0)(IC.fromArrayPair([['user', 'Joe'], ['subject', 'bills']]))
+> I.generate(query3)
+'due>Tue%20Apr%2015%202014%2000%3A00%3A00%20GMT-0700&subject=bills&user=Joe'
+> query4 = IC.map(prevMonth)(query3)
+> I.generate(query4)
+'due>Sat%20Mar%2015%202014%2000%3A00%3A00%20GMT-0700&subject=Invalid%20date&user=Invalid%20date'
+```
+
+So as we can see, it failed because the function was expecting to operate on moments.
+
+N.B. This wouldn't be a problem in a language like purescript, as the line wouldn't have even compile.
+This is only a concern in javascript because it does not respect types.
+
+So let's use our zipper to find that specific date, and change it.
+We know it's the leftmost predicate in our query, so let's go there, and modify that.
+
+The basic idea with the Zipper is that it allows you to traverse a data structure,
+modify some part of it, and then return the new modified structure.
+
+```javascript
+> IZ = inquire.Inquire_Zipper
+> zip0 = IZ.toInquireZ(query3)
+> zip1 = IZ.zipLeftmost(zip0)
+> zip2 = IZ.modify(IC.map(prevMonth))(zip1)
+> query5 = IZ.fromInquireZ(zip2)
+> I.generate(query5)
+'due>Sat%20Mar%2015%202014%2000%3A00%3A00%20GMT-0700&subject=bills&user=Joe'
+```
+
+Wonderful! We see that the Zipper made it so our logic was expressed almost verbatim in the code.
+It was composable and reusable.
 
 [armet]: http://armet.github.io/
 [inquire]: https://npmjs.org/package/inquire
