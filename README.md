@@ -519,6 +519,70 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
+#### Zipper
+
+The Zipper is a purely functional data structure for manipulating other data structures.
+An immense amount of information can be found on Zippers.
+It was first written about as a [Functional Pearl][the zipper] by [Gérard Huet][huet].
+The basic idea is that you create a `hole` in a data structure that you want to modify,
+and keep track of the `context` to that `hole`.
+Once you modify the `hole`, you can then use the `context` to find your way back to the top of the structure.
+
+In our case, the `hole` will be an Inquire, and the `context` the path to the top of the Inquire.
+We can move in the four cardinal directions: Up, Down, Left, Right.
+This allows us to go to any position in our Inquire,
+modify that Predicate, Junction, or Wrap, and return the new structure easily.
+
+###### toInquireZ :: Inquire k v -> InquireZ k v
+
+Creates a new Zipper from an Inquire.
+This is how we can start to manipulate our Inquire.
+
+###### fromInquireZ :: InquireZ k v -> Inquire k v
+
+Returns our modified Inquire from a Zipper.
+
+###### zipLeft :: InquireZ k v -> Maybe (InquireZ k v)
+
+Moves to the left of the current `hole`, if possible, or does nothing.
+
+###### zipRight :: InquireZ k v -> Maybe (InquireZ k v)
+
+Moves to the right of the current `hole`, if possible, or does nothing.
+
+###### zipDown :: InquireZ k v -> Maybe (InquireZ k v)
+
+Moves down or to the right of the current `hole`, if possible, or does nothing.
+
+###### zipUp :: InquireZ k v -> Maybe (InquireZ k v)
+
+Moves up of the current `hole`, if possible, or does nothing.
+
+###### zipUpmost :: InquireZ k v -> InquireZ k v
+
+Moves to the top of the Zipper.
+
+###### zipLeftmost :: InquireZ k v -> InquireZ k v
+
+Moves as far to the left of the Zipper as possible.
+
+###### zipRightmost :: InquireZ k v -> InquireZ k v
+
+Moves as far to the right of the Zipper as possible.
+
+###### getHole :: InquireZ k v -> Inquire k v
+
+Peeks into the Zipper and returns the current Inquire in the `hole`.
+
+###### query :: (Inquire k v -> a) -> InquireZ k v -> a
+
+Applies a function to the current Inquire in the `hole` and returns the result.
+
+###### modify :: (Inquire k v -> Inquire k v) -> InquireZ k v -> InquireZ k v
+
+Applies a function to the current Inquire in the `hole`.
+
+
 ## Examples
 
 So let's say we've got a Todo list available at some endpoint.
@@ -594,3 +658,5 @@ It was composable and reusable.
 [armet]: http://armet.github.io/
 [inquire]: https://npmjs.org/package/inquire
 [fantasy land]: https://github.com/fantasyland/fantasy-land
+[the zipper]: http://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf
+[huet]: http://pauillac.inria.fr/~huet/
