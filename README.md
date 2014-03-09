@@ -173,11 +173,13 @@ we get all of the properties of those for free as well!
 The complemented part means that every query has a complement.
 We construct the complement for an entire query by wrapping it in a negation.
 This is the lazy way, and not actually true to the definition.
-We the actual complement is to take each predicate and change its relational operator.
+The way to actually get the complement is to take each predicate and change its relational operator.
 
-| `==` | `!=` |
-| `>`  | `<=` |
-| `<`  | `>=` |
+|      |     |      |
+| ---- | --- | ---- |
+| `==` | <=> | `!=` |
+| `>`  | <=> | `<=` |
+| `<`  | <=> | `>=` |
 
 The distributive part means that our binary combinators can be distributed over each other.
 This is similar to how multiplication can distribute over addition in Semirings like the Natural numbers with 0, or Integers or the reals, etc.
