@@ -1,5 +1,18 @@
 # Changelog
 
+### 0.4.2
+#### 03/09/14
+- Encode predicates.
+- Invoke functions when they're part of an Inquire.
+- More pretty printing.
+- Update README with examples and more documentation.
+
+### 0.4.1
+#### 03/08/14
+- Export only what's necessary
+- Use fixed record update syntax rather than rolling our own extend.
+- Use Prelude.BoolLike instead of BooleanAlgebra.
+
 ### 0.4.0
 #### 03/06/14
 - Complete revamp in PureScript.
