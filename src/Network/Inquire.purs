@@ -202,7 +202,11 @@ module Inquire
     "function generate(i) {\
     \  var showDict = {\
     \    show: function(k) {\
-    \      return k.toString();\
+    \      if ({}.toString.call(k).slice(8, -1) === 'Function') {\
+    \        return k().toString();\
+    \      } else {\
+    \        return k.toString();\
+    \      }\
     \    }\
     \  };\
     \  return gen(showDict)(showDict)(i);\
