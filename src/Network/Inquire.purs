@@ -1,4 +1,37 @@
-module Inquire where
+module Inquire
+  ( Inquire(..)
+  , Rel(..)
+  , JuncOp(..)
+  , WrapOp(..)
+  , gen
+  , generate
+  , eq
+  , ne
+  , gt
+  , ge
+  , lt
+  , le
+  , eqObj
+  , neObj
+  , gtObj
+  , geObj
+  , ltObj
+  , leObj
+  , and
+  , or
+  , neg
+  , implies
+  , equiv
+  , xor
+  , absorb
+  , associate
+  , assocLeft
+  , assocRight
+  , commute
+  , distribute
+  , codistribute
+  , idempotent
+  ) where
 
   import Prelude
   import Data.Foldable

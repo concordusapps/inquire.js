@@ -1,16 +1,5 @@
+module Text.Parsing.Read where
 module Prelude where
-foreign import data Alternative :: (* -> *) -> *
-foreign import data Applicative :: (* -> *) -> *
-foreign import data Bits :: * -> *
-foreign import data BoolLike :: * -> *
-foreign import data Category :: (* -> * -> *) -> *
-foreign import data Eq :: * -> *
-foreign import data Functor :: (* -> *) -> *
-foreign import data Monad :: (* -> *) -> *
-foreign import data Num :: * -> *
-foreign import data Ord :: * -> *
-foreign import data Read :: * -> *
-foreign import data Show :: * -> *
 foreign import (#) :: forall a b. a -> (a -> b) -> b
 foreign import ($) :: forall a b. (a -> b) -> a -> b
 foreign import const :: forall a b. a -> b -> a
@@ -33,7 +22,6 @@ foreign import data Maybe :: * -> *
 foreign import fromMaybe :: forall a. a -> Data.Maybe.Maybe a -> a
 foreign import maybe :: forall a b. b -> (a -> b) -> Data.Maybe.Maybe a -> b
 module Data.Functor where
-foreign import data BiFunctor :: (* -> * -> *) -> *
 foreign import bimap :: forall a b c d f. (Data.Functor.BiFunctor f) => (a -> c) -> (b -> d) -> f a b -> f c d
 foreign import first :: forall a b c f. (Data.Functor.BiFunctor f) => (a -> b) -> f a c -> f b c
 foreign import map :: forall a b f. (Prelude.Functor f) => (a -> b) -> f a -> f b
@@ -44,7 +32,6 @@ foreign import liftRef :: forall a b. (a -> a -> b) -> Data.Eq.Ref a -> Data.Eq.
 foreign import refEq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
 foreign import refIneq :: forall a. Data.Eq.Ref a -> Data.Eq.Ref a -> Prim.Boolean
 module Data.Enum where
-foreign import data Enum :: * -> *
 module Data.Either where
 foreign import data Either :: * -> * -> *
 foreign import either :: forall a b c. (a -> c) -> (b -> c) -> Data.Either.Either a b -> c
@@ -70,15 +57,10 @@ foreign import tail :: forall a. [a] -> Data.Maybe.Maybe [a]
 foreign import take :: forall a. Prim.Number -> [a] -> [a]
 foreign import zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
 module Data.Monoid where
-foreign import data Monoid :: * -> *
 foreign import mconcat :: forall m. (Data.Monoid.Monoid m) => [m] -> m
 module Data.Foldable where
-foreign import data BiFoldable :: (* -> * -> *) -> *
-foreign import data Foldable :: (* -> *) -> *
 foreign import foldMap :: forall a f m. (Data.Foldable.Foldable f, Data.Monoid.Monoid m) => (a -> m) -> f a -> m
 module Data.Traversable where
-foreign import data BiTraversable :: (* -> * -> *) -> *
-foreign import data Traversable :: (* -> *) -> *
 foreign import bisequence :: forall a b f t. (Prelude.Applicative f, Data.Traversable.BiTraversable t) => t (f a) (f b) -> f (t a b)
 foreign import sequence :: forall a f t. (Prelude.Applicative f, Data.Traversable.Traversable t) => t (f a) -> f (t a)
 module Inquire where
@@ -112,7 +94,6 @@ foreign import ne :: forall k v. k -> v -> Inquire.Inquire k v
 foreign import neObj :: forall k v. { val :: v, key :: k } -> Inquire.Inquire k v
 foreign import neg :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import or :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import pred :: forall k v. { val :: v, rel :: Inquire.Rel, key :: k } -> Inquire.Inquire k v
 foreign import xor :: forall k v. Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
 module Data.Tuple where
 foreign import data Tuple :: * -> * -> *
@@ -126,22 +107,19 @@ foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Inquire.Inquire
 foreign import findByKey :: forall k v. (Prelude.Eq k) => k -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
 foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Inquire.Inquire k v -> Data.Maybe.Maybe (Inquire.Inquire k v)
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Inquire.Inquire k v
-foreign import fromArrayPair :: forall t3856. [[t3856]] -> Inquire.Inquire t3856 t3856
+foreign import fromArrayPair :: forall t3921. [[t3921]] -> Inquire.Inquire t3921 t3921
 foreign import keys :: forall k v. Inquire.Inquire k v -> [k]
 foreign import remove :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
-foreign import remove' :: forall k v. (Prelude.Eq k, Prelude.Eq v) => (Inquire.Inquire k v -> Inquire.Inquire k v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import removeAll :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import replaceValByKey :: forall k v. (Prelude.Eq k) => v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import replaceValByVal :: forall k v. (Prelude.Eq v) => v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import toArrayObj :: forall k v. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t3833. Inquire.Inquire t3833 t3833 -> [[t3833]]
+foreign import toArrayPair :: forall t3898. Inquire.Inquire t3898 t3898 -> [[t3898]]
 foreign import toObj :: forall k v. Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
 foreign import toTuple :: forall k v. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Inquire.Inquire k v -> [v]
 module Inquire.Zipper where
-foreign import data Context :: * -> * -> *
 foreign import data InquireZ :: * -> * -> *
-foreign import data Movement :: * -> * -> *
 foreign import fromInquireZ :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
 foreign import getHole :: forall k v. Inquire.Zipper.InquireZ k v -> Inquire.Inquire k v
 foreign import modify :: forall k v. (Inquire.Inquire k v -> Inquire.Inquire k v) -> Inquire.Zipper.InquireZ k v -> Inquire.Zipper.InquireZ k v
@@ -184,17 +162,3 @@ foreign import sequence :: forall m a. (Prelude.Monad m) => [m a] -> m [a]
 foreign import when :: forall m. (Prelude.Monad m) => Prim.Boolean -> m {  } -> m {  }
 foreign import zipWithM :: forall m a b c. (Prelude.Monad m) => (a -> b -> m c) -> [a] -> [b] -> m [c]
 module Algebra where
-foreign import data BooleanAlgebra :: * -> *
-foreign import data BoundedLattice :: * -> *
-foreign import data ComplementedLattice :: * -> *
-foreign import data DistributiveLattice :: * -> *
-foreign import data Field :: * -> *
-foreign import data Group :: * -> *
-foreign import data Lattice :: * -> *
-foreign import data Monoid :: * -> *
-foreign import data Rig :: * -> *
-foreign import data Ring :: * -> *
-foreign import data Rng :: * -> *
-foreign import data Semigroup :: * -> *
-foreign import data Semilattice :: * -> *
-foreign import data Semiring :: * -> *

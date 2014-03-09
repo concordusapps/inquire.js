@@ -1,4 +1,30 @@
-module Inquire.Combinators where
+module Inquire.Combinators
+  ( toObj
+  , keys
+  , vals
+  , toTuple
+  , toArrayPair
+  , toArrayObj
+  , fromArrayPair
+  , fromArrayObj
+  , filterByVal
+  , filterByKey
+  , findByVal
+  , findByKey
+  , remove
+  , removeAll
+  , replaceValByKey
+  , replaceValByVal
+  , bimap
+  , map
+  , unsafeFindByKey
+  , unsafeFindByVal
+  , unsafeRemove
+  , unsafeRemoveAll
+  , unsafeReplaceValByKey
+  , unsafeReplaceValByVal
+  )
+  where
 
   import Prelude
   import Inquire

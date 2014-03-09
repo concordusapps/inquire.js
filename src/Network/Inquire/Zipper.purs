@@ -1,4 +1,20 @@
-module Inquire.Zipper where
+module Inquire.Zipper
+  ( InquireZ(..)
+  , toInquireZ
+  , fromInquireZ
+  , zipLeft
+  , zipRight
+  , zipDown
+  , zipUp
+  , zipMost
+  , zipUpmost
+  , zipLeftmost
+  , zipRightmost
+  , getHole
+  , query
+  , modify
+  )
+  where
 
   {-
     Since we don't have `syz` yet, we're going to roll our own zipper.
