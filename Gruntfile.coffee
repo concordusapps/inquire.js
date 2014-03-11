@@ -4,11 +4,37 @@ module.exports = (grunt) ->
     purescript:
       compile:
         files:
-          'lib/inquire.js': 'src/**/*.purs'
+          'lib/inquire.js': [
+            'src/**/*.purs'
+            'bower_components/purescript-parsing/src/**/*.purs'
+            'bower_components/purescript-parsing/src/**/*.purs.hs'
+          ]
         options:
-          runtimeTypeChecks: true
           externs: 'lib/inquire.e.ps'
+          modules: [
+            'Network.Inquire'
+            'Network.Inquire.Combinators'
+            'Network.Inquire.Zipper'
+          ]
+          runtimeTypeChecks: true
+          tco: true
+      test:
+        files:
+          'test/inquire.js': [
+            'src/**/*.purs'
+            'test/**/*.purs'
+            'bower_components/purescript-quickcheck/src/**/*.purs'
+            'bower_components/purescript-quickcheck/src/**/*.purs.hs'
+          ]
+        options:
+          main: 'Network.Inquire.Properties'
+
+    execute:
+      target:
+        src: ['test/inquire.js']
 
   grunt.loadNpmTasks 'grunt-purescript'
+  grunt.loadNpmTasks 'grunt-execute'
 
-  grunt.registerTask 'default', ['purescript']
+  grunt.registerTask 'default', ['purescript', 'execute']
+  grunt.registerTask 'test', ['purescript:test', 'execute']
