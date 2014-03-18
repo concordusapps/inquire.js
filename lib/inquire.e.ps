@@ -335,6 +335,7 @@ foreign import curry :: forall a b c. (Data.Tuple.Tuple a b -> c) -> a -> b -> c
 foreign import instance showTuple :: (Prelude.Show a, Prelude.Show b) => Prelude.Show (Data.Tuple.Tuple a b)
 foreign import instance eqTuple :: (Prelude.Eq a, Prelude.Eq b) => Prelude.Eq (Data.Tuple.Tuple a b)
 module Inquire.Combinators where
+foreign import unsafeFromObj :: forall a k v. a -> Inquire.Inquire k v
 foreign import unsafeReplaceValByVal :: forall k v. v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import unsafeReplaceValByKey :: forall k v. v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import unsafeRemoveAll :: forall k v. v -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
@@ -352,9 +353,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Inquire.Inquire k
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Inquire.Inquire k v
-foreign import fromArrayPair :: forall t3993. [[t3993]] -> Inquire.Inquire t3993 t3993
+foreign import fromArrayPair :: forall t4000. [[t4000]] -> Inquire.Inquire t4000 t4000
 foreign import toArrayObj :: forall k v. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t3970. Inquire.Inquire t3970 t3970 -> [[t3970]]
+foreign import toArrayPair :: forall t3977. Inquire.Inquire t3977 t3977 -> [[t3977]]
 foreign import toTuple :: forall k v. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Inquire.Inquire k v -> [k]

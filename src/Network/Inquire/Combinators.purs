@@ -23,14 +23,15 @@ module Inquire.Combinators
   , unsafeRemoveAll
   , unsafeReplaceValByKey
   , unsafeReplaceValByVal
+  , unsafeFromObj
   )
   where
 
   import Prelude
   import Inquire
   import Data.Array ((:), zipWith)
-  import Data.Foldable (Foldable, bifoldr)
-  import Data.Functor (BiFunctor)
+  import Data.BiFoldable (bifoldr)
+  import Data.BiFunctor (BiFunctor)
   import Data.Maybe
   import Data.Monoid
   import Data.Tuple
@@ -189,3 +190,14 @@ module Inquire.Combinators
     \    }\
     \  }\
     \}" :: forall k v. v -> v -> Inquire k v -> Inquire k v
+
+  foreign import unsafeFromObj
+    "function unsafeFromObj(rawObj) {\
+    \  var arr = [];\
+    \  for (var k in rawObj) {\
+    \    if (rawObj.hasOwnProperty(k)) {\
+    \      arr.push({key: k, val: rawObj[k]});\
+    \    }\
+    \  }\
+    \  return fromArrayObj(arr);\
+    \}" :: forall a k v. a -> Inquire k v
