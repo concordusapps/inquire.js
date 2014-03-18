@@ -115,10 +115,7 @@ module Inquire
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
     show EmptyAnd = ""
     show EmptyOr = ""
-    show (Pred ks@(k:_) r vs@(v:_)) = show ks ++ show r ++ show vs
-    show (Pred k r vs@(v:_)) = encodeURIComponent (show k) ++ show r ++ show vs
-    show (Pred ks@(k:_) r v) = show ks ++ show r ++ encodeURIComponent (show v)
-    show (Pred k r v) = encodeURIComponent (show k) ++ show r ++ encodeURIComponent (show v)
+    show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
@@ -160,6 +157,8 @@ module Inquire
     foldr f z (Wrap _ i)   = F.foldr f z i
 
     foldl f z i = F.foldr (flip f) z i
+
+    foldMap f x = F.foldr ((<>) <<< f) mempty x
 
   instance biFoldableInquire :: Data.BiFoldable.BiFoldable Inquire where
     bifoldr _ _ z EmptyAnd     = z
@@ -219,6 +218,22 @@ module Inquire
     \  };\
     \  return gen(showDict)(showDict)(i);\
     \}" :: forall k v. Inquire k v -> String
+
+  foreign import unsafeEncode
+    "function unsafeEncode(x) {\
+    \  var show = function(k) {\
+    \    if ({}.toString.call(k).slice(8, -1) === 'Function') {\
+    \      return k().toString();\
+    \    } else {\
+    \      return k.toString();\
+    \    }\
+    \  };\
+    \  if ({}.toString.call(x).slice(8, -1) === 'Array') {\
+    \    return x.map(encodeURIComponent).join();\
+    \  } else {\
+    \    return encodeURIComponent(show(x));\
+    \  }\
+    \}" :: forall a. a -> String
 
   foreign import encodeURI :: String -> String
   foreign import encodeURIComponent :: String -> String
