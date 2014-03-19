@@ -62,11 +62,13 @@ module Inquire.Combinators
   -- The ideal type would be
   -- fromArrayPair :: forall k v. [[k, v]] -> Inquire k v
   fromArrayPair []         = EmptyAnd
-  fromArrayPair ([x,y]:zs) = (fromArrayPair zs) `and` (x `eq` y)
+  fromArrayPair [[x,y]]    = x `eq` y
+  fromArrayPair ([x,y]:zs) = (x `eq` y) `and` (fromArrayPair zs)
 
   fromArrayObj :: forall k v. [{key :: k, val :: v}] -> Inquire k v
   fromArrayObj []                        = EmptyAnd
-  fromArrayObj ({ key = x, val = y }:zs) = (fromArrayObj zs) `and` (x `eq` y)
+  fromArrayObj [{ key = x, val = y }]    = x `eq` y
+  fromArrayObj ({ key = x, val = y }:zs) = (x `eq` y) `and` (fromArrayObj zs)
 
   -- This should be implemented with a foldr or some such,
   -- but the kind wont work out.
@@ -200,4 +202,4 @@ module Inquire.Combinators
     \    }\
     \  }\
     \  return fromArrayObj(arr);\
-    \}" :: forall a k v. a -> Inquire k v
+    \}" :: forall a k v. { | a } -> Inquire k v

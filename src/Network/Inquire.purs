@@ -116,6 +116,14 @@ module Inquire
     show EmptyAnd = ""
     show EmptyOr = ""
     show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
+    show (Junc EmptyAnd _ EmptyAnd) = ""
+    show (Junc EmptyAnd _ EmptyOr)  = ""
+    show (Junc EmptyAnd _ EmptyOr)  = ""
+    show (Junc EmptyOr _ EmptyOr)   = ""
+    show (Junc l _ EmptyOr)         = show l
+    show (Junc l _ EmptyAnd)        = show l
+    show (Junc EmptyAnd _ r)        = show r
+    show (Junc EmptyOr _ r)         = show r
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
@@ -186,16 +194,16 @@ module Inquire
     bitraverse f g (Wrap o i)   = Wrap o <$> bitraverse f g i
 
   instance boolLikeInquire :: BoolLike (Inquire k v) where
-    (||) EmptyAnd p        = EmptyAnd
-    (||) p        EmptyAnd = EmptyAnd
-    (||) p        EmptyOr  = p
-    (||) EmptyOr  p        = p
+    -- (||) EmptyAnd p        = EmptyAnd
+    -- (||) p        EmptyAnd = EmptyAnd
+    -- (||) p        EmptyOr  = p
+    -- (||) EmptyOr  p        = p
     (||) p        q        = Junc p OR q
 
-    (&&) EmptyOr  p        = EmptyOr
-    (&&) p        EmptyOr  = EmptyOr
-    (&&) p        EmptyAnd = p
-    (&&) EmptyAnd p        = p
+    -- (&&) EmptyOr  p        = EmptyOr
+    -- (&&) p        EmptyOr  = EmptyOr
+    -- (&&) p        EmptyAnd = p
+    -- (&&) EmptyAnd p        = p
     (&&) p        q        = Junc p AND q
 
     not EmptyAnd = EmptyOr

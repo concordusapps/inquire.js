@@ -427,7 +427,7 @@ foreign import instance traversableInquire :: Data.Traversable.Traversable (Inqu
 foreign import instance bitraversableInquire :: Data.BiTraversable.BiTraversable Inquire.Inquire
 foreign import instance boolLikeInquire :: Prelude.BoolLike (Inquire.Inquire k v)
 module Inquire.Combinators where
-foreign import unsafeFromObj :: forall a k v. a -> Inquire.Inquire k v
+foreign import unsafeFromObj :: forall a k v. {  | a } -> Inquire.Inquire k v
 foreign import unsafeReplaceValByVal :: forall k v. v -> v -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import unsafeReplaceValByKey :: forall k v. v -> k -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import unsafeRemoveAll :: forall k v. v -> Inquire.Inquire k v -> Inquire.Inquire k v -> Inquire.Inquire k v
@@ -445,9 +445,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Inquire.Inquire k
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Inquire.Inquire k v -> Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Inquire.Inquire k v
-foreign import fromArrayPair :: forall t5631. [[t5631]] -> Inquire.Inquire t5631 t5631
+foreign import fromArrayPair :: forall t5651. [[t5651]] -> Inquire.Inquire t5651 t5651
 foreign import toArrayObj :: forall k v. Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t5608. Inquire.Inquire t5608 t5608 -> [[t5608]]
+foreign import toArrayPair :: forall t5624. Inquire.Inquire t5624 t5624 -> [[t5624]]
 foreign import toTuple :: forall k v. Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Inquire.Inquire k v -> [k]
