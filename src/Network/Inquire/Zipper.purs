@@ -1,4 +1,4 @@
-module Inquire.Zipper
+module Network.Inquire.Zipper
   ( InquireZ(..)
   , toInquireZ
   , fromInquireZ
@@ -47,7 +47,7 @@ module Inquire.Zipper
   import Data.Array ((:))
   import Data.Either
   import Data.Maybe
-  import Inquire
+  import Network.Inquire
 
   data Context k v = L JuncOp (Inquire k v)
                    | R JuncOp (Inquire k v)
@@ -57,36 +57,37 @@ module Inquire.Zipper
                           , context :: [Context k v]
                           }
 
+  type Movement k v = InquireZ k v -> Maybe (InquireZ k v)
+
   -- Injection and projection.
 
   toInquireZ :: forall k v. Inquire k v -> InquireZ k v
   toInquireZ i = Zip { hole: i, context: [] }
 
   fromInquireZ :: forall k v. InquireZ k v -> Inquire k v
-  fromInquireZ (Zip { hole = i, context = [] }) = i
-  fromInquireZ iz = maybe EmptyAnd fromInquireZ $ zipUp iz
+  fromInquireZ = getHole <<< zipUpmost
 
   -- Basic movement.
 
-  zipLeft :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipLeft :: forall k v. Movement k v
   zipLeft (Zip { hole = Junc l o r, context = p }) =
     Just $ Zip $ { hole: l, context: (L o r):p }
   zipLeft _ = Nothing
 
-  zipRight :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipRight :: forall k v. Movement k v
   zipRight (Zip { hole = Junc l o r, context = p }) =
     Just $ Zip $ { hole: r, context: (R o l):p }
   zipRight _ = Nothing
 
   -- Zip down into a `Wrap`, or go to the right of a `Junc`.
-  zipDown :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipDown :: forall k v. Movement k v
   zipDown (Zip { hole = Wrap o i, context = p }) =
     Just $ Zip $ { hole: i, context: (D o):p }
   zipDown iz@(Zip { hole = Junc l o r}) = zipRight iz
   zipDown _ = Nothing
 
   -- Zip up out of a `Wrap`, or out of a `Junc`.
-  zipUp :: forall k v. InquireZ k v -> Maybe (InquireZ k v)
+  zipUp :: forall k v. Movement k v
   zipUp (Zip { hole = i, context = (D o):p }) =
     Just $ Zip $ { hole: Wrap o i, context: p }
   zipUp (Zip { hole = l, context = (L o r):p }) =
@@ -94,8 +95,6 @@ module Inquire.Zipper
   zipUp (Zip { hole = r, context = (R o l):p }) =
     Just $ Zip $ { hole: Junc l o r, context: p }
   zipUp _ = Nothing
-
-  type Movement k v = InquireZ k v -> Maybe (InquireZ k v)
 
   -- Advanced movement.
 

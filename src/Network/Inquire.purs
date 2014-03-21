@@ -1,10 +1,10 @@
-module Inquire
+module Network.Inquire
   ( Inquire(..)
   , Rel(..)
   , JuncOp(..)
   , WrapOp(..)
-  , gen
   , generate
+  , unsafeGenerate
   , eq
   , ne
   , gt
@@ -23,21 +23,17 @@ module Inquire
   , implies
   , equiv
   , xor
-  , absorb
-  , associate
-  , assocLeft
-  , assocRight
-  , commute
-  , distribute
-  , codistribute
-  , idempotent
   ) where
 
   import Prelude
-  import Data.Foldable
-  import Data.Functor
+  import Global
+  import Data.BiFoldable
+  import Data.BiFunctor
+  import Data.BiTraversable
   import Data.Monoid
   import Data.Traversable
+
+  import qualified Data.Foldable as F
 
   data Inquire k v = EmptyAnd
                    | EmptyOr
@@ -45,12 +41,12 @@ module Inquire
                    | Junc (Inquire k v) JuncOp (Inquire k v)
                    | Wrap WrapOp (Inquire k v)
 
-  data Rel = EQ
-           | NE
-           | GT
-           | GE
-           | LT
-           | LE
+  data Rel = REQ
+           | RNE
+           | RGT
+           | RGE
+           | RLT
+           | RLE
 
   data JuncOp = AND
               | OR
@@ -58,32 +54,32 @@ module Inquire
   data WrapOp = NOBOOL
               | NOT
 
-  instance eqRel :: Prelude.Eq Rel where
-    (==) EQ EQ = true
-    (==) NE NE = true
-    (==) GT GT = true
-    (==) GE GE = true
-    (==) LT LT = true
-    (==) LE LE = true
+  instance eqRel :: Eq Rel where
+    (==) REQ REQ = true
+    (==) RNE RNE = true
+    (==) RGT RGT = true
+    (==) RGE RGE = true
+    (==) RLT RLT = true
+    (==) RLE RLE = true
     (==) _  _  = false
 
     (/=) r  r' = not (r == r')
 
-  instance eqJuncOp :: Prelude.Eq JuncOp where
+  instance eqJuncOp :: Eq JuncOp where
     (==) AND AND = true
     (==) OR  OR  = true
     (==) _   _   = false
 
     (/=) r   r'  = not (r == r')
 
-  instance eqWrapOp :: Prelude.Eq WrapOp where
+  instance eqWrapOp :: Eq WrapOp where
     (==) NOBOOL NOBOOL = true
     (==) NOT    NOT    = true
     (==) _      _      = false
 
     (/=) r      r'     = not (r == r')
 
-  instance eqInquire :: (Prelude.Eq k, Prelude.Eq v) => Prelude.Eq (Inquire k v) where
+  instance eqInquire :: (Eq k, Eq v) => Eq (Inquire k v) where
     (==) EmptyAnd     EmptyAnd        = true
     (==) EmptyOr      EmptyOr         = true
     (==) (Pred k r v) (Pred k' r' v') = k == k' && r == r' && v == v'
@@ -93,26 +89,26 @@ module Inquire
 
     (/=) i  i' = not (i == i')
 
-  instance showRel :: Prelude.Show Rel where
-    show EQ = "="
-    show NE = "!="
-    show GT = ">"
-    show GE = ">="
-    show LT = "<"
-    show LE = "<="
+  instance showRel :: Show Rel where
+    show REQ = "="
+    show RNE = "!="
+    show RGT = ">"
+    show RGE = ">="
+    show RLT = "<"
+    show RLE = "<="
 
-  instance showJuncOp :: Prelude.Show JuncOp where
+  instance showJuncOp :: Show JuncOp where
     show AND = "&"
     show OR  = ";"
 
-  instance showWrapOp :: Prelude.Show WrapOp where
+  instance showWrapOp :: Show WrapOp where
     show NOBOOL = ""
     show NOT    = "!"
 
-  instance showInquire :: (Prelude.Show k, Prelude.Show v) => Prelude.Show (Inquire k v) where
+  instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
     show EmptyAnd = ""
     show EmptyOr = ""
-    show (Pred k r v) = encodeURIComponent (show k) ++ show r ++ encodeURIComponent (show v)
+    show (Pred k r v) = show k ++ show r ++ show v
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
@@ -126,36 +122,38 @@ module Inquire
     show (Wrap o i@(Wrap NOBOOL _))   = show i
     show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
 
-  instance functorInquire :: Prelude.Functor (Inquire k) where
+  instance functorInquire :: Functor (Inquire k) where
     (<$>) _ EmptyAnd        = EmptyAnd
     (<$>) _ EmptyOr         = EmptyOr
     (<$>) f (Pred k r v)    = Pred k r (f v)
     (<$>) f (Junc i1 op i2) = Junc (f <$> i1) op (f <$> i2)
     (<$>) f (Wrap op i)     = Wrap op (f <$> i)
 
-  instance monoidInquire :: Data.Monoid.Monoid (Inquire k v) where
+  instance monoidInquire :: Monoid (Inquire k v) where
     mempty = EmptyAnd
     (<>) i EmptyAnd = i
     (<>) EmptyAnd i = i
     (<>) i1 i2 = Junc i1 AND i2
 
-  instance biFunctorInquire :: Data.Functor.BiFunctor Inquire where
+  instance biFunctorInquire :: BiFunctor Inquire where
     (<$$>) _ _ EmptyAnd        = EmptyAnd
     (<$$>) _ _ EmptyOr         = EmptyOr
     (<$$>) f g (Pred k r v)    = Pred (f k) r (g v)
     (<$$>) f g (Junc i1 op i2) = Junc ((<$$>) f g i1) op ((<$$>) f g i2)
     (<$$>) f g (Wrap op i)     = Wrap op ((<$$>) f g i)
 
-  instance foldableInquire :: Data.Foldable.Foldable (Inquire k) where
+  instance foldableInquire :: F.Foldable (Inquire k) where
     foldr _ z EmptyAnd     = z
     foldr _ z EmptyOr      = z
     foldr f z (Pred _ _ v) = v `f` z
-    foldr f z (Junc l _ r) = foldr f (foldr f z r) l
-    foldr f z (Wrap _ i)   = foldr f z i
+    foldr f z (Junc l _ r) = F.foldr f (F.foldr f z r) l
+    foldr f z (Wrap _ i)   = F.foldr f z i
 
-    foldl f z i = foldr (flip f) z i
+    foldl f z i = F.foldr (flip f) z i
 
-  instance biFoldableInquire :: Data.Foldable.BiFoldable Inquire where
+    foldMap f = F.foldr ((<>) <<< f) mempty
+
+  instance biFoldableInquire :: BiFoldable Inquire where
     bifoldr _ _ z EmptyAnd     = z
     bifoldr _ _ z EmptyOr      = z
     bifoldr f g z (Pred k _ v) = k `f` (v `g` z)
@@ -171,12 +169,16 @@ module Inquire
     traverse f (Junc l o r) = Junc <$> traverse f l <*> pure o <*> traverse f r
     traverse f (Wrap o i)   = Wrap o <$> traverse f i
 
+    sequence = traverse id
+
   instance bitraversableInquire :: BiTraversable Inquire where
     bitraverse _ _ EmptyAnd = pure EmptyAnd
     bitraverse _ _ EmptyOr  = pure EmptyOr
     bitraverse f g (Pred k r v) = Pred <$> f k <*> pure r <*> g v
     bitraverse f g (Junc l o r) = Junc <$> bitraverse f g l <*> pure o <*> bitraverse f g r
     bitraverse f g (Wrap o i)   = Wrap o <$> bitraverse f g i
+
+    bisequence = bitraverse id id
 
   instance boolLikeInquire :: BoolLike (Inquire k v) where
     (||) EmptyAnd p        = EmptyAnd
@@ -198,8 +200,8 @@ module Inquire
   -- FIXME
   -- There should be some better way to `generate` from js.
   -- This depends on compiler details, which is horribly fragile.
-  foreign import generate
-    "function generate(i) {\
+  foreign import unsafeGenerate
+    "function unsafeGenerate(i) {\
     \  var showDict = {\
     \    show: function(k) {\
     \      if ({}.toString.call(k).slice(8, -1) === 'Function') {\
@@ -209,14 +211,11 @@ module Inquire
     \      }\
     \    }\
     \  };\
-    \  return gen(showDict)(showDict)(i);\
+    \  return generate(showDict)(showDict)(i);\
     \}" :: forall k v. Inquire k v -> String
 
-  foreign import encodeURI :: String -> String
-  foreign import encodeURIComponent :: String -> String
-
-  gen :: forall k v. (Show k, Show v) => Inquire k v -> String
-  gen i = show i
+  generate :: forall k v. (Show k, Show v) => Inquire k v -> String
+  generate i = encodeURIComponent (show i)
 
   pred :: forall k v. {key :: k, val :: v, rel :: Rel} -> Inquire k v
   pred o = Pred o.key o.rel o.val
@@ -235,17 +234,17 @@ module Inquire
   le k v = leObj {key: k, val: v}
 
   eqObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  eqObj o = pred {key: o.key, rel: EQ, val: o.val}
+  eqObj o = pred {key: o.key, rel: REQ, val: o.val}
   neObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  neObj o = pred {key: o.key, rel: NE, val: o.val}
+  neObj o = pred {key: o.key, rel: RNE, val: o.val}
   gtObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  gtObj o = pred {key: o.key, rel: GT, val: o.val}
+  gtObj o = pred {key: o.key, rel: RGT, val: o.val}
   geObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  geObj o = pred {key: o.key, rel: GE, val: o.val}
+  geObj o = pred {key: o.key, rel: RGE, val: o.val}
   ltObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  ltObj o = pred {key: o.key, rel: LT, val: o.val}
+  ltObj o = pred {key: o.key, rel: RLT, val: o.val}
   leObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  leObj o = pred {key: o.key, rel: LE, val: o.val}
+  leObj o = pred {key: o.key, rel: RLE, val: o.val}
 
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   and i1 i2 = i1 && i2
@@ -264,39 +263,3 @@ module Inquire
 
   xor :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   xor p q = (p && not q) || (not p && q)
-
-  -- These should all be part of BooleanAlgebra, but no bueno at this momento.
-
-  absorb :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
-  absorb (Junc p AND (Junc p' OR  _)) | p == p' = p
-  absorb (Junc p OR  (Junc p' AND _)) | p == p' = p
-
-  associate :: forall k v. Inquire k v -> Inquire k v
-  associate (Junc p AND (Junc q AND r)) = (p && q) && r
-  associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
-  associate (Junc (Junc p AND q) AND r) = p && (q && r)
-  associate (Junc (Junc p OR  q) OR  r) = p || (q || r)
-
-  assocLeft :: forall k v. Inquire k v-> Inquire k v
-  assocLeft (Junc p AND (Junc q AND r)) = (p && q) && r
-  assocLeft (Junc p OR  (Junc q OR  r)) = (p || q) || r
-
-  assocRight :: forall k v. Inquire k v-> Inquire k v
-  assocRight (Junc (Junc p AND q) AND r) = p && (q && r)
-  assocRight (Junc (Junc p OR  q) OR  r) = p || (q || r)
-
-  commute :: forall k v. Inquire k v -> Inquire k v
-  commute (Junc p AND q) = q && p
-  commute (Junc p OR  q) = q || p
-
-  distribute :: forall k v. Inquire k v -> Inquire k v
-  distribute (Junc p AND (Junc q OR  r)) = (p || q) && (p || r)
-  distribute (Junc p OR  (Junc q AND r)) = (p && q) || (p && r)
-
-  codistribute :: forall k v. Inquire k v -> Inquire k v
-  codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)
-  codistribute (Junc (Junc p AND q) OR  (Junc p AND r)) = p || (q && r)
-
-  idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
-  idempotent (Junc p AND p') | p == p' = p
-  idempotent (Junc p OR  p') | p == p' = p

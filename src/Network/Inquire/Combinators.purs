@@ -1,4 +1,4 @@
-module Inquire.Combinators
+module Network.Inquire.Combinators
   ( toObj
   , keys
   , vals
@@ -17,6 +17,14 @@ module Inquire.Combinators
   , replaceValByVal
   , bimap
   , map
+  , absorb
+  , associate
+  , assocLeft
+  , assocRight
+  , commute
+  , distribute
+  , codistribute
+  , idempotent
   , unsafeFindByKey
   , unsafeFindByVal
   , unsafeRemove
@@ -27,13 +35,50 @@ module Inquire.Combinators
   where
 
   import Prelude
-  import Inquire
+  import Network.Inquire
   import Data.Array ((:), zipWith)
-  import Data.Foldable (Foldable, bifoldr)
-  import Data.Functor (BiFunctor)
+  import Data.BiFoldable (bifoldr)
+  import Data.BiFunctor (BiFunctor)
   import Data.Maybe
   import Data.Monoid
   import Data.Tuple
+
+  -- These should all be part of BooleanAlgebra, but no bueno at this momento.
+
+  absorb :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
+  absorb (Junc p AND (Junc p' OR  _)) | p == p' = p
+  absorb (Junc p OR  (Junc p' AND _)) | p == p' = p
+
+  associate :: forall k v. Inquire k v -> Inquire k v
+  associate (Junc p AND (Junc q AND r)) = (p && q) && r
+  associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
+  associate (Junc (Junc p AND q) AND r) = p && (q && r)
+  associate (Junc (Junc p OR  q) OR  r) = p || (q || r)
+
+  assocLeft :: forall k v. Inquire k v-> Inquire k v
+  assocLeft (Junc p AND (Junc q AND r)) = (p && q) && r
+  assocLeft (Junc p OR  (Junc q OR  r)) = (p || q) || r
+
+  assocRight :: forall k v. Inquire k v-> Inquire k v
+  assocRight (Junc (Junc p AND q) AND r) = p && (q && r)
+  assocRight (Junc (Junc p OR  q) OR  r) = p || (q || r)
+
+  commute :: forall k v. Inquire k v -> Inquire k v
+  commute (Junc p AND q) = q && p
+  commute (Junc p OR  q) = q || p
+  commute i = i
+
+  distribute :: forall k v. Inquire k v -> Inquire k v
+  distribute (Junc p AND (Junc q OR  r)) = (p || q) && (p || r)
+  distribute (Junc p OR  (Junc q AND r)) = (p && q) || (p && r)
+
+  codistribute :: forall k v. Inquire k v -> Inquire k v
+  codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)
+  codistribute (Junc (Junc p AND q) OR  (Junc p AND r)) = p || (q && r)
+
+  idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
+  idempotent (Junc p AND p') | p == p' = p
+  idempotent (Junc p OR  p') | p == p' = p
 
   -- Utilities for working with Inquire.
   toObj :: forall k v. Inquire k v -> {keys :: [k], vals :: [v]}

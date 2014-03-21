@@ -1,0 +1,33 @@
+{
+  "name": "inquire",
+  "version": "0.4.1",
+  "homepage": "https://github.com/concordusapps/inquire.js",
+  "authors": [
+    "Concordus Applications"
+  ],
+  "description": "Generate advanced URL query strings.",
+  "main": "lib/inquire.js",
+  "keywords": [
+    "[armet",
+    "query",
+    "string",
+    "url]"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "purescript-foldable-traversable": "*",
+    "purescript-random": "*",
+    "purescript-quickcheck": "*",
+    "purescript-parsing": "*",
+    "purescript-control": "*",
+    "purescript-globals": "*",
+    "purescript-math": "*"
+  }
+}

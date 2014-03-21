@@ -6,8 +6,8 @@ module.exports = (grunt) ->
         files:
           'lib/inquire.js': [
             'src/**/*.purs'
-            'bower_components/purescript-parsing/src/**/*.purs'
-            'bower_components/purescript-parsing/src/**/*.purs.hs'
+            'bower_components/purescript-*/src/**/*.purs'
+            'bower_components/purescript-*/src/**/*.purs.hs'
           ]
         options:
           externs: 'lib/inquire.e.ps'
@@ -23,8 +23,8 @@ module.exports = (grunt) ->
           'test/inquire.js': [
             'src/**/*.purs'
             'test/**/*.purs'
-            'bower_components/purescript-quickcheck/src/**/*.purs'
-            'bower_components/purescript-quickcheck/src/**/*.purs.hs'
+            'bower_components/purescript-*/src/**/*.purs'
+            'bower_components/purescript-*/src/**/*.purs.hs'
           ]
         options:
           main: 'Network.Inquire.Properties'
