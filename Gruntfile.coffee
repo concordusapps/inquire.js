@@ -27,7 +27,7 @@ module.exports = (grunt) ->
             'bower_components/purescript-*/src/**/*.purs.hs'
           ]
         options:
-          main: 'Network.Inquire.Properties'
+          main: 'Network.Inquire.Laws'
 
     execute:
       target:

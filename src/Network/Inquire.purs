@@ -1,4 +1,4 @@
-module Inquire
+module Network.Inquire
   ( Inquire(..)
   , Rel(..)
   , JuncOp(..)
@@ -107,17 +107,17 @@ module Inquire
     show NOT    = "!"
 
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
-    show EmptyAnd = ""
-    show EmptyOr = ""
+    show EmptyAnd = "EmptyAnd"
+    show EmptyOr = "EmptyOr"
     show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
-    show (Junc EmptyAnd _ EmptyAnd) = ""
-    show (Junc EmptyAnd _ EmptyOr)  = ""
-    show (Junc EmptyAnd _ EmptyOr)  = ""
-    show (Junc EmptyOr _ EmptyOr)   = ""
-    show (Junc l _ EmptyOr)         = show l
-    show (Junc l _ EmptyAnd)        = show l
-    show (Junc EmptyAnd _ r)        = show r
-    show (Junc EmptyOr _ r)         = show r
+    -- show (Junc EmptyAnd _ EmptyAnd) = "AA"
+    -- show (Junc EmptyAnd _ EmptyOr)  = "AO"
+    -- show (Junc EmptyAnd _ EmptyOr)  = "OA"
+    -- show (Junc EmptyOr _ EmptyOr)   = "OO"
+    -- show (Junc l _ EmptyOr)         = show l
+    -- show (Junc l _ EmptyAnd)        = show l
+    -- show (Junc EmptyAnd _ r)        = show r
+    -- show (Junc EmptyOr _ r)         = show r
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
@@ -202,8 +202,8 @@ module Inquire
     -- (&&) EmptyAnd p        = p
     (&&) p        q        = Junc p AND q
 
-    not EmptyAnd = EmptyOr
-    not EmptyOr  = EmptyAnd
+    -- not EmptyAnd = EmptyOr
+    -- not EmptyOr  = EmptyAnd
     not p        = Wrap NOT p
 
   -- FIXME
