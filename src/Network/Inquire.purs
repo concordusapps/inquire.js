@@ -1,4 +1,4 @@
-module Network.Inquire
+module Inquire
   ( Inquire(..)
   , Rel(..)
   , JuncOp(..)
@@ -27,6 +27,7 @@ module Network.Inquire
 
   import Prelude
   import Global
+  import Data.Array
   import Data.BiFoldable
   import Data.BiFunctor
   import Data.BiTraversable
@@ -41,12 +42,12 @@ module Network.Inquire
                    | Junc (Inquire k v) JuncOp (Inquire k v)
                    | Wrap WrapOp (Inquire k v)
 
-  data Rel = REQ
-           | RNE
-           | RGT
-           | RGE
-           | RLT
-           | RLE
+  data Rel = IEQ
+           | INE
+           | IGT
+           | IGE
+           | ILT
+           | ILE
 
   data JuncOp = AND
               | OR
@@ -55,12 +56,12 @@ module Network.Inquire
               | NOT
 
   instance eqRel :: Eq Rel where
-    (==) REQ REQ = true
-    (==) RNE RNE = true
-    (==) RGT RGT = true
-    (==) RGE RGE = true
-    (==) RLT RLT = true
-    (==) RLE RLE = true
+    (==) IEQ IEQ = true
+    (==) INE INE = true
+    (==) IGT IGT = true
+    (==) IGE IGE = true
+    (==) ILT ILT = true
+    (==) ILE ILE = true
     (==) _  _  = false
 
     (/=) r  r' = not (r == r')
@@ -90,12 +91,12 @@ module Network.Inquire
     (/=) i  i' = not (i == i')
 
   instance showRel :: Show Rel where
-    show REQ = "="
-    show RNE = "!="
-    show RGT = ">"
-    show RGE = ">="
-    show RLT = "<"
-    show RLE = "<="
+    show IEQ = "="
+    show INE = "!="
+    show IGT = ">"
+    show IGE = ">="
+    show ILT = "<"
+    show ILE = "<="
 
   instance showJuncOp :: Show JuncOp where
     show AND = "&"
@@ -108,7 +109,15 @@ module Network.Inquire
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
     show EmptyAnd = ""
     show EmptyOr = ""
-    show (Pred k r v) = show k ++ show r ++ show v
+    show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
+    show (Junc EmptyAnd _ EmptyAnd) = ""
+    show (Junc EmptyAnd _ EmptyOr)  = ""
+    show (Junc EmptyAnd _ EmptyOr)  = ""
+    show (Junc EmptyOr _ EmptyOr)   = ""
+    show (Junc l _ EmptyOr)         = show l
+    show (Junc l _ EmptyAnd)        = show l
+    show (Junc EmptyAnd _ r)        = show r
+    show (Junc EmptyOr _ r)         = show r
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
@@ -181,16 +190,16 @@ module Network.Inquire
     bisequence = bitraverse id id
 
   instance boolLikeInquire :: BoolLike (Inquire k v) where
-    (||) EmptyAnd p        = EmptyAnd
-    (||) p        EmptyAnd = EmptyAnd
-    (||) p        EmptyOr  = p
-    (||) EmptyOr  p        = p
+    -- (||) EmptyAnd p        = EmptyAnd
+    -- (||) p        EmptyAnd = EmptyAnd
+    -- (||) p        EmptyOr  = p
+    -- (||) EmptyOr  p        = p
     (||) p        q        = Junc p OR q
 
-    (&&) EmptyOr  p        = EmptyOr
-    (&&) p        EmptyOr  = EmptyOr
-    (&&) p        EmptyAnd = p
-    (&&) EmptyAnd p        = p
+    -- (&&) EmptyOr  p        = EmptyOr
+    -- (&&) p        EmptyOr  = EmptyOr
+    -- (&&) p        EmptyAnd = p
+    -- (&&) EmptyAnd p        = p
     (&&) p        q        = Junc p AND q
 
     not EmptyAnd = EmptyOr
@@ -214,6 +223,22 @@ module Network.Inquire
     \  return generate(showDict)(showDict)(i);\
     \}" :: forall k v. Inquire k v -> String
 
+  foreign import unsafeEncode
+    "function unsafeEncode(x) {\
+    \  var show = function(k) {\
+    \    if ({}.toString.call(k).slice(8, -1) === 'Function') {\
+    \      return k().toString();\
+    \    } else {\
+    \      return k.toString();\
+    \    }\
+    \  };\
+    \  if ({}.toString.call(x).slice(8, -1) === 'Array') {\
+    \    return x.map(encodeURIComponent).join();\
+    \  } else {\
+    \    return encodeURIComponent(show(x));\
+    \  }\
+    \}" :: forall a. a -> String
+
   generate :: forall k v. (Show k, Show v) => Inquire k v -> String
   generate i = encodeURIComponent (show i)
 
@@ -234,17 +259,17 @@ module Network.Inquire
   le k v = leObj {key: k, val: v}
 
   eqObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  eqObj o = pred {key: o.key, rel: REQ, val: o.val}
+  eqObj o = pred {key: o.key, rel: IEQ, val: o.val}
   neObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  neObj o = pred {key: o.key, rel: RNE, val: o.val}
+  neObj o = pred {key: o.key, rel: INE, val: o.val}
   gtObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  gtObj o = pred {key: o.key, rel: RGT, val: o.val}
+  gtObj o = pred {key: o.key, rel: IGT, val: o.val}
   geObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  geObj o = pred {key: o.key, rel: RGE, val: o.val}
+  geObj o = pred {key: o.key, rel: IGE, val: o.val}
   ltObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  ltObj o = pred {key: o.key, rel: RLT, val: o.val}
+  ltObj o = pred {key: o.key, rel: ILT, val: o.val}
   leObj :: forall k v. {key :: k, val :: v} -> Inquire k v
-  leObj o = pred {key: o.key, rel: RLE, val: o.val}
+  leObj o = pred {key: o.key, rel: ILE, val: o.val}
 
   and :: forall k v. Inquire k v -> Inquire k v -> Inquire k v
   and i1 i2 = i1 && i2

@@ -2,8 +2,6 @@
 
 module Data.BiFoldable where
 
-  import Prelude
-
   class BiFoldable f where
     bifoldr :: forall a b c. (a -> c -> c) -> (b -> c -> c) -> c -> f a b -> c
     bifoldl :: forall a b c. (c -> a -> c) -> (c -> b -> c) -> c -> f a b -> c

@@ -1,4 +1,4 @@
-module Network.Inquire.Properties where
+module Network.Inquire.Laws where
 
   import Prelude
 
@@ -30,7 +30,7 @@ module Network.Inquire.Properties where
                  ]
 
   rel :: forall eff. Eff (random :: Random | eff) Rel
-  rel = elements [REQ, RNE, RGT, RGE, RLT, RLE]
+  rel = elements [IEQ, INE, IGT, IGE, ILT, ILE]
   jop :: forall eff. Eff (random :: Random | eff) JuncOp
   jop = elements [AND, OR]
   wop :: forall eff. Eff (random :: Random | eff) WrapOp
@@ -42,24 +42,21 @@ module Network.Inquire.Properties where
   div :: Number -> Number -> Number
   div m n = floor (m / n)
 
-  prop_commute :: Inquire Number Number -> Inquire Number Number -> Boolean
-  prop_commute p q = (p && q) == (commute (q && p))
+  -- | Boolean algebra laws.
+  law_bool_assoc :: Inquire String String -> Inquire String String -> Inquire String String -> Boolean
+  law_bool_assoc p q r = (p && (q && r)) == associate ((p && q) && r)
 
-  prop_commuteS :: Inquire String String -> Inquire String String -> Boolean
-  prop_commuteS p q = (p && q) == (commute (q && p))
+  law_bool_commute :: Inquire String String -> Inquire String String -> Boolean
+  law_bool_commute p q = (p && q) == commute (q && p)
 
-  prop_functor_id :: Inquire Number Number -> Boolean
-  prop_functor_id i = id <$> i == i
+  law_functor_id :: Inquire String String -> Boolean
+  law_functor_id i = id <$> i == i
 
-  prop_functor_idS :: Inquire String String -> Boolean
-  prop_functor_idS i = id <$> i == i
-
-  prop_string :: String -> String -> Boolean
-  prop_string s1 s2 = if lengthS s1 > 3 && 3 < lengthS s2 then s1 == s2 else true
+  -- law_functor_composition :: Inquire String String -> Fun String String -> Fun String String -> Boolean
+  -- law_functor_composition i f g = (f <<< g) <$> i == ((<$>) f <<< (<$>) g) i
 
   main = do
-    quickCheck prop_commute
-    quickCheck prop_functor_id
-    quickCheck prop_commuteS
-    quickCheck prop_functor_idS
-    quickCheck prop_string
+    quickCheck law_bool_assoc
+    quickCheck law_bool_commute
+    quickCheck law_functor_id
+    -- quickCheck law_functor_composition

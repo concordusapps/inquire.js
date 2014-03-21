@@ -4306,28 +4306,28 @@
             ctor: "Network.Inquire.NOT", 
             values: [  ]
         };
-        var REQ = {
-            ctor: "Network.Inquire.REQ", 
+        var IEQ = {
+            ctor: "Network.Inquire.IEQ", 
             values: [  ]
         };
-        var RNE = {
-            ctor: "Network.Inquire.RNE", 
+        var INE = {
+            ctor: "Network.Inquire.INE", 
             values: [  ]
         };
-        var RGT = {
-            ctor: "Network.Inquire.RGT", 
+        var IGT = {
+            ctor: "Network.Inquire.IGT", 
             values: [  ]
         };
-        var RGE = {
-            ctor: "Network.Inquire.RGE", 
+        var IGE = {
+            ctor: "Network.Inquire.IGE", 
             values: [  ]
         };
-        var RLT = {
-            ctor: "Network.Inquire.RLT", 
+        var ILT = {
+            ctor: "Network.Inquire.ILT", 
             values: [  ]
         };
-        var RLE = {
-            ctor: "Network.Inquire.RLE", 
+        var ILE = {
+            ctor: "Network.Inquire.ILE", 
             values: [  ]
         };
         var AND = {
@@ -4375,6 +4375,7 @@
             };
         };
         function unsafeGenerate(i) {  var showDict = {    show: function(k) {      if ({}.toString.call(k).slice(8, -1) === 'Function') {        return k().toString();      } else {        return k.toString();      }    }  };  return generate(showDict)(showDict)(i);};
+        function unsafeEncode(x) {  var show = function(k) {    if ({}.toString.call(k).slice(8, -1) === 'Function') {      return k().toString();    } else {      return k.toString();    }  };  if ({}.toString.call(x).slice(8, -1) === 'Array') {    return x.map(encodeURIComponent).join();  } else {    return encodeURIComponent(show(x));  }};
         var traversableInquire = function (_1) {
             return {
                 traverse: function (__dict_Applicative_318) {
@@ -4425,22 +4426,22 @@
             };
         };
         var showRel_show = function (_1) {
-            if (_1.ctor === "Network.Inquire.REQ") {
+            if (_1.ctor === "Network.Inquire.IEQ") {
                 return "=";
             };
-            if (_1.ctor === "Network.Inquire.RNE") {
+            if (_1.ctor === "Network.Inquire.INE") {
                 return "!=";
             };
-            if (_1.ctor === "Network.Inquire.RGT") {
+            if (_1.ctor === "Network.Inquire.IGT") {
                 return ">";
             };
-            if (_1.ctor === "Network.Inquire.RGE") {
+            if (_1.ctor === "Network.Inquire.IGE") {
                 return ">=";
             };
-            if (_1.ctor === "Network.Inquire.RLT") {
+            if (_1.ctor === "Network.Inquire.ILT") {
                 return "<";
             };
-            if (_1.ctor === "Network.Inquire.RLE") {
+            if (_1.ctor === "Network.Inquire.ILE") {
                 return "<=";
             };
             throw "Failed pattern match";
@@ -4470,7 +4471,7 @@
         var neObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: RNE, 
+                rel: INE, 
                 val: o.val
             });
         };
@@ -4504,7 +4505,7 @@
         var ltObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: RLT, 
+                rel: ILT, 
                 val: o.val
             });
         };
@@ -4519,7 +4520,7 @@
         var leObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: RLE, 
+                rel: ILE, 
                 val: o.val
             });
         };
@@ -4534,7 +4535,7 @@
         var gtObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: RGT, 
+                rel: IGT, 
                 val: o.val
             });
         };
@@ -4549,7 +4550,7 @@
         var geObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: RGE, 
+                rel: IGE, 
                 val: o.val
             });
         };
@@ -4658,33 +4659,33 @@
         };
         var eqRel_$eq$eq = function (_1) {
             return function (_2) {
-                if (_1.ctor === "Network.Inquire.REQ") {
-                    if (_2.ctor === "Network.Inquire.REQ") {
+                if (_1.ctor === "Network.Inquire.IEQ") {
+                    if (_2.ctor === "Network.Inquire.IEQ") {
                         return true;
                     };
                 };
-                if (_1.ctor === "Network.Inquire.RNE") {
-                    if (_2.ctor === "Network.Inquire.RNE") {
+                if (_1.ctor === "Network.Inquire.INE") {
+                    if (_2.ctor === "Network.Inquire.INE") {
                         return true;
                     };
                 };
-                if (_1.ctor === "Network.Inquire.RGT") {
-                    if (_2.ctor === "Network.Inquire.RGT") {
+                if (_1.ctor === "Network.Inquire.IGT") {
+                    if (_2.ctor === "Network.Inquire.IGT") {
                         return true;
                     };
                 };
-                if (_1.ctor === "Network.Inquire.RGE") {
-                    if (_2.ctor === "Network.Inquire.RGE") {
+                if (_1.ctor === "Network.Inquire.IGE") {
+                    if (_2.ctor === "Network.Inquire.IGE") {
                         return true;
                     };
                 };
-                if (_1.ctor === "Network.Inquire.RLT") {
-                    if (_2.ctor === "Network.Inquire.RLT") {
+                if (_1.ctor === "Network.Inquire.ILT") {
+                    if (_2.ctor === "Network.Inquire.ILT") {
                         return true;
                     };
                 };
-                if (_1.ctor === "Network.Inquire.RLE") {
-                    if (_2.ctor === "Network.Inquire.RLE") {
+                if (_1.ctor === "Network.Inquire.ILE") {
+                    if (_2.ctor === "Network.Inquire.ILE") {
                         return true;
                     };
                 };
@@ -4706,7 +4707,7 @@
         var eqObj = function (o) {
             return pred({
                 key: o.key, 
-                rel: REQ, 
+                rel: IEQ, 
                 val: o.val
             });
         };
@@ -4747,7 +4748,55 @@
                         return "";
                     };
                     if (_1.ctor === "Network.Inquire.Pred") {
-                        return _ps.Prelude.show(__dict_Show_320)(_1.values[0]) + _ps.Prelude.show(showRel({}))(_1.values[1]) + _ps.Prelude.show(__dict_Show_321)(_1.values[2]);
+                        return unsafeEncode(_1.values[0]) + _ps.Prelude.show(showRel({}))(_1.values[1]) + unsafeEncode(_1.values[2]);
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyAnd") {
+                            if ((_1.values[2]).ctor === "Network.Inquire.EmptyAnd") {
+                                return "";
+                            };
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyAnd") {
+                            if ((_1.values[2]).ctor === "Network.Inquire.EmptyOr") {
+                                return "";
+                            };
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyAnd") {
+                            if ((_1.values[2]).ctor === "Network.Inquire.EmptyOr") {
+                                return "";
+                            };
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyOr") {
+                            if ((_1.values[2]).ctor === "Network.Inquire.EmptyOr") {
+                                return "";
+                            };
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[2]).ctor === "Network.Inquire.EmptyOr") {
+                            return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]);
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[2]).ctor === "Network.Inquire.EmptyAnd") {
+                            return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]);
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyAnd") {
+                            return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
+                        };
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        if ((_1.values[0]).ctor === "Network.Inquire.EmptyOr") {
+                            return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
+                        };
                     };
                     if (_1.ctor === "Network.Inquire.Junc") {
                         if ((_1.values[0]).ctor === "Network.Inquire.Pred") {
@@ -4915,40 +4964,14 @@
             return Wrap(NOT)(_1);
             throw "Failed pattern match";
         };
-        var boolLikeInquire_$bar$bar = function (_1) {
-            return function (_2) {
-                if (_1.ctor === "Network.Inquire.EmptyAnd") {
-                    return EmptyAnd;
-                };
-                if (_2.ctor === "Network.Inquire.EmptyAnd") {
-                    return EmptyAnd;
-                };
-                if (_2.ctor === "Network.Inquire.EmptyOr") {
-                    return _1;
-                };
-                if (_1.ctor === "Network.Inquire.EmptyOr") {
-                    return _2;
-                };
-                return Junc(_1)(OR)(_2);
-                throw "Failed pattern match";
+        var boolLikeInquire_$bar$bar = function (p) {
+            return function (q) {
+                return Junc(p)(OR)(q);
             };
         };
-        var boolLikeInquire_$amp$amp = function (_1) {
-            return function (_2) {
-                if (_1.ctor === "Network.Inquire.EmptyOr") {
-                    return EmptyOr;
-                };
-                if (_2.ctor === "Network.Inquire.EmptyOr") {
-                    return EmptyOr;
-                };
-                if (_2.ctor === "Network.Inquire.EmptyAnd") {
-                    return _1;
-                };
-                if (_1.ctor === "Network.Inquire.EmptyAnd") {
-                    return _2;
-                };
-                return Junc(_1)(AND)(_2);
-                throw "Failed pattern match";
+        var boolLikeInquire_$amp$amp = function (p) {
+            return function (q) {
+                return Junc(p)(AND)(q);
             };
         };
         var boolLikeInquire = function (_1) {
@@ -5093,12 +5116,12 @@
         module.NOT = NOT;
         module.AND = AND;
         module.OR = OR;
-        module.REQ = REQ;
-        module.RNE = RNE;
-        module.RGT = RGT;
-        module.RGE = RGE;
-        module.RLT = RLT;
-        module.RLE = RLE;
+        module.IEQ = IEQ;
+        module.INE = INE;
+        module.IGT = IGT;
+        module.IGE = IGE;
+        module.ILT = ILT;
+        module.ILE = ILE;
         module.EmptyAnd = EmptyAnd;
         module.EmptyOr = EmptyOr;
         module.Pred = Pred;
@@ -5152,6 +5175,7 @@
         function unsafeRemoveAll(i1) {  return function(i2) {    /* We use String's eq typeclass because it uses `unsafeRefEq`*/    return removeAll(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(i1)(i2);  }};
         function unsafeReplaceValByKey(v) {  return function(k) {    return function(i) {      /* We use String's eq typeclass because it uses `unsafeRefEq`*/      return replaceValByKey(_ps.Prelude.eqString({}))(v)(k)(i);    }  }};
         function unsafeReplaceValByVal(v1) {  return function(v2) {    return function(i) {      /* We use String's eq typeclass because it uses `unsafeRefEq`*/      return replaceValByVal(_ps.Prelude.eqString({}))(v1)(v2)(i);    }  }};
+        function unsafeFromObj(rawObj) {  var arr = [];  for (var k in rawObj) {    if (rawObj.hasOwnProperty(k)) {      arr.push({key: k, val: rawObj[k]});    }  }  return fromArrayObj(arr);};
         var toObj = function (i) {
             return (function (updateVals) {
                 return (function (updateKeys) {
@@ -5314,10 +5338,15 @@
             if (_1.length === 0) {
                 return _ps.Network_Inquire.EmptyAnd;
             };
-            if (_1.length > 0) {
-                var _4 = _1.slice(1);
+            if (_1.length === 1) {
                 if ((_1[0]).length === 2) {
-                    return _ps.Network_Inquire.and(fromArrayPair(_4))(_ps.Network_Inquire.eq(_1[0][0])(_1[0][1]));
+                    return _ps.Network_Inquire.eq(_1[0][0])(_1[0][1]);
+                };
+            };
+            if (_1.length > 0) {
+                var _7 = _1.slice(1);
+                if ((_1[0]).length === 2) {
+                    return _ps.Network_Inquire.and(_ps.Network_Inquire.eq(_1[0][0])(_1[0][1]))(fromArrayPair(_7));
                 };
             };
             throw "Failed pattern match";
@@ -5326,9 +5355,12 @@
             if (_1.length === 0) {
                 return _ps.Network_Inquire.EmptyAnd;
             };
+            if (_1.length === 1) {
+                return _ps.Network_Inquire.eq((_1[0]).key)((_1[0]).val);
+            };
             if (_1.length > 0) {
-                var _4 = _1.slice(1);
-                return _ps.Network_Inquire.and(fromArrayObj(_4))(_ps.Network_Inquire.eq((_1[0]).key)((_1[0]).val));
+                var _7 = _1.slice(1);
+                return _ps.Network_Inquire.and(_ps.Network_Inquire.eq((_1[0]).key)((_1[0]).val))(fromArrayObj(_7));
             };
             throw "Failed pattern match";
         };
@@ -5580,6 +5612,7 @@
                 };
             };
         };
+        module.unsafeFromObj = unsafeFromObj;
         module.unsafeReplaceValByVal = unsafeReplaceValByVal;
         module.unsafeReplaceValByKey = unsafeReplaceValByKey;
         module.unsafeRemoveAll = unsafeRemoveAll;
@@ -5614,29 +5647,23 @@
         module.toObj = toObj;
         return module;
     })();
-    _ps.Network_Inquire_Properties = (function () {
+    _ps.Network_Inquire_Laws = (function () {
         var module = {};
         var wop = _ps.Test_QuickCheck.elements([ _ps.Network_Inquire.NOBOOL, _ps.Network_Inquire.NOT ]);
-        var rel = _ps.Test_QuickCheck.elements([ _ps.Network_Inquire.REQ, _ps.Network_Inquire.RNE, _ps.Network_Inquire.RGT, _ps.Network_Inquire.RGE, _ps.Network_Inquire.RLT, _ps.Network_Inquire.RLE ]);
-        var prop_string = function (s1) {
-            return function (s2) {
-                return (_ps.Data_String.lengthS(s1) > 3 && 3 < _ps.Data_String.lengthS(s2)) ? s1 === s2 : true;
-            };
-        };
-        var prop_functor_idS = function (i) {
+        var rel = _ps.Test_QuickCheck.elements([ _ps.Network_Inquire.IEQ, _ps.Network_Inquire.INE, _ps.Network_Inquire.IGT, _ps.Network_Inquire.IGE, _ps.Network_Inquire.ILT, _ps.Network_Inquire.ILE ]);
+        var law_functor_id = function (i) {
             return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["<$>"](_ps.Network_Inquire.functorInquire({}))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))(i))(i);
         };
-        var prop_functor_id = function (i) {
-            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqNumber({}))(_ps.Prelude.eqNumber({})))(_ps.Prelude["<$>"](_ps.Network_Inquire.functorInquire({}))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))(i))(i);
-        };
-        var prop_commuteS = function (p) {
+        var law_bool_commute = function (p) {
             return function (q) {
                 return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Network_Inquire_Combinators.commute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(p)));
             };
         };
-        var prop_commute = function (p) {
+        var law_bool_assoc = function (p) {
             return function (q) {
-                return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqNumber({}))(_ps.Prelude.eqNumber({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Network_Inquire_Combinators.commute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(p)));
+                return function (r) {
+                    return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r)))(_ps.Network_Inquire_Combinators.associate(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(r)));
+                };
             };
         };
         var jop = _ps.Test_QuickCheck.elements([ _ps.Network_Inquire.AND, _ps.Network_Inquire.OR ]);
@@ -5676,21 +5703,15 @@
                 };
             };
         };
-        var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showNumber({}))(_ps.Prelude.showNumber({})))(arbInquire(_ps.Test_QuickCheck.arbNumber({}))(_ps.Test_QuickCheck.arbNumber({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showNumber({}))(_ps.Prelude.showNumber({})))(arbInquire(_ps.Test_QuickCheck.arbNumber({}))(_ps.Test_QuickCheck.arbNumber({})))(_ps.Test_QuickCheck.testableBoolean({}))))(prop_commute))(function (_) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showNumber({}))(_ps.Prelude.showNumber({})))(arbInquire(_ps.Test_QuickCheck.arbNumber({}))(_ps.Test_QuickCheck.arbNumber({})))(_ps.Test_QuickCheck.testableBoolean({})))(prop_functor_id))(function (_) {
-                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(prop_commuteS))(function (_) {
-                    return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(prop_functor_idS))(function (_) {
-                        return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Prelude.showString({}))(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.testableFunction(_ps.Prelude.showString({}))(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.testableBoolean({}))))(prop_string);
-                    });
-                });
+        var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_assoc))(function (_) {
+            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute))(function (_) {
+                return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id);
             });
         });
         module.main = main;
-        module.prop_string = prop_string;
-        module.prop_functor_idS = prop_functor_idS;
-        module.prop_functor_id = prop_functor_id;
-        module.prop_commuteS = prop_commuteS;
-        module.prop_commute = prop_commute;
+        module.law_functor_id = law_functor_id;
+        module.law_bool_commute = law_bool_commute;
+        module.law_bool_assoc = law_bool_assoc;
         module.div = div;
         module.wop = wop;
         module.jop = jop;
@@ -6093,7 +6114,7 @@
         module.splitOp = splitOp;
         return module;
     })();
-    _ps.Network_Inquire_Properties.main();
+    _ps.Network_Inquire_Laws.main();
 })((typeof module !== "undefined" && module.exports) ? module.exports : (typeof window !== "undefined") ? window.PS = window.PS || {} : (function () {
     throw "PureScript doesn't know how to export modules in the current environment";
 })());

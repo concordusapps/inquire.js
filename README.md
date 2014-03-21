@@ -60,6 +60,7 @@ Currently supports [armet][armet] syntax query strings.
         * [replaceValByVal](#replacevalbyval)
         * [unsafeFindByKey](#unsafefindbykey)
         * [unsafeFindByVal](#unsafefindbyval)
+        * [unsafeFromObj](#unsafefromobj)
         * [unsafeRemove](#unsaferemove)
         * [unsafeRemoveAll](#unsaferemoveall)
         * [unsafeReplaceValByKey](#unsafereplacevalbykey)
@@ -203,51 +204,60 @@ However, the fundamentals are the same for any purpose.
 
 #### Predicate combinators
 
-###### eq :: k -> v -> Inquire k v
+###### eq
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `==`.
 Will return results where the `key` on the model equals the supplied `val`
 
-###### ne :: k -> v -> Inquire k v
+###### ne
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `!=`
 Will return results where the `key` on the model does not equal the supplied `val`
 
-###### gt :: k -> v -> Inquire k v
+###### gt
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `>`
 Will return results where the `key` on the model is greater than the supplied `val`
 
-###### ge :: k -> v -> Inquire k v
+###### ge
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `>=`
 Will return results where the `key` on the model is greater than or equal to the supplied `val`
 
-###### lt :: k -> v -> Inquire k v
+###### lt
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `<`
 Will return results where the `key` on the model is less than the supplied `val`
 
-###### le :: k -> v -> Inquire k v
+###### le
+###### k -> v -> Inquire k v
 
 Constructs an Inquire from two values with the relation `<=`
 Will return results where the `key` on the model is less than or equal to the supplied `val`
 
 #### Junction combinators
 
-###### and :: Inquire k v -> Inquire k v -> Inquire k v
+###### and
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Constructs an Inquire from two Inquires with the conjunction `&`
 Will return results where both `left` and `right` subqueries are true.
 
-###### or :: Inquire k v -> Inquire k v -> Inquire k v
+###### or
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Constructs an Inquire from two Inquires with the disjunction `;`
 Will return results where either one, or both, `left` and `right` subqueries are true.
 
 #### Wrap combinator
 
-###### not :: Inquire k v -> Inquire k v
+###### not
+###### Inquire k v -> Inquire k v
 
 Constructs an Inquire from one Inquire with the negation `!`
 Will return results where subquery is false.
@@ -256,22 +266,26 @@ Will return results where subquery is false.
 
 From these simple combinators, we can create more complex ideas:
 
-###### implies :: Inquire k v -> Inquire k v -> Inquire k v
+###### implies
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Constructs an Inquire from two Inquires.
 This is the direct definition of implication, namely `(NOT p) OR q`.
 
-###### equiv :: Inquire k v -> Inquire k v -> Inquire k v
+###### equiv
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Constructs an Inquire from two Inquires.
 This is the direct definition of equivalence, namely `(p AND q) OR ((NOT p) AND (NOT q))`.
 
-###### xor :: Inquire k v -> Inquire k v -> Inquire k v
+###### xor
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Constructs an Inquire from two Inquires.
 This is the direct definition of exclusive or, namely `(p AND (NOT q)) OR ((NOT p) AND q)`.
 
-###### absorb :: Inquire k v -> Inquire k v
+###### absorb
+###### Inquire k v -> Inquire k v
 
 Simplifies specific Inquires.
 
@@ -279,7 +293,8 @@ Simplifies specific Inquires.
 
 `p OR (p AND q)` => `p`
 
-###### associate :: Inquire k v -> Inquire k v
+###### associate
+###### Inquire k v -> Inquire k v
 
 Reorders parens from what they are now to the other possible way.
 
@@ -291,7 +306,8 @@ Reorders parens from what they are now to the other possible way.
 
 `(p OR q) OR r` => `p OR (q OR r)`
 
-###### assocLeft :: Inquire k v-> Inquire k v
+###### assocLeft
+###### Inquire k v-> Inquire k v
 
 Reorders parens to the left.
 
@@ -299,7 +315,8 @@ Reorders parens to the left.
 
 `p OR (q OR r)` => `(p OR q) OR r`
 
-###### assocRight :: Inquire k v-> Inquire k v
+###### assocRight
+###### Inquire k v-> Inquire k v
 
 Reorders parens to the right.
 
@@ -307,7 +324,8 @@ Reorders parens to the right.
 
 `(p OR q) OR r` => `p OR (q OR r)`
 
-###### commute :: Inquire k v -> Inquire k v
+###### commute
+###### Inquire k v -> Inquire k v
 
 Reorders queries.
 
@@ -315,7 +333,8 @@ Reorders queries.
 
 `p OR q` => `q OR p`
 
-###### distribute :: Inquire k v -> Inquire k v
+###### distribute
+###### Inquire k v -> Inquire k v
 
 Distributes one query over its dual.
 
@@ -323,7 +342,8 @@ Distributes one query over its dual.
 
 `p OR (q AND r)` => `(p AND q) OR (p AND r)`
 
-###### codistribute :: Inquire k v -> Inquire k v
+###### codistribute
+###### Inquire k v -> Inquire k v
 
 Performs the opposite of distribution.
 
@@ -331,7 +351,8 @@ Performs the opposite of distribution.
 
 `(p AND q) OR (p AND r)` => `p OR (q AND r)`
 
-###### idempotent :: Inquire k v -> Inquire k v
+###### idempotent
+###### Inquire k v -> Inquire k v
 
 Simplifies the Inquire with the Idempotency rule.
 
@@ -347,12 +368,14 @@ or an array of `{key: k, val: v}` objects.
 
 The [predicate combinators](#predicate-combinators) above correspond to the single `key`, `val` option.
 
-###### fromArrayPair :: [[k, v]] -> Inquire k v
+###### fromArrayPair
+###### [[k, v]] -> Inquire k v
 
 This constructs an Inquire with the default relation of `==` for all predicates,
 and the default junction of `&` for all combinations of predicates.
 
-###### fromArrayObj :: [{key: k, val: v}] -> Inquire k v
+###### fromArrayObj
+###### [{key: k, val: v}] -> Inquire k v
 
 This constructs an Inquire with the default relation of `==` for all predicates,
 and the default junction of `&` for all combinations of predicates.
@@ -372,7 +395,8 @@ or something you might get from a library like underscore.
 So, if you can use `Array.map`, `_.reduceRight` or similar,
 you already know how to use these functions.
 
-###### foldr :: (v -> v' -> v') -> v' -> Inquire k v -> v'
+###### foldr
+###### (v -> v' -> v') -> v' -> Inquire k v -> v'
 
 This is a right associative "catamorphism".
 What that means is that it takes each value and joins it to the next given the supplied function.
@@ -381,7 +405,8 @@ The first argument is a binary function.
 The second argument is the initial value.
 The last argument is the Inquire.
 
-###### foldl :: (v' -> v -> v') -> v' -> Inquire k v -> v'
+###### foldl
+###### (v' -> v -> v') -> v' -> Inquire k v -> v'
 
 This is a left associative "catamorphism".
 What that means is that it takes each value and joins it to the next given the supplied function.
@@ -390,23 +415,27 @@ The first argument is a binary function.
 The second argument is the initial value.
 The last argument is the Inquire.
 
-###### map :: (v -> v') -> Inquire k v -> Inquire k v'
+###### map
+###### (v -> v') -> Inquire k v -> Inquire k v'
 
 This will modify every value in the Inquire with the given function.
 
 There are a few modification combinators available.
 
-###### filterByKey :: (k -> Boolean) -> Inquire k v -> Inquire k v
+###### filterByKey
+###### (k -> Boolean) -> Inquire k v -> Inquire k v
 
 Removes all predicates that fail the supplied boolean test.
 The first argument must be a function that tests a `key` and returns a boolean.
 
-###### filterByVal :: (v -> Boolean) -> Inquire k v -> Inquire k v
+###### filterByVal
+###### (v -> Boolean) -> Inquire k v -> Inquire k v
 
 Removes all predicates that fail the supplied boolean test.
 The first argument must be a function that tests a `val` and returns a boolean.
 
-###### findByKey :: k -> Inquire k v -> Maybe (Inquire k v)
+###### findByKey
+###### k -> Inquire k v -> Maybe (Inquire k v)
 
 Searches for the first element which has the specified `key`.
 If successful, will return a `Just predicate`.
@@ -414,7 +443,8 @@ If unsuccessful, will return a `Nothing`.
 
 This is biased to the right.
 
-###### findByVal :: v -> Inquire k v -> Maybe (Inquire k v)
+###### findByVal
+###### v -> Inquire k v -> Maybe (Inquire k v)
 
 Searches for the first element which has the specified `val`.
 If successful, will return a `Just predicate`.
@@ -422,32 +452,38 @@ If unsuccessful, will return a `Nothing`.
 
 This is biased to the right.
 
-###### remove' :: (Inquire k v -> Inquire k v -> Boolean) -> Inquire k v -> Inquire k v -> Inquire k v
+###### remo
+###### :: (Inquire k v -> Inquire k v -> Boolean) -> Inquire k v -> Inquire k v -> Inquire k v
 
 Helper function for `remove` and `removeAll`.
 Requires a binary function that takes two inquires and returns a boolean indicating whether the to continue removal.
 
-###### remove :: Inquire k v -> Inquire k v -> Inquire k v
+###### remove
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Removes the rightmost instance of the first Inquire from the second Inquire.
 
-###### removeAll :: Inquire k v -> Inquire k v -> Inquire k v
+###### removeAll
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Removes every instance of the first Inquire from the second Inquire.
 
-###### replaceValByKey :: v -> k -> Inquire k v -> Inquire k v
+###### replaceValByKey
+###### v -> k -> Inquire k v -> Inquire k v
 
 Replaces each Inquire that has the specified `key` with the given `val`.
 The first argument is the `val` to replace with.
 The second argument is the `key` to test with.
 
-###### replaceValByVal :: v -> v -> Inquire k v -> Inquire k v
+###### replaceValByVal
+###### v -> v -> Inquire k v -> Inquire k v
 
 Replaces each Inquire that has the specified `val` with the given `val`.
 The first argument is the `val` to replace with.
 The second argument is the `val` to test with.
 
-###### unsafeFindByKey :: k -> Inquire k v -> Maybe (Inquire k v)
+###### unsafeFindByKey
+###### k -> Inquire k v -> Maybe (Inquire k v)
 
 Unsafe version of [findByKey](#findByKey).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -459,7 +495,8 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
-###### unsafeFindByVal :: v -> Inquire k v -> Maybe (Inquire k v)
+###### unsafeFindByVal
+###### v -> Inquire k v -> Maybe (Inquire k v)
 
 Unsafe version of [findByVal](#findByVal).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -471,7 +508,19 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
-###### unsafeRemove :: Inquire k v -> Inquire k v -> Inquire k v
+###### unsafeFromObj
+###### { | a } -> Inquire k v
+
+Unsafe way to drop an object into an Inquire.
+
+This just iterates through the object and tries to take all the top level keys and vals as arguments to the Inquire.
+
+Conjoins everything with the relation equals.
+
+Note, there's no telling what will happen if you put in something that's not a simple key val object.
+
+###### unsafeRemove
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Unsafe version of [remove](#remove).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -483,7 +532,8 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
-###### unsafeRemoveAll :: Inquire k v -> Inquire k v -> Inquire k v
+###### unsafeRemoveAll
+###### Inquire k v -> Inquire k v -> Inquire k v
 
 Unsafe version of [removeAll](#removeAll).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -495,7 +545,8 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
-###### unsafeReplaceValByKey :: v -> k -> Inquire k v -> Inquire k v
+###### unsafeReplaceValByKey
+###### v -> k -> Inquire k v -> Inquire k v
 
 Unsafe version of [replaceValByKey](#replaceValByKey).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -507,7 +558,8 @@ Use with caution!
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
 
-###### unsafeReplaceValByVal :: v -> v -> Inquire k v -> Inquire k v
+###### unsafeReplaceValByVal
+###### v -> v -> Inquire k v -> Inquire k v
 
 Unsafe version of [replaceValByVal](#replaceValByVal).
 This is unsafe in the sense that it uses `Prelude.unsafeRefEq` for equality testing.
@@ -533,52 +585,64 @@ We can move in the four cardinal directions: Up, Down, Left, Right.
 This allows us to go to any position in our Inquire,
 modify that Predicate, Junction, or Wrap, and return the new structure easily.
 
-###### toInquireZ :: Inquire k v -> InquireZ k v
+###### toInquireZ
+###### Inquire k v -> InquireZ k v
 
 Creates a new Zipper from an Inquire.
 This is how we can start to manipulate our Inquire.
 
-###### fromInquireZ :: InquireZ k v -> Inquire k v
+###### fromInquireZ
+###### InquireZ k v -> Inquire k v
 
 Returns our modified Inquire from a Zipper.
 
-###### zipLeft :: InquireZ k v -> Maybe (InquireZ k v)
+###### zipLeft
+###### InquireZ k v -> Maybe (InquireZ k v)
 
 Moves to the left of the current `hole`, if possible, or does nothing.
 
-###### zipRight :: InquireZ k v -> Maybe (InquireZ k v)
+###### zipRight
+###### InquireZ k v -> Maybe (InquireZ k v)
 
 Moves to the right of the current `hole`, if possible, or does nothing.
 
-###### zipDown :: InquireZ k v -> Maybe (InquireZ k v)
+###### zipDown
+###### InquireZ k v -> Maybe (InquireZ k v)
 
 Moves down or to the right of the current `hole`, if possible, or does nothing.
 
-###### zipUp :: InquireZ k v -> Maybe (InquireZ k v)
+###### zipUp
+###### InquireZ k v -> Maybe (InquireZ k v)
 
 Moves up of the current `hole`, if possible, or does nothing.
 
-###### zipUpmost :: InquireZ k v -> InquireZ k v
+###### zipUpmost
+###### InquireZ k v -> InquireZ k v
 
 Moves to the top of the Zipper.
 
-###### zipLeftmost :: InquireZ k v -> InquireZ k v
+###### zipLeftmost
+###### InquireZ k v -> InquireZ k v
 
 Moves as far to the left of the Zipper as possible.
 
-###### zipRightmost :: InquireZ k v -> InquireZ k v
+###### zipRightmost
+###### InquireZ k v -> InquireZ k v
 
 Moves as far to the right of the Zipper as possible.
 
-###### getHole :: InquireZ k v -> Inquire k v
+###### getHole
+###### InquireZ k v -> Inquire k v
 
 Peeks into the Zipper and returns the current Inquire in the `hole`.
 
-###### query :: (Inquire k v -> a) -> InquireZ k v -> a
+###### query
+###### (Inquire k v -> a) -> InquireZ k v -> a
 
 Applies a function to the current Inquire in the `hole` and returns the result.
 
-###### modify :: (Inquire k v -> Inquire k v) -> InquireZ k v -> InquireZ k v
+###### modify
+###### (Inquire k v -> Inquire k v) -> InquireZ k v -> InquireZ k v
 
 Applies a function to the current Inquire in the `hole`.
 
