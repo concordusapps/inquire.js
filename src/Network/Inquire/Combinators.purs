@@ -70,8 +70,8 @@ module Network.Inquire.Combinators
   commute i = i
 
   distribute :: forall k v. Inquire k v -> Inquire k v
-  distribute (Junc p AND (Junc q OR  r)) = (p || q) && (p || r)
-  distribute (Junc p OR  (Junc q AND r)) = (p && q) || (p && r)
+  distribute (Junc p AND (Junc q OR  r)) = (p && q) || (p && r)
+  distribute (Junc p OR  (Junc q AND r)) = (p || q) && (p || r)
 
   codistribute :: forall k v. Inquire k v -> Inquire k v
   codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)
@@ -106,12 +106,12 @@ module Network.Inquire.Combinators
 
   -- The ideal type would be
   -- fromArrayPair :: forall k v. [[k, v]] -> Inquire k v
-  fromArrayPair []         = EmptyAnd
+  fromArrayPair []         = True
   fromArrayPair [[x,y]]    = x `eq` y
   fromArrayPair ([x,y]:zs) = (x `eq` y) `and` (fromArrayPair zs)
 
   fromArrayObj :: forall k v. [{key :: k, val :: v}] -> Inquire k v
-  fromArrayObj []                        = EmptyAnd
+  fromArrayObj []                        = True
   fromArrayObj [{ key = x, val = y }]    = x `eq` y
   fromArrayObj ({ key = x, val = y }:zs) = (x `eq` y) `and` (fromArrayObj zs)
 
@@ -149,7 +149,7 @@ module Network.Inquire.Combinators
     let r' = remove' p i r in
     if p r r' then Junc (remove' p i l) o r else Junc l o r'
   remove' p i (Wrap o i')  = Wrap o (remove' p i i')
-  remove' p i i' | i == i' = EmptyAnd
+  remove' p i i' | i == i' = True
   remove' p i i'           = i'
 
   remove :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v -> Inquire k v

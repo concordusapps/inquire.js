@@ -36,8 +36,8 @@ module Network.Inquire
 
   import qualified Data.Foldable as F
 
-  data Inquire k v = EmptyAnd
-                   | EmptyOr
+  data Inquire k v = True
+                   | False
                    | Pred k Rel v
                    | Junc (Inquire k v) JuncOp (Inquire k v)
                    | Wrap WrapOp (Inquire k v)
@@ -81,8 +81,8 @@ module Network.Inquire
     (/=) r      r'     = not (r == r')
 
   instance eqInquire :: (Eq k, Eq v) => Eq (Inquire k v) where
-    (==) EmptyAnd     EmptyAnd        = true
-    (==) EmptyOr      EmptyOr         = true
+    (==) True     True        = true
+    (==) False      False         = true
     (==) (Pred k r v) (Pred k' r' v') = k == k' && r == r' && v == v'
     (==) (Junc p o q) (Junc p' o' q') = p == p' && o == o' && q == q'
     (==) (Wrap o p)   (Wrap o' p')    = p == p' && o == o'
@@ -107,53 +107,60 @@ module Network.Inquire
     show NOT    = "!"
 
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
-    show EmptyAnd = "EmptyAnd"
-    show EmptyOr = "EmptyOr"
-    show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
-    -- show (Junc EmptyAnd _ EmptyAnd) = "AA"
-    -- show (Junc EmptyAnd _ EmptyOr)  = "AO"
-    -- show (Junc EmptyAnd _ EmptyOr)  = "OA"
-    -- show (Junc EmptyOr _ EmptyOr)   = "OO"
-    -- show (Junc l _ EmptyOr)         = show l
-    -- show (Junc l _ EmptyAnd)        = show l
-    -- show (Junc EmptyAnd _ r)        = show r
-    -- show (Junc EmptyOr _ r)         = show r
-    show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
-    show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
-    show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
-    show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
-    show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
-    show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
-    show (Junc l@(Junc _ o _) o' r) | o == o'   = show l ++ show o ++ "(" ++ show r ++ ")"
-    show (Junc l o r@(Junc _ o' _)) | o == o'   = "(" ++ show l ++ ")" ++ show o ++ show r
-    show (Junc l o r)                           = "(" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
-    show (Wrap NOBOOL i@(Wrap _ _)) = show i
-    show (Wrap o i@(Wrap NOBOOL _))   = show i
-    show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
+    show True = "True"
+    show False = "False"
+    show (Pred k r v) = "Pred " ++ show k ++ " " ++ show r ++ " " ++ show v
+    show (Junc l o r) = "Junc (" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
+    show (Wrap o i) = "Wrap (" ++ show o ++ " " ++ show i ++ ")"
+
+  -- instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
+  --   show True = "True"
+  --   show False = "False"
+  --   show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
+  --   -- show (Junc True _ True) = "AA"
+  --   -- show (Junc True _ False)  = "AO"
+  --   -- show (Junc True _ False)  = "OA"
+  --   -- show (Junc False _ False)   = "OO"
+  --   -- show (Junc l _ False)         = show l
+  --   -- show (Junc l _ True)        = show l
+  --   -- show (Junc True _ r)        = show r
+  --   -- show (Junc False _ r)         = show r
+  --   show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
+  --   show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
+  --   show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
+  --   show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
+  --   show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
+  --   show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
+  --   show (Junc l@(Junc _ o _) o' r) | o == o'   = show l ++ show o ++ "(" ++ show r ++ ")"
+  --   show (Junc l o r@(Junc _ o' _)) | o == o'   = "(" ++ show l ++ ")" ++ show o ++ show r
+  --   show (Junc l o r)                           = "(" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
+  --   show (Wrap NOBOOL i@(Wrap _ _)) = show i
+  --   show (Wrap o i@(Wrap NOBOOL _))   = show i
+  --   show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
 
   instance functorInquire :: Functor (Inquire k) where
-    (<$>) _ EmptyAnd        = EmptyAnd
-    (<$>) _ EmptyOr         = EmptyOr
+    (<$>) _ True        = True
+    (<$>) _ False         = False
     (<$>) f (Pred k r v)    = Pred k r (f v)
     (<$>) f (Junc i1 op i2) = Junc (f <$> i1) op (f <$> i2)
     (<$>) f (Wrap op i)     = Wrap op (f <$> i)
 
   instance monoidInquire :: Monoid (Inquire k v) where
-    mempty = EmptyAnd
-    (<>) i EmptyAnd = i
-    (<>) EmptyAnd i = i
+    mempty = True
+    (<>) i True = i
+    (<>) True i = i
     (<>) i1 i2 = Junc i1 AND i2
 
   instance biFunctorInquire :: BiFunctor Inquire where
-    (<$$>) _ _ EmptyAnd        = EmptyAnd
-    (<$$>) _ _ EmptyOr         = EmptyOr
+    (<$$>) _ _ True        = True
+    (<$$>) _ _ False         = False
     (<$$>) f g (Pred k r v)    = Pred (f k) r (g v)
     (<$$>) f g (Junc i1 op i2) = Junc ((<$$>) f g i1) op ((<$$>) f g i2)
     (<$$>) f g (Wrap op i)     = Wrap op ((<$$>) f g i)
 
   instance foldableInquire :: F.Foldable (Inquire k) where
-    foldr _ z EmptyAnd     = z
-    foldr _ z EmptyOr      = z
+    foldr _ z True     = z
+    foldr _ z False      = z
     foldr f z (Pred _ _ v) = v `f` z
     foldr f z (Junc l _ r) = F.foldr f (F.foldr f z r) l
     foldr f z (Wrap _ i)   = F.foldr f z i
@@ -163,8 +170,8 @@ module Network.Inquire
     foldMap f = F.foldr ((<>) <<< f) mempty
 
   instance biFoldableInquire :: BiFoldable Inquire where
-    bifoldr _ _ z EmptyAnd     = z
-    bifoldr _ _ z EmptyOr      = z
+    bifoldr _ _ z True     = z
+    bifoldr _ _ z False      = z
     bifoldr f g z (Pred k _ v) = k `f` (v `g` z)
     bifoldr f g z (Junc l _ r) = bifoldr f g (bifoldr f g z r) l
     bifoldr f g z (Wrap _ i)   = bifoldr f g z i
@@ -172,8 +179,8 @@ module Network.Inquire
     bifoldl f g z i = bifoldr (flip f) (flip g) z i
 
   instance traversableInquire :: Traversable (Inquire k) where
-    traverse _ EmptyAnd = pure EmptyAnd
-    traverse _ EmptyOr  = pure EmptyOr
+    traverse _ True = pure True
+    traverse _ False  = pure False
     traverse f (Pred k r v) = Pred k r <$> f v
     traverse f (Junc l o r) = Junc <$> traverse f l <*> pure o <*> traverse f r
     traverse f (Wrap o i)   = Wrap o <$> traverse f i
@@ -181,8 +188,8 @@ module Network.Inquire
     sequence = traverse id
 
   instance bitraversableInquire :: BiTraversable Inquire where
-    bitraverse _ _ EmptyAnd = pure EmptyAnd
-    bitraverse _ _ EmptyOr  = pure EmptyOr
+    bitraverse _ _ True = pure True
+    bitraverse _ _ False  = pure False
     bitraverse f g (Pred k r v) = Pred <$> f k <*> pure r <*> g v
     bitraverse f g (Junc l o r) = Junc <$> bitraverse f g l <*> pure o <*> bitraverse f g r
     bitraverse f g (Wrap o i)   = Wrap o <$> bitraverse f g i
@@ -190,20 +197,20 @@ module Network.Inquire
     bisequence = bitraverse id id
 
   instance boolLikeInquire :: BoolLike (Inquire k v) where
-    -- (||) EmptyAnd p        = EmptyAnd
-    -- (||) p        EmptyAnd = EmptyAnd
-    -- (||) p        EmptyOr  = p
-    -- (||) EmptyOr  p        = p
+    -- (||) True p        = True
+    -- (||) p        True = True
+    -- (||) p        False  = p
+    -- (||) False  p        = p
     (||) p        q        = Junc p OR q
 
-    -- (&&) EmptyOr  p        = EmptyOr
-    -- (&&) p        EmptyOr  = EmptyOr
-    -- (&&) p        EmptyAnd = p
-    -- (&&) EmptyAnd p        = p
+    -- (&&) False  p        = False
+    -- (&&) p        False  = False
+    -- (&&) p        True = p
+    -- (&&) True p        = p
     (&&) p        q        = Junc p AND q
 
-    -- not EmptyAnd = EmptyOr
-    -- not EmptyOr  = EmptyAnd
+    -- not True = False
+    -- not False  = True
     not p        = Wrap NOT p
 
   -- FIXME

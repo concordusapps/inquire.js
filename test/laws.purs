@@ -1,6 +1,6 @@
 module Network.Inquire.Laws where
 
-  import Prelude
+  import Debug.Trace
 
   import Control.Monad.Eff
   import Control.Monad.Eff.Random
@@ -18,12 +18,12 @@ module Network.Inquire.Laws where
   inq = sized inq'
 
   inq' :: forall eff k v. (Arb k, Arb v) => Number -> Eff (random :: Random | eff) (Inquire k v)
-  inq' 0 = oneof [ return EmptyAnd
-                 , return EmptyOr
+  inq' 0 = oneof [ return True
+                 , return False
                  ]
   inq' 1 = Pred <$> arb <*> rel <*> arb
-  inq' n = oneof [ return EmptyAnd
-                 , return EmptyOr
+  inq' n = oneof [ return True
+                 , return False
                  , Pred <$> arb <*> rel <*> arb
                  , Junc <$> inq' (n `div` 2) <*> jop <*> inq' (n `div` 2)
                  , Wrap <$> wop <*> inq' (n `div` 2)
@@ -49,6 +49,9 @@ module Network.Inquire.Laws where
   law_bool_commute :: Inquire String String -> Inquire String String -> Boolean
   law_bool_commute p q = (p && q) == commute (q && p)
 
+  law_bool_distribute :: Inquire String String -> Inquire String String -> Inquire String String -> Boolean
+  law_bool_distribute p q r = ((p && q) || (p && r)) == distribute (p && (q || r))
+
   law_functor_id :: Inquire String String -> Boolean
   law_functor_id i = id <$> i == i
 
@@ -56,7 +59,12 @@ module Network.Inquire.Laws where
   -- law_functor_composition i f g = (f <<< g) <$> i == ((<$>) f <<< (<$>) g) i
 
   main = do
+    print "checking associativity"
     quickCheck law_bool_assoc
+    print "checking commutativity"
     quickCheck law_bool_commute
+    print "checking distributativity"
+    quickCheck law_bool_distribute
+    print "checking functor identity"
     quickCheck law_functor_id
     -- quickCheck law_functor_composition

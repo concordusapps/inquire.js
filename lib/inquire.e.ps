@@ -1,3 +1,14 @@
+module Math where
+import Prelude ()
+module Global where
+import Prelude ()
+foreign import encodeURIComponent :: Prim.String -> Prim.String
+module Data.String.Regex where
+import Prelude ()
+module Data.String where
+import Prelude ()
+module Data.Eq.Unsafe where
+import Prelude ()
 module Prelude where
 import Prelude ()
 infixr 9 >>>
@@ -35,15 +46,6 @@ foreign import flip :: forall a b c. (a -> b -> c) -> b -> a -> c
 foreign import instance categoryArr :: Prelude.Category Prim.Function
 foreign import instance functorFromApplicative :: (Prelude.Applicative f) => Prelude.Functor f
 foreign import instance boolLikeBoolean :: Prelude.BoolLike Prim.Boolean
-module Math where
-import Prelude ()
-module Global where
-import Prelude ()
-foreign import encodeURIComponent :: Prim.String -> Prim.String
-module Data.String.Regex where
-import Prelude ()
-module Data.String where
-import Prelude ()
 module Data.Maybe where
 import Prelude ()
 data Maybe a = Nothing  | Just a
@@ -138,7 +140,7 @@ import Prelude ()
 data WrapOp  = NOBOOL  | NOT 
 data JuncOp  = AND  | OR 
 data Rel  = IEQ  | INE  | IGT  | IGE  | ILT  | ILE 
-data Inquire k v = EmptyAnd  | EmptyOr  | Pred k Network.Inquire.Rel v | Junc (Network.Inquire.Inquire k v) Network.Inquire.JuncOp (Network.Inquire.Inquire k v) | Wrap Network.Inquire.WrapOp (Network.Inquire.Inquire k v)
+data Inquire k v = True  | False  | Pred k Network.Inquire.Rel v | Junc (Network.Inquire.Inquire k v) Network.Inquire.JuncOp (Network.Inquire.Inquire k v) | Wrap Network.Inquire.WrapOp (Network.Inquire.Inquire k v)
 foreign import xor :: forall k v. Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import equiv :: forall k v. Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import implies :: forall k v. Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
@@ -203,9 +205,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Network.Inquire.I
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Network.Inquire.Inquire k v
-foreign import fromArrayPair :: forall t11610. [[t11610]] -> Network.Inquire.Inquire t11610 t11610
+foreign import fromArrayPair :: forall t11504. [[t11504]] -> Network.Inquire.Inquire t11504 t11504
 foreign import toArrayObj :: forall k v. Network.Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t11569. Network.Inquire.Inquire t11569 t11569 -> [[t11569]]
+foreign import toArrayPair :: forall t11463. Network.Inquire.Inquire t11463 t11463 -> [[t11463]]
 foreign import toTuple :: forall k v. Network.Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Network.Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Network.Inquire.Inquire k v -> [k]

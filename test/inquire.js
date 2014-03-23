@@ -1,5 +1,134 @@
 (function (_ps) {
     "use strict";
+    _ps.Math = (function () {
+        var module = {};
+        var abs = Math.abs;;
+        var acos = Math.acos;;
+        var asin = Math.asin;;
+        var atan = Math.atan;;
+        function atan2(y){  return function (x) {    return Math.atan2(y, x);  };};
+        var ceil = Math.ceil;;
+        var cos = Math.cos;;
+        var exp = Math.exp;;
+        var floor = Math.floor;;
+        var log = Math.log;;
+        function max(n1){  return function(n2) {    return Math.max(n1, n2);  }};
+        function min(n1){  return function(n2) {    return Math.min(n1, n2);  }};
+        function pow(n){  return function(p) {    return Math.pow(n, p);  }};
+        var round = Math.round;;
+        var sin = Math.sin;;
+        var sqrt = Math.sqrt;;
+        var tan = Math.tan;;
+        var e       = Math.E;;
+        var ln2     = Math.LN2;;
+        var ln10    = Math.LN10;;
+        var log2e   = Math.LOG2E;;
+        var log10e  = Math.LOG10E;;
+        var pi      = Math.PI;;
+        var sqrt1_2 = Math.SQRT1_2;;
+        var sqrt2   = Math.SQRT2;;
+        module.sqrt2 = sqrt2;
+        module.sqrt1_2 = sqrt1_2;
+        module.pi = pi;
+        module.log10e = log10e;
+        module.log2e = log2e;
+        module.ln10 = ln10;
+        module.ln2 = ln2;
+        module.e = e;
+        module.tan = tan;
+        module.sqrt = sqrt;
+        module.sin = sin;
+        module.round = round;
+        module.pow = pow;
+        module.min = min;
+        module.max = max;
+        module.log = log;
+        module.floor = floor;
+        module.exp = exp;
+        module.cos = cos;
+        module.ceil = ceil;
+        module.atan2 = atan2;
+        module.atan = atan;
+        module.asin = asin;
+        module.acos = acos;
+        module.abs = abs;
+        return module;
+    })();
+    _ps.Global = (function () {
+        var module = {};
+        var nan = NaN;;
+        var infinity = Infinity;;
+        function toExponential(n) {  return n.toExponential();};
+        function toFixed(d) {  return function(n) {    return n.toFixed(d);  };};
+        function toPrecision(d) {  return function(n) {    return n.toPrecision(d);  };};
+        function parseInt(n) {  return function(radix) {    return parseInt(n, radix);  };};
+        module.isNaN = isNaN;
+        module.decodeURI = decodeURI;
+        module.encodeURI = encodeURI;
+        module.decodeURIComponent = decodeURIComponent;
+        module.encodeURIComponent = encodeURIComponent;
+        module.parseInt = parseInt;
+        module.parseFloat = parseFloat;
+        module.isFinite = isFinite;
+        module.toPrecision = toPrecision;
+        module.toFixed = toFixed;
+        module.toExponential = toExponential;
+        module.infinity = infinity;
+        module.nan = nan;
+        return module;
+    })();
+    _ps.Data_String_Regex = (function () {
+        var module = {};
+        function regex(s1) {  return function(s2) {    return new Regex(s1, s2);  };};
+        function test(r) {  return function (s) {    return r.test(s);  };};
+        function match(r) {  return function (s) {    return s.match(r);   };};
+        function replaceR(r) {  return function(s1) {    return function(s2) {      return s2.replace(r, s1);    };  };};
+        function search(r) {  return function (s) {    return s.search(r);  };};
+        module.search = search;
+        module.replaceR = replaceR;
+        module.match = match;
+        module.test = test;
+        module.regex = regex;
+        return module;
+    })();
+    _ps.Data_String = (function () {
+        var module = {};
+        function lengthS(s) {  return s.length;};
+        function charAt(i) {  return function(s) {    return s.charAt(i);   };};
+        function indexOfS(s1) {  return function(s2) {    return s1.indexOf(s2);  }; };
+        function lastIndexOfS(s1) {  return function(s2) {    return s1.lastIndexOf(s2);  };};
+        function localeCompare(s1) {  return function(s2) {    return s1.localeCompare(s2);  };};
+        function replace(s1) {  return function(s2) {    return function(s3) {      return s3.replace(s1, s2);    };  };};
+        function sliceS(st) {  return function(e) {    return function(s) {      return s.slice(st, e);    };  };};
+        function split(sep) {  return function(s) {    return s.split(sep);  };};
+        function substr(n1) {  return function(n2) {    return function(s) {      return s.substr(n1, n2);    };  };};
+        function substring(n1) {  return function(n2) {    return function(s) {      return s.substring(n1, n2);    };  };};
+        function toLower(s) {  return s.toLowerCase();};
+        function toUpper(s) {  return s.toUpperCase();};
+        function trim(s) {  return s.trim();};
+        module.trim = trim;
+        module.toUpper = toUpper;
+        module.toLower = toLower;
+        module.substring = substring;
+        module.substr = substr;
+        module.split = split;
+        module.sliceS = sliceS;
+        module.replace = replace;
+        module.localeCompare = localeCompare;
+        module.lastIndexOfS = lastIndexOfS;
+        module.indexOfS = indexOfS;
+        module.charAt = charAt;
+        module.lengthS = lengthS;
+        return module;
+    })();
+    _ps.Data_Eq_Unsafe = (function () {
+        var module = {};
+        function refEq(r1) {  return function(r2) {    return r1 === r2;  };};
+        function refIneq(r1) {  return function(r2) {    return r1 !== r2;  };};
+        module.refIneq = refIneq;
+        module.refEq = refEq;
+        return module;
+    })();
     _ps.Prelude = (function () {
         var module = {};
         var LT = {
@@ -75,8 +204,6 @@
         function $div$eq(dict) {
             return dict.$div$eq;
         };
-        function refEq(r1) {  return function(r2) {    return r1 === r2;  };};
-        function refIneq(r1) {  return function(r2) {    return r1 !== r2;  };};
         function compare(dict) {
             return dict.compare;
         };
@@ -218,24 +345,24 @@
                 };
             };
         };
-        var eqString_$eq$eq = refEq;
-        var eqString_$div$eq = refIneq;
+        var eqString_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
+        var eqString_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
         var eqString = function (_1) {
             return {
                 $eq$eq: eqString_$eq$eq, 
                 $div$eq: eqString_$div$eq
             };
         };
-        var eqNumber_$eq$eq = refEq;
-        var eqNumber_$div$eq = refIneq;
+        var eqNumber_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
+        var eqNumber_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
         var eqNumber = function (_1) {
             return {
                 $eq$eq: eqNumber_$eq$eq, 
                 $div$eq: eqNumber_$div$eq
             };
         };
-        var eqBoolean_$eq$eq = refEq;
-        var eqBoolean_$div$eq = refIneq;
+        var eqBoolean_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
+        var eqBoolean_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
         var eqBoolean = function (_1) {
             return {
                 $eq$eq: eqBoolean_$eq$eq, 
@@ -445,8 +572,6 @@
         module[">"] = $greater;
         module["<"] = $less;
         module.compare = compare;
-        module.refIneq = refIneq;
-        module.refEq = refEq;
         module["/="] = $div$eq;
         module["=="] = $eq$eq;
         module.numNegate = numNegate;
@@ -493,127 +618,6 @@
         module.ordNumber = ordNumber;
         module.bitsNumber = bitsNumber;
         module.boolLikeBoolean = boolLikeBoolean;
-        return module;
-    })();
-    _ps.Math = (function () {
-        var module = {};
-        var abs = Math.abs;;
-        var acos = Math.acos;;
-        var asin = Math.asin;;
-        var atan = Math.atan;;
-        function atan2(y){  return function (x) {    return Math.atan2(y, x);  };};
-        var ceil = Math.ceil;;
-        var cos = Math.cos;;
-        var exp = Math.exp;;
-        var floor = Math.floor;;
-        var log = Math.log;;
-        function max(n1){  return function(n2) {    return Math.max(n1, n2);  }};
-        function min(n1){  return function(n2) {    return Math.min(n1, n2);  }};
-        function pow(n){  return function(p) {    return Math.pow(n, p);  }};
-        var round = Math.round;;
-        var sin = Math.sin;;
-        var sqrt = Math.sqrt;;
-        var tan = Math.tan;;
-        var e       = Math.E;;
-        var ln2     = Math.LN2;;
-        var ln10    = Math.LN10;;
-        var log2e   = Math.LOG2E;;
-        var log10e  = Math.LOG10E;;
-        var pi      = Math.PI;;
-        var sqrt1_2 = Math.SQRT1_2;;
-        var sqrt2   = Math.SQRT2;;
-        module.sqrt2 = sqrt2;
-        module.sqrt1_2 = sqrt1_2;
-        module.pi = pi;
-        module.log10e = log10e;
-        module.log2e = log2e;
-        module.ln10 = ln10;
-        module.ln2 = ln2;
-        module.e = e;
-        module.tan = tan;
-        module.sqrt = sqrt;
-        module.sin = sin;
-        module.round = round;
-        module.pow = pow;
-        module.min = min;
-        module.max = max;
-        module.log = log;
-        module.floor = floor;
-        module.exp = exp;
-        module.cos = cos;
-        module.ceil = ceil;
-        module.atan2 = atan2;
-        module.atan = atan;
-        module.asin = asin;
-        module.acos = acos;
-        module.abs = abs;
-        return module;
-    })();
-    _ps.Global = (function () {
-        var module = {};
-        var nan = NaN;;
-        var infinity = Infinity;;
-        function toExponential(n) {  return n.toExponential();};
-        function toFixed(d) {  return function(n) {    return n.toFixed(d);  };};
-        function toPrecision(d) {  return function(n) {    return n.toPrecision(d);  };};
-        function parseInt(n) {  return function(radix) {    return parseInt(n, radix);  };};
-        module.isNaN = isNaN;
-        module.decodeURI = decodeURI;
-        module.encodeURI = encodeURI;
-        module.decodeURIComponent = decodeURIComponent;
-        module.encodeURIComponent = encodeURIComponent;
-        module.parseInt = parseInt;
-        module.parseFloat = parseFloat;
-        module.isFinite = isFinite;
-        module.toPrecision = toPrecision;
-        module.toFixed = toFixed;
-        module.toExponential = toExponential;
-        module.infinity = infinity;
-        module.nan = nan;
-        return module;
-    })();
-    _ps.Data_String_Regex = (function () {
-        var module = {};
-        function regex(s1) {  return function(s2) {    return new Regex(s1, s2);  };};
-        function test(r) {  return function (s) {    return r.test(s);  };};
-        function match(r) {  return function (s) {    return s.match(r);   };};
-        function replaceR(r) {  return function(s1) {    return function(s2) {      return s2.replace(r, s1);    };  };};
-        function search(r) {  return function (s) {    return s.search(r);  };};
-        module.search = search;
-        module.replaceR = replaceR;
-        module.match = match;
-        module.test = test;
-        module.regex = regex;
-        return module;
-    })();
-    _ps.Data_String = (function () {
-        var module = {};
-        function lengthS(s) {  return s.length;};
-        function charAt(i) {  return function(s) {    return s.charAt(i);   };};
-        function indexOfS(s1) {  return function(s2) {    return s1.indexOf(s2);  }; };
-        function lastIndexOfS(s1) {  return function(s2) {    return s1.lastIndexOf(s2);  };};
-        function localeCompare(s1) {  return function(s2) {    return s1.localeCompare(s2);  };};
-        function replace(s1) {  return function(s2) {    return function(s3) {      return s3.replace(s1, s2);    };  };};
-        function sliceS(st) {  return function(e) {    return function(s) {      return s.slice(st, e);    };  };};
-        function split(sep) {  return function(s) {    return s.split(sep);  };};
-        function substr(n1) {  return function(n2) {    return function(s) {      return s.substr(n1, n2);    };  };};
-        function substring(n1) {  return function(n2) {    return function(s) {      return s.substring(n1, n2);    };  };};
-        function toLower(s) {  return s.toLowerCase();};
-        function toUpper(s) {  return s.toUpperCase();};
-        function trim(s) {  return s.trim();};
-        module.trim = trim;
-        module.toUpper = toUpper;
-        module.toLower = toLower;
-        module.substring = substring;
-        module.substr = substr;
-        module.split = split;
-        module.sliceS = sliceS;
-        module.replace = replace;
-        module.localeCompare = localeCompare;
-        module.lastIndexOfS = lastIndexOfS;
-        module.indexOfS = indexOfS;
-        module.charAt = charAt;
-        module.lengthS = lengthS;
         return module;
     })();
     _ps.Data_Maybe = (function () {
@@ -766,8 +770,10 @@
                 };
             };
         };
-        var eqRef_$eq$eq = liftRef(_ps.Prelude.refEq);
-        var eqRef_$div$eq = liftRef(_ps.Prelude.refIneq);
+        var refEq = liftRef(_ps.Data_Eq_Unsafe.refEq);
+        var refIneq = liftRef(_ps.Data_Eq_Unsafe.refIneq);
+        var eqRef_$eq$eq = refEq;
+        var eqRef_$div$eq = refIneq;
         var eqRef = function (_1) {
             return {
                 $eq$eq: eqRef_$eq$eq, 
@@ -775,6 +781,8 @@
             };
         };
         module.Ref = Ref;
+        module.refIneq = refIneq;
+        module.refEq = refEq;
         module.liftRef = liftRef;
         module.eqRef = eqRef;
         return module;
@@ -4338,12 +4346,12 @@
             ctor: "Network.Inquire.OR", 
             values: [  ]
         };
-        var EmptyAnd = {
-            ctor: "Network.Inquire.EmptyAnd", 
+        var True = {
+            ctor: "Network.Inquire.True", 
             values: [  ]
         };
-        var EmptyOr = {
-            ctor: "Network.Inquire.EmptyOr", 
+        var False = {
+            ctor: "Network.Inquire.False", 
             values: [  ]
         };
         var Pred = function (value0) {
@@ -4389,11 +4397,11 @@
         var traversableInquire_traverse = function (__dict_Applicative_316) {
             return function (_1) {
                 return function (_2) {
-                    if (_2.ctor === "Network.Inquire.EmptyAnd") {
-                        return _ps.Prelude.pure(__dict_Applicative_316)(EmptyAnd);
+                    if (_2.ctor === "Network.Inquire.True") {
+                        return _ps.Prelude.pure(__dict_Applicative_316)(True);
                     };
-                    if (_2.ctor === "Network.Inquire.EmptyOr") {
-                        return _ps.Prelude.pure(__dict_Applicative_316)(EmptyOr);
+                    if (_2.ctor === "Network.Inquire.False") {
+                        return _ps.Prelude.pure(__dict_Applicative_316)(False);
                     };
                     if (_2.ctor === "Network.Inquire.Pred") {
                         return _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(__dict_Applicative_316))(Pred(_2.values[0])(_2.values[1]))(_1(_2.values[2]));
@@ -4465,6 +4473,35 @@
                 show: showJuncOp_show
             };
         };
+        var showInquire = function (_1) {
+            return function (_2) {
+                return {
+                    show: showInquire_show(_1)(_2)
+                };
+            };
+        };
+        var showInquire_show = function (__dict_Show_320) {
+            return function (__dict_Show_321) {
+                return function (_1) {
+                    if (_1.ctor === "Network.Inquire.True") {
+                        return "True";
+                    };
+                    if (_1.ctor === "Network.Inquire.False") {
+                        return "False";
+                    };
+                    if (_1.ctor === "Network.Inquire.Pred") {
+                        return "Pred " + _ps.Prelude.show(__dict_Show_320)(_1.values[0]) + " " + _ps.Prelude.show(showRel({}))(_1.values[1]) + " " + _ps.Prelude.show(__dict_Show_321)(_1.values[2]);
+                    };
+                    if (_1.ctor === "Network.Inquire.Junc") {
+                        return "Junc (" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + ")" + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]) + ")";
+                    };
+                    if (_1.ctor === "Network.Inquire.Wrap") {
+                        return "Wrap (" + _ps.Prelude.show(showWrapOp({}))(_1.values[0]) + " " + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[1]) + ")";
+                    };
+                    throw "Failed pattern match";
+                };
+            };
+        };
         var pred = function (o) {
             return Pred(o.key)(o.rel)(o.val);
         };
@@ -4483,13 +4520,13 @@
                 });
             };
         };
-        var monoidInquire_mempty = EmptyAnd;
+        var monoidInquire_mempty = True;
         var monoidInquire_$less$greater = function (_1) {
             return function (_2) {
-                if (_2.ctor === "Network.Inquire.EmptyAnd") {
+                if (_2.ctor === "Network.Inquire.True") {
                     return _1;
                 };
-                if (_1.ctor === "Network.Inquire.EmptyAnd") {
+                if (_1.ctor === "Network.Inquire.True") {
                     return _2;
                 };
                 return Junc(_1)(AND)(_2);
@@ -4547,6 +4584,13 @@
                 });
             };
         };
+        var generate = function (__dict_Show_322) {
+            return function (__dict_Show_323) {
+                return function (i) {
+                    return _ps.Global.encodeURIComponent(_ps.Prelude.show(showInquire(__dict_Show_322)(__dict_Show_323))(i));
+                };
+            };
+        };
         var geObj = function (o) {
             return pred({
                 key: o.key, 
@@ -4569,11 +4613,11 @@
         };
         var functorInquire_$less$dollar$greater = function (_1) {
             return function (_2) {
-                if (_2.ctor === "Network.Inquire.EmptyAnd") {
-                    return EmptyAnd;
+                if (_2.ctor === "Network.Inquire.True") {
+                    return True;
                 };
-                if (_2.ctor === "Network.Inquire.EmptyOr") {
-                    return EmptyOr;
+                if (_2.ctor === "Network.Inquire.False") {
+                    return False;
                 };
                 if (_2.ctor === "Network.Inquire.Pred") {
                     return Pred(_2.values[0])(_2.values[1])(_1(_2.values[2]));
@@ -4599,10 +4643,10 @@
         var foldableInquire_foldr = function (_1) {
             return function (_2) {
                 return function (_3) {
-                    if (_3.ctor === "Network.Inquire.EmptyAnd") {
+                    if (_3.ctor === "Network.Inquire.True") {
                         return _2;
                     };
-                    if (_3.ctor === "Network.Inquire.EmptyOr") {
+                    if (_3.ctor === "Network.Inquire.False") {
                         return _2;
                     };
                     if (_3.ctor === "Network.Inquire.Pred") {
@@ -4738,114 +4782,6 @@
                 return !_ps.Prelude["=="](eqJuncOp({}))(r)(r$prime);
             };
         };
-        var showInquire_show = function (__dict_Show_320) {
-            return function (__dict_Show_321) {
-                return function (_1) {
-                    if (_1.ctor === "Network.Inquire.EmptyAnd") {
-                        return "EmptyAnd";
-                    };
-                    if (_1.ctor === "Network.Inquire.EmptyOr") {
-                        return "EmptyOr";
-                    };
-                    if (_1.ctor === "Network.Inquire.Pred") {
-                        return unsafeEncode(_1.values[0]) + _ps.Prelude.show(showRel({}))(_1.values[1]) + unsafeEncode(_1.values[2]);
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Pred") {
-                            if ((_1.values[2]).ctor === "Network.Inquire.Pred") {
-                                return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Pred") {
-                            if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
-                                if (_ps.Prelude["=="](eqJuncOp({}))(_1.values[1])((_1.values[2]).values[1])) {
-                                    return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                                };
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Junc") {
-                            if ((_1.values[2]).ctor === "Network.Inquire.Pred") {
-                                if (_ps.Prelude["=="](eqJuncOp({}))((_1.values[0]).values[1])(_1.values[1])) {
-                                    return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))((_1.values[0]).values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                                };
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Pred") {
-                            return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]) + ")";
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[2]).ctor === "Network.Inquire.Pred") {
-                            return "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + ")" + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Junc") {
-                            if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
-                                if (_ps.Prelude["=="](eqJuncOp({}))((_1.values[0]).values[1])(_1.values[1]) && _ps.Prelude["=="](eqJuncOp({}))(_1.values[1])((_1.values[2]).values[1])) {
-                                    return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))((_1.values[0]).values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                                };
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.Junc") {
-                            if (_ps.Prelude["=="](eqJuncOp({}))((_1.values[0]).values[1])(_1.values[1])) {
-                                return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + _ps.Prelude.show(showJuncOp({}))((_1.values[0]).values[1]) + "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]) + ")";
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
-                            if (_ps.Prelude["=="](eqJuncOp({}))(_1.values[1])((_1.values[2]).values[1])) {
-                                return "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + ")" + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]);
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Junc") {
-                        return "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[0]) + ")" + _ps.Prelude.show(showJuncOp({}))(_1.values[1]) + "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[2]) + ")";
-                    };
-                    if (_1.ctor === "Network.Inquire.Wrap") {
-                        if ((_1.values[0]).ctor === "Network.Inquire.NOBOOL") {
-                            if ((_1.values[1]).ctor === "Network.Inquire.Wrap") {
-                                return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[1]);
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Wrap") {
-                        if ((_1.values[1]).ctor === "Network.Inquire.Wrap") {
-                            if (((_1.values[1]).values[0]).ctor === "Network.Inquire.NOBOOL") {
-                                return _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[1]);
-                            };
-                        };
-                    };
-                    if (_1.ctor === "Network.Inquire.Wrap") {
-                        return _ps.Prelude.show(showWrapOp({}))(_1.values[0]) + "(" + _ps.Prelude.show(showInquire(__dict_Show_320)(__dict_Show_321))(_1.values[1]) + ")";
-                    };
-                    throw "Failed pattern match";
-                };
-            };
-        };
-        var showInquire = function (_1) {
-            return function (_2) {
-                return {
-                    show: showInquire_show(_1)(_2)
-                };
-            };
-        };
-        var generate = function (__dict_Show_322) {
-            return function (__dict_Show_323) {
-                return function (i) {
-                    return _ps.Global.encodeURIComponent(_ps.Prelude.show(showInquire(__dict_Show_322)(__dict_Show_323))(i));
-                };
-            };
-        };
         var eqInquire = function (_1) {
             return function (_2) {
                 return {
@@ -4858,13 +4794,13 @@
             return function (__dict_Eq_327) {
                 return function (_1) {
                     return function (_2) {
-                        if (_1.ctor === "Network.Inquire.EmptyAnd") {
-                            if (_2.ctor === "Network.Inquire.EmptyAnd") {
+                        if (_1.ctor === "Network.Inquire.True") {
+                            if (_2.ctor === "Network.Inquire.True") {
                                 return true;
                             };
                         };
-                        if (_1.ctor === "Network.Inquire.EmptyOr") {
-                            if (_2.ctor === "Network.Inquire.EmptyOr") {
+                        if (_1.ctor === "Network.Inquire.False") {
+                            if (_2.ctor === "Network.Inquire.False") {
                                 return true;
                             };
                         };
@@ -4963,11 +4899,11 @@
             return function (_1) {
                 return function (_2) {
                     return function (_3) {
-                        if (_3.ctor === "Network.Inquire.EmptyAnd") {
-                            return _ps.Prelude.pure(__dict_Applicative_330)(EmptyAnd);
+                        if (_3.ctor === "Network.Inquire.True") {
+                            return _ps.Prelude.pure(__dict_Applicative_330)(True);
                         };
-                        if (_3.ctor === "Network.Inquire.EmptyOr") {
-                            return _ps.Prelude.pure(__dict_Applicative_330)(EmptyOr);
+                        if (_3.ctor === "Network.Inquire.False") {
+                            return _ps.Prelude.pure(__dict_Applicative_330)(False);
                         };
                         if (_3.ctor === "Network.Inquire.Pred") {
                             return _ps.Prelude["<*>"](__dict_Applicative_330)(_ps.Prelude["<*>"](__dict_Applicative_330)(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(__dict_Applicative_330))(Pred)(_1(_3.values[0])))(_ps.Prelude.pure(__dict_Applicative_330)(_3.values[1])))(_2(_3.values[2]));
@@ -4994,11 +4930,11 @@
         var biFunctorInquire_$less$dollar$dollar$greater = function (_1) {
             return function (_2) {
                 return function (_3) {
-                    if (_3.ctor === "Network.Inquire.EmptyAnd") {
-                        return EmptyAnd;
+                    if (_3.ctor === "Network.Inquire.True") {
+                        return True;
                     };
-                    if (_3.ctor === "Network.Inquire.EmptyOr") {
-                        return EmptyOr;
+                    if (_3.ctor === "Network.Inquire.False") {
+                        return False;
                     };
                     if (_3.ctor === "Network.Inquire.Pred") {
                         return Pred(_1(_3.values[0]))(_3.values[1])(_2(_3.values[2]));
@@ -5023,10 +4959,10 @@
             return function (_2) {
                 return function (_3) {
                     return function (_4) {
-                        if (_4.ctor === "Network.Inquire.EmptyAnd") {
+                        if (_4.ctor === "Network.Inquire.True") {
                             return _3;
                         };
-                        if (_4.ctor === "Network.Inquire.EmptyOr") {
+                        if (_4.ctor === "Network.Inquire.False") {
                             return _3;
                         };
                         if (_4.ctor === "Network.Inquire.Pred") {
@@ -5067,8 +5003,8 @@
         module.IGE = IGE;
         module.ILT = ILT;
         module.ILE = ILE;
-        module.EmptyAnd = EmptyAnd;
-        module.EmptyOr = EmptyOr;
+        module.True = True;
+        module.False = False;
         module.Pred = Pred;
         module.Junc = Junc;
         module.Wrap = Wrap;
@@ -5212,7 +5148,7 @@
                                 return _ps.Network_Inquire.Wrap(_3.values[0])(remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[1]));
                             };
                             if (_ps.Prelude["=="](_ps.Network_Inquire.eqInquire(__dict_Eq_336)(__dict_Eq_337))(_2)(_3)) {
-                                return _ps.Network_Inquire.EmptyAnd;
+                                return _ps.Network_Inquire.True;
                             };
                             return _3;
                             throw "Failed pattern match";
@@ -5281,7 +5217,7 @@
         };
         var fromArrayPair = function (_1) {
             if (_1.length === 0) {
-                return _ps.Network_Inquire.EmptyAnd;
+                return _ps.Network_Inquire.True;
             };
             if (_1.length === 1) {
                 if ((_1[0]).length === 2) {
@@ -5298,7 +5234,7 @@
         };
         var fromArrayObj = function (_1) {
             if (_1.length === 0) {
-                return _ps.Network_Inquire.EmptyAnd;
+                return _ps.Network_Inquire.True;
             };
             if (_1.length === 1) {
                 return _ps.Network_Inquire.eq((_1[0]).key)((_1[0]).val);
@@ -5388,7 +5324,7 @@
                 if ((_1.values[1]).ctor === "Network.Inquire.AND") {
                     if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
                         if (((_1.values[2]).values[1]).ctor === "Network.Inquire.OR") {
-                            return _ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[2]));
+                            return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[2]));
                         };
                     };
                 };
@@ -5397,7 +5333,7 @@
                 if ((_1.values[1]).ctor === "Network.Inquire.OR") {
                     if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
                         if (((_1.values[2]).values[1]).ctor === "Network.Inquire.AND") {
-                            return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[2]));
+                            return _ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[2]));
                         };
                     };
                 };
@@ -5599,6 +5535,13 @@
         var law_functor_id = function (i) {
             return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["<$>"](_ps.Network_Inquire.functorInquire({}))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))(i))(i);
         };
+        var law_bool_distribute = function (p) {
+            return function (q) {
+                return function (r) {
+                    return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(r)))(_ps.Network_Inquire_Combinators.distribute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r))));
+                };
+            };
+        };
         var law_bool_commute = function (p) {
             return function (q) {
                 return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Network_Inquire_Combinators.commute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(p)));
@@ -5621,12 +5564,12 @@
             return function (__dict_Arb_349) {
                 return function (_1) {
                     if (_1 === 0) {
-                        return _ps.Test_QuickCheck.oneof([ _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.EmptyAnd), _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.EmptyOr) ]);
+                        return _ps.Test_QuickCheck.oneof([ _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.True), _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.False) ]);
                     };
                     if (_1 === 1) {
                         return _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349));
                     };
-                    return _ps.Test_QuickCheck.oneof([ _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.EmptyAnd), _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.EmptyOr), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349)), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Junc)(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))))(jop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Wrap)(wop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))) ]);
+                    return _ps.Test_QuickCheck.oneof([ _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.True), _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.False), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349)), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Junc)(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))))(jop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Wrap)(wop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))) ]);
                     throw "Failed pattern match";
                 };
             };
@@ -5648,13 +5591,24 @@
                 };
             };
         };
-        var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck$prime(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(1000)(law_bool_assoc))(function (_) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute))(function (_) {
-                return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id);
+        var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking associativity"))(function (_) {
+            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_assoc))(function (_) {
+                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking commutativity"))(function (_) {
+                    return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute))(function (_) {
+                        return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking distributativity"))(function (_) {
+                            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_distribute))(function (_) {
+                                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking functor identity"))(function (_) {
+                                    return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id);
+                                });
+                            });
+                        });
+                    });
+                });
             });
         });
         module.main = main;
         module.law_functor_id = law_functor_id;
+        module.law_bool_distribute = law_bool_distribute;
         module.law_bool_commute = law_bool_commute;
         module.law_bool_assoc = law_bool_assoc;
         module.div = div;
