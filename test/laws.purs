@@ -52,6 +52,10 @@ module Network.Inquire.Laws where
   law_bool_distribute :: Inquire String String -> Inquire String String -> Inquire String String -> Boolean
   law_bool_distribute p q r = ((p && q) || (p && r)) == distribute (p && (q || r))
 
+  -- law_bool_and_identity :: Inquire String String -> Boolean
+  -- law_bool_and_identity i =
+
+  -- | Functor laws
   law_functor_id :: Inquire String String -> Boolean
   law_functor_id i = id <$> i == i
 

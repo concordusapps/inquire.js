@@ -50,11 +50,13 @@ module Network.Inquire.Combinators
   absorb (Junc p AND (Junc p' OR  _)) | p == p' = p
   absorb (Junc p OR  (Junc p' AND _)) | p == p' = p
 
+-- Junc (Junc (False)&(Wrap ( True)))&(Junc (False)&(False))
+
   associate :: forall k v. Inquire k v -> Inquire k v
-  associate (Junc p AND (Junc q AND r)) = (p && q) && r
-  associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
   associate (Junc (Junc p AND q) AND r) = p && (q && r)
   associate (Junc (Junc p OR  q) OR  r) = p || (q || r)
+  associate (Junc p AND (Junc q AND r)) = (p && q) && r
+  associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
 
   assocLeft :: forall k v. Inquire k v-> Inquire k v
   assocLeft (Junc p AND (Junc q AND r)) = (p && q) && r
@@ -67,7 +69,6 @@ module Network.Inquire.Combinators
   commute :: forall k v. Inquire k v -> Inquire k v
   commute (Junc p AND q) = q && p
   commute (Junc p OR  q) = q || p
-  commute i = i
 
   distribute :: forall k v. Inquire k v -> Inquire k v
   distribute (Junc p AND (Junc q OR  r)) = (p && q) || (p && r)

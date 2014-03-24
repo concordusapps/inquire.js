@@ -1044,6 +1044,27 @@
             return _ps.Data_Maybe.Nothing;
             throw "Failed pattern match";
         };
+        var eqEmptyArray_$eq$eq = function (_1) {
+            return function (_2) {
+                if (_1.length === 0) {
+                    if (_2.length === 0) {
+                        return true;
+                    };
+                };
+                throw "Failed pattern match";
+            };
+        };
+        var eqEmptyArray = function (_1) {
+            return {
+                $eq$eq: eqEmptyArray_$eq$eq, 
+                $div$eq: eqEmptyArray_$div$eq
+            };
+        };
+        var eqEmptyArray_$div$eq = function (a) {
+            return function (a$prime) {
+                return !_ps.Prelude["=="](eqEmptyArray({}))(a)(a$prime);
+            };
+        };
         var eqArray = function (_1) {
             return {
                 $eq$eq: eqArray_$eq$eq(_1), 
@@ -1253,6 +1274,7 @@
         module.tail = tail;
         module.head = head;
         module.showArray = showArray;
+        module.eqEmptyArray = eqEmptyArray;
         module.eqArray = eqArray;
         module.monadArray = monadArray;
         module.functorArray = functorArray;
@@ -5351,7 +5373,6 @@
                     return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[2])(_1.values[0]);
                 };
             };
-            return _1;
             throw "Failed pattern match";
         };
         var codistribute = function (_1) {
@@ -5385,24 +5406,6 @@
         };
         var associate = function (_1) {
             if (_1.ctor === "Network.Inquire.Junc") {
-                if ((_1.values[1]).ctor === "Network.Inquire.AND") {
-                    if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
-                        if (((_1.values[2]).values[1]).ctor === "Network.Inquire.AND") {
-                            return _ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))((_1.values[2]).values[2]);
-                        };
-                    };
-                };
-            };
-            if (_1.ctor === "Network.Inquire.Junc") {
-                if ((_1.values[1]).ctor === "Network.Inquire.OR") {
-                    if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
-                        if (((_1.values[2]).values[1]).ctor === "Network.Inquire.OR") {
-                            return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))((_1.values[2]).values[2]);
-                        };
-                    };
-                };
-            };
-            if (_1.ctor === "Network.Inquire.Junc") {
                 if ((_1.values[0]).ctor === "Network.Inquire.Junc") {
                     if (((_1.values[0]).values[1]).ctor === "Network.Inquire.AND") {
                         if ((_1.values[1]).ctor === "Network.Inquire.AND") {
@@ -5416,6 +5419,24 @@
                     if (((_1.values[0]).values[1]).ctor === "Network.Inquire.OR") {
                         if ((_1.values[1]).ctor === "Network.Inquire.OR") {
                             return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))((_1.values[0]).values[0])(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))((_1.values[0]).values[2])(_1.values[2]));
+                        };
+                    };
+                };
+            };
+            if (_1.ctor === "Network.Inquire.Junc") {
+                if ((_1.values[1]).ctor === "Network.Inquire.AND") {
+                    if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
+                        if (((_1.values[2]).values[1]).ctor === "Network.Inquire.AND") {
+                            return _ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))((_1.values[2]).values[2]);
+                        };
+                    };
+                };
+            };
+            if (_1.ctor === "Network.Inquire.Junc") {
+                if ((_1.values[1]).ctor === "Network.Inquire.OR") {
+                    if ((_1.values[2]).ctor === "Network.Inquire.Junc") {
+                        if (((_1.values[2]).values[1]).ctor === "Network.Inquire.OR") {
+                            return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[0])((_1.values[2]).values[0]))((_1.values[2]).values[2]);
                         };
                     };
                 };
@@ -5592,7 +5613,7 @@
             };
         };
         var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking associativity"))(function (_) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_assoc))(function (_) {
+            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck$prime(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(1000)(law_bool_assoc))(function (_) {
                 return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking commutativity"))(function (_) {
                     return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute))(function (_) {
                         return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking distributativity"))(function (_) {

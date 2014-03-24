@@ -36,5 +36,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-purescript'
   grunt.loadNpmTasks 'grunt-execute'
 
-  grunt.registerTask 'default', ['purescript', 'execute']
+  grunt.registerTask 'default', ['compile', 'test']
+  grunt.registerTask 'compile', ['purescript:compile']
   grunt.registerTask 'test', ['purescript:test', 'execute']
