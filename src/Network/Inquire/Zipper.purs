@@ -1,5 +1,6 @@
 module Network.Inquire.Zipper
   ( InquireZ(..)
+  , Movement()
   , toInquireZ
   , fromInquireZ
   , zipLeft

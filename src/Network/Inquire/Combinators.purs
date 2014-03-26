@@ -57,22 +57,27 @@ module Network.Inquire.Combinators
   associate (Junc (Junc p OR  q) OR  r) = p || (q || r)
   associate (Junc p AND (Junc q AND r)) = (p && q) && r
   associate (Junc p OR  (Junc q OR  r)) = (p || q) || r
+  associate i = i
 
   assocLeft :: forall k v. Inquire k v-> Inquire k v
   assocLeft (Junc p AND (Junc q AND r)) = (p && q) && r
   assocLeft (Junc p OR  (Junc q OR  r)) = (p || q) || r
+  assocLeft i = i
 
   assocRight :: forall k v. Inquire k v-> Inquire k v
   assocRight (Junc (Junc p AND q) AND r) = p && (q && r)
   assocRight (Junc (Junc p OR  q) OR  r) = p || (q || r)
+  assocRight i = i
 
   commute :: forall k v. Inquire k v -> Inquire k v
   commute (Junc p AND q) = q && p
   commute (Junc p OR  q) = q || p
+  commute i = i
 
   distribute :: forall k v. Inquire k v -> Inquire k v
   distribute (Junc p AND (Junc q OR  r)) = (p && q) || (p && r)
   distribute (Junc p OR  (Junc q AND r)) = (p || q) && (p || r)
+  distribute i = i
 
   codistribute :: forall k v. Inquire k v -> Inquire k v
   codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)

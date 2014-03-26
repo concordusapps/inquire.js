@@ -1,134 +1,5 @@
 (function (_ps) {
     "use strict";
-    _ps.Math = (function () {
-        var module = {};
-        var abs = Math.abs;;
-        var acos = Math.acos;;
-        var asin = Math.asin;;
-        var atan = Math.atan;;
-        function atan2(y){  return function (x) {    return Math.atan2(y, x);  };};
-        var ceil = Math.ceil;;
-        var cos = Math.cos;;
-        var exp = Math.exp;;
-        var floor = Math.floor;;
-        var log = Math.log;;
-        function max(n1){  return function(n2) {    return Math.max(n1, n2);  }};
-        function min(n1){  return function(n2) {    return Math.min(n1, n2);  }};
-        function pow(n){  return function(p) {    return Math.pow(n, p);  }};
-        var round = Math.round;;
-        var sin = Math.sin;;
-        var sqrt = Math.sqrt;;
-        var tan = Math.tan;;
-        var e       = Math.E;;
-        var ln2     = Math.LN2;;
-        var ln10    = Math.LN10;;
-        var log2e   = Math.LOG2E;;
-        var log10e  = Math.LOG10E;;
-        var pi      = Math.PI;;
-        var sqrt1_2 = Math.SQRT1_2;;
-        var sqrt2   = Math.SQRT2;;
-        module.sqrt2 = sqrt2;
-        module.sqrt1_2 = sqrt1_2;
-        module.pi = pi;
-        module.log10e = log10e;
-        module.log2e = log2e;
-        module.ln10 = ln10;
-        module.ln2 = ln2;
-        module.e = e;
-        module.tan = tan;
-        module.sqrt = sqrt;
-        module.sin = sin;
-        module.round = round;
-        module.pow = pow;
-        module.min = min;
-        module.max = max;
-        module.log = log;
-        module.floor = floor;
-        module.exp = exp;
-        module.cos = cos;
-        module.ceil = ceil;
-        module.atan2 = atan2;
-        module.atan = atan;
-        module.asin = asin;
-        module.acos = acos;
-        module.abs = abs;
-        return module;
-    })();
-    _ps.Global = (function () {
-        var module = {};
-        var nan = NaN;;
-        var infinity = Infinity;;
-        function toExponential(n) {  return n.toExponential();};
-        function toFixed(d) {  return function(n) {    return n.toFixed(d);  };};
-        function toPrecision(d) {  return function(n) {    return n.toPrecision(d);  };};
-        function parseInt(n) {  return function(radix) {    return parseInt(n, radix);  };};
-        module.isNaN = isNaN;
-        module.decodeURI = decodeURI;
-        module.encodeURI = encodeURI;
-        module.decodeURIComponent = decodeURIComponent;
-        module.encodeURIComponent = encodeURIComponent;
-        module.parseInt = parseInt;
-        module.parseFloat = parseFloat;
-        module.isFinite = isFinite;
-        module.toPrecision = toPrecision;
-        module.toFixed = toFixed;
-        module.toExponential = toExponential;
-        module.infinity = infinity;
-        module.nan = nan;
-        return module;
-    })();
-    _ps.Data_String_Regex = (function () {
-        var module = {};
-        function regex(s1) {  return function(s2) {    return new Regex(s1, s2);  };};
-        function test(r) {  return function (s) {    return r.test(s);  };};
-        function match(r) {  return function (s) {    return s.match(r);   };};
-        function replaceR(r) {  return function(s1) {    return function(s2) {      return s2.replace(r, s1);    };  };};
-        function search(r) {  return function (s) {    return s.search(r);  };};
-        module.search = search;
-        module.replaceR = replaceR;
-        module.match = match;
-        module.test = test;
-        module.regex = regex;
-        return module;
-    })();
-    _ps.Data_String = (function () {
-        var module = {};
-        function lengthS(s) {  return s.length;};
-        function charAt(i) {  return function(s) {    return s.charAt(i);   };};
-        function indexOfS(s1) {  return function(s2) {    return s1.indexOf(s2);  }; };
-        function lastIndexOfS(s1) {  return function(s2) {    return s1.lastIndexOf(s2);  };};
-        function localeCompare(s1) {  return function(s2) {    return s1.localeCompare(s2);  };};
-        function replace(s1) {  return function(s2) {    return function(s3) {      return s3.replace(s1, s2);    };  };};
-        function sliceS(st) {  return function(e) {    return function(s) {      return s.slice(st, e);    };  };};
-        function split(sep) {  return function(s) {    return s.split(sep);  };};
-        function substr(n1) {  return function(n2) {    return function(s) {      return s.substr(n1, n2);    };  };};
-        function substring(n1) {  return function(n2) {    return function(s) {      return s.substring(n1, n2);    };  };};
-        function toLower(s) {  return s.toLowerCase();};
-        function toUpper(s) {  return s.toUpperCase();};
-        function trim(s) {  return s.trim();};
-        module.trim = trim;
-        module.toUpper = toUpper;
-        module.toLower = toLower;
-        module.substring = substring;
-        module.substr = substr;
-        module.split = split;
-        module.sliceS = sliceS;
-        module.replace = replace;
-        module.localeCompare = localeCompare;
-        module.lastIndexOfS = lastIndexOfS;
-        module.indexOfS = indexOfS;
-        module.charAt = charAt;
-        module.lengthS = lengthS;
-        return module;
-    })();
-    _ps.Data_Eq_Unsafe = (function () {
-        var module = {};
-        function refEq(r1) {  return function(r2) {    return r1 === r2;  };};
-        function refIneq(r1) {  return function(r2) {    return r1 !== r2;  };};
-        module.refIneq = refIneq;
-        module.refEq = refEq;
-        return module;
-    })();
     _ps.Prelude = (function () {
         var module = {};
         var LT = {
@@ -204,6 +75,8 @@
         function $div$eq(dict) {
             return dict.$div$eq;
         };
+        function refEq(r1) {  return function(r2) {    return r1 === r2;  };};
+        function refIneq(r1) {  return function(r2) {    return r1 !== r2;  };};
         function compare(dict) {
             return dict.compare;
         };
@@ -345,24 +218,24 @@
                 };
             };
         };
-        var eqString_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
-        var eqString_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
+        var eqString_$eq$eq = refEq;
+        var eqString_$div$eq = refIneq;
         var eqString = function (_1) {
             return {
                 $eq$eq: eqString_$eq$eq, 
                 $div$eq: eqString_$div$eq
             };
         };
-        var eqNumber_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
-        var eqNumber_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
+        var eqNumber_$eq$eq = refEq;
+        var eqNumber_$div$eq = refIneq;
         var eqNumber = function (_1) {
             return {
                 $eq$eq: eqNumber_$eq$eq, 
                 $div$eq: eqNumber_$div$eq
             };
         };
-        var eqBoolean_$eq$eq = _ps.Data_Eq_Unsafe.refEq;
-        var eqBoolean_$div$eq = _ps.Data_Eq_Unsafe.refIneq;
+        var eqBoolean_$eq$eq = refEq;
+        var eqBoolean_$div$eq = refIneq;
         var eqBoolean = function (_1) {
             return {
                 $eq$eq: eqBoolean_$eq$eq, 
@@ -572,6 +445,8 @@
         module[">"] = $greater;
         module["<"] = $less;
         module.compare = compare;
+        module.refIneq = refIneq;
+        module.refEq = refEq;
         module["/="] = $div$eq;
         module["=="] = $eq$eq;
         module.numNegate = numNegate;
@@ -618,6 +493,127 @@
         module.ordNumber = ordNumber;
         module.bitsNumber = bitsNumber;
         module.boolLikeBoolean = boolLikeBoolean;
+        return module;
+    })();
+    _ps.Math = (function () {
+        var module = {};
+        var abs = Math.abs;;
+        var acos = Math.acos;;
+        var asin = Math.asin;;
+        var atan = Math.atan;;
+        function atan2(y){  return function (x) {    return Math.atan2(y, x);  };};
+        var ceil = Math.ceil;;
+        var cos = Math.cos;;
+        var exp = Math.exp;;
+        var floor = Math.floor;;
+        var log = Math.log;;
+        function max(n1){  return function(n2) {    return Math.max(n1, n2);  }};
+        function min(n1){  return function(n2) {    return Math.min(n1, n2);  }};
+        function pow(n){  return function(p) {    return Math.pow(n, p);  }};
+        var round = Math.round;;
+        var sin = Math.sin;;
+        var sqrt = Math.sqrt;;
+        var tan = Math.tan;;
+        var e       = Math.E;;
+        var ln2     = Math.LN2;;
+        var ln10    = Math.LN10;;
+        var log2e   = Math.LOG2E;;
+        var log10e  = Math.LOG10E;;
+        var pi      = Math.PI;;
+        var sqrt1_2 = Math.SQRT1_2;;
+        var sqrt2   = Math.SQRT2;;
+        module.sqrt2 = sqrt2;
+        module.sqrt1_2 = sqrt1_2;
+        module.pi = pi;
+        module.log10e = log10e;
+        module.log2e = log2e;
+        module.ln10 = ln10;
+        module.ln2 = ln2;
+        module.e = e;
+        module.tan = tan;
+        module.sqrt = sqrt;
+        module.sin = sin;
+        module.round = round;
+        module.pow = pow;
+        module.min = min;
+        module.max = max;
+        module.log = log;
+        module.floor = floor;
+        module.exp = exp;
+        module.cos = cos;
+        module.ceil = ceil;
+        module.atan2 = atan2;
+        module.atan = atan;
+        module.asin = asin;
+        module.acos = acos;
+        module.abs = abs;
+        return module;
+    })();
+    _ps.Global = (function () {
+        var module = {};
+        var nan = NaN;;
+        var infinity = Infinity;;
+        function toExponential(n) {  return n.toExponential();};
+        function toFixed(d) {  return function(n) {    return n.toFixed(d);  };};
+        function toPrecision(d) {  return function(n) {    return n.toPrecision(d);  };};
+        function parseInt(n) {  return function(radix) {    return parseInt(n, radix);  };};
+        module.isNaN = isNaN;
+        module.decodeURI = decodeURI;
+        module.encodeURI = encodeURI;
+        module.decodeURIComponent = decodeURIComponent;
+        module.encodeURIComponent = encodeURIComponent;
+        module.parseInt = parseInt;
+        module.parseFloat = parseFloat;
+        module.isFinite = isFinite;
+        module.toPrecision = toPrecision;
+        module.toFixed = toFixed;
+        module.toExponential = toExponential;
+        module.infinity = infinity;
+        module.nan = nan;
+        return module;
+    })();
+    _ps.Data_String_Regex = (function () {
+        var module = {};
+        function regex(s1) {  return function(s2) {    return new Regex(s1, s2);  };};
+        function test(r) {  return function (s) {    return r.test(s);  };};
+        function match(r) {  return function (s) {    return s.match(r);   };};
+        function replaceR(r) {  return function(s1) {    return function(s2) {      return s2.replace(r, s1);    };  };};
+        function search(r) {  return function (s) {    return s.search(r);  };};
+        module.search = search;
+        module.replaceR = replaceR;
+        module.match = match;
+        module.test = test;
+        module.regex = regex;
+        return module;
+    })();
+    _ps.Data_String = (function () {
+        var module = {};
+        function lengthS(s) {  return s.length;};
+        function charAt(i) {  return function(s) {    return s.charAt(i);   };};
+        function indexOfS(s1) {  return function(s2) {    return s1.indexOf(s2);  }; };
+        function lastIndexOfS(s1) {  return function(s2) {    return s1.lastIndexOf(s2);  };};
+        function localeCompare(s1) {  return function(s2) {    return s1.localeCompare(s2);  };};
+        function replace(s1) {  return function(s2) {    return function(s3) {      return s3.replace(s1, s2);    };  };};
+        function sliceS(st) {  return function(e) {    return function(s) {      return s.slice(st, e);    };  };};
+        function split(sep) {  return function(s) {    return s.split(sep);  };};
+        function substr(n1) {  return function(n2) {    return function(s) {      return s.substr(n1, n2);    };  };};
+        function substring(n1) {  return function(n2) {    return function(s) {      return s.substring(n1, n2);    };  };};
+        function toLower(s) {  return s.toLowerCase();};
+        function toUpper(s) {  return s.toUpperCase();};
+        function trim(s) {  return s.trim();};
+        module.trim = trim;
+        module.toUpper = toUpper;
+        module.toLower = toLower;
+        module.substring = substring;
+        module.substr = substr;
+        module.split = split;
+        module.sliceS = sliceS;
+        module.replace = replace;
+        module.localeCompare = localeCompare;
+        module.lastIndexOfS = lastIndexOfS;
+        module.indexOfS = indexOfS;
+        module.charAt = charAt;
+        module.lengthS = lengthS;
         return module;
     })();
     _ps.Data_Maybe = (function () {
@@ -770,10 +766,8 @@
                 };
             };
         };
-        var refEq = liftRef(_ps.Data_Eq_Unsafe.refEq);
-        var refIneq = liftRef(_ps.Data_Eq_Unsafe.refIneq);
-        var eqRef_$eq$eq = refEq;
-        var eqRef_$div$eq = refIneq;
+        var eqRef_$eq$eq = liftRef(_ps.Prelude.refEq);
+        var eqRef_$div$eq = liftRef(_ps.Prelude.refIneq);
         var eqRef = function (_1) {
             return {
                 $eq$eq: eqRef_$eq$eq, 
@@ -781,8 +775,6 @@
             };
         };
         module.Ref = Ref;
-        module.refIneq = refIneq;
-        module.refEq = refEq;
         module.liftRef = liftRef;
         module.eqRef = eqRef;
         return module;
@@ -1098,19 +1090,26 @@
                 };
             };
         };
-        var drop = function (_1) {
-            return function (_2) {
-                if (_1 === 0) {
-                    return _2;
+        var drop = function (__copy__1) {
+            return function (__copy__2) {
+                var _1 = __copy__1;
+                var _2 = __copy__2;
+                tco: while (true) {
+                    if (_1 === 0) {
+                        return _2;
+                    };
+                    if (_2.length === 0) {
+                        return [  ];
+                    };
+                    if (_2.length > 0) {
+                        var _6 = _2.slice(1);
+                        var __tco__1 = _1 - 1;
+                        _1 = __tco__1;
+                        _2 = _6;
+                        continue tco;
+                    };
+                    throw "Failed pattern match";
                 };
-                if (_2.length === 0) {
-                    return [  ];
-                };
-                if (_2.length > 0) {
-                    var _6 = _2.slice(1);
-                    return drop(_1 - 1)(_6);
-                };
-                throw "Failed pattern match";
             };
         };
         var concatMap = function (_1) {
@@ -1532,15 +1531,15 @@
             return function (__dict_Applicative_43) {
                 return function (f) {
                     return function (v) {
-                        return WriterT((function (k) {
-                            return _ps.Prelude["<*>"](__dict_Applicative_43)(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(__dict_Applicative_43))(k)(runWriterT(f)))(runWriterT(v));
-                        })(function (_2) {
-                            return function (_1) {
-                                return _ps.Data_Tuple.Tuple(_2.values[0](_1.values[0]))(_ps.Data_Monoid["<>"](__dict_Monoid_42)(_2.values[1])(_1.values[1]));
-                                throw "Failed pattern match";
+                        return WriterT((function () {
+                            var k = function (_1) {
+                                return function (_2) {
+                                    return _ps.Data_Tuple.Tuple(_1.values[0](_2.values[0]))(_ps.Data_Monoid["<>"](__dict_Monoid_42)(_1.values[1])(_2.values[1]));
+                                    throw "Failed pattern match";
+                                };
                             };
-                            throw "Failed pattern match";
-                        }));
+                            return _ps.Prelude["<*>"](__dict_Applicative_43)(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(__dict_Applicative_43))(k)(runWriterT(f)))(runWriterT(v));
+                        })());
                     };
                 };
             };
@@ -2316,7 +2315,8 @@
             return function (__dict_Arb_89) {
                 return function (__dict_Testable_90) {
                     return function (f) {
-                        return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(__dict_Arb_89))(function (t) {
+                        return function __do() {
+                            var t = arb(__dict_Arb_89)();
                             return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(test(__dict_Testable_90)(f(t)))(function (result) {
                                 if (result.ctor === "Test.QuickCheck.Success") {
                                     return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(Success);
@@ -2325,8 +2325,8 @@
                                     return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(Failed("Failed on input " + _ps.Prelude.show(__dict_Show_88)(t) + ": \n" + result.values[0]));
                                 };
                                 throw "Failed pattern match";
-                            });
-                        });
+                            })();
+                        };
                     };
                 };
             };
@@ -2375,7 +2375,7 @@
                             return quickCheck$prime(__dict_Testable_91)(_1 - 1)(_2);
                         };
                         if (result.ctor === "Test.QuickCheck.Failed") {
-                            return _ps.Debug_Trace.trace("Test failed: \n" + result.values[0]);
+                            return _ps.Debug_Trace.trace("Failed after " + _ps.Prelude.show(_ps.Prelude.showNumber({}))(_1) + " tests: \n" + result.values[0]);
                         };
                         throw "Failed pattern match";
                     });
@@ -2393,9 +2393,8 @@
             throw "Failed pattern match";
         };
         var oneof = function (xs) {
-            return (function (n) {
-                return xs[n];
-            })(choose(_ps.Data_Tuple.Tuple(0)(_ps.Data_Array.length(xs) - 1)));
+            var n = choose(_ps.Data_Tuple.Tuple(0)(_ps.Data_Array.length(xs) - 1));
+            return xs[n];
         };
         var elements = function (xs) {
             return oneof(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Data_Array.monadArray({}))))(_ps.Control_Monad_Eff.retEff)(xs));
@@ -2418,17 +2417,19 @@
                 arb: arbNumber_arb
             };
         };
-        var arbNat_arb = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Control_Monad_Eff_Random.random)(function (n) {
-            return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(Nat(n * 100));
-        });
+        var arbNat_arb = function __do() {
+            var n = _ps.Control_Monad_Eff_Random.random();
+            return Nat(n * 100);
+        };
         var arbNat = function (_1) {
             return {
                 arb: arbNat_arb
             };
         };
-        var arbBoolean_arb = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Control_Monad_Eff_Random.random)(function (n) {
-            return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))((n * 2) < 1);
-        });
+        var arbBoolean_arb = function __do() {
+            var n = _ps.Control_Monad_Eff_Random.random();
+            return (n * 2) < 1;
+        };
         var arbBoolean = function (_1) {
             return {
                 arb: arbBoolean_arb
@@ -2436,9 +2437,10 @@
         };
         var arbEither_arb = function (__dict_Arb_96) {
             return function (__dict_Arb_97) {
-                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(arbBoolean({})))(function (b) {
-                    return b ? _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Either.Left)(arb(__dict_Arb_96)) : _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Either.Right)(arb(__dict_Arb_97));
-                });
+                return function __do() {
+                    var b = arb(arbBoolean({}))();
+                    return (b ? _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Either.Left)(arb(__dict_Arb_96)) : _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Either.Right)(arb(__dict_Arb_97)))();
+                };
             };
         };
         var arbEither = function (_1) {
@@ -2449,9 +2451,10 @@
             };
         };
         var arbMaybe_arb = function (__dict_Arb_95) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(arbBoolean({})))(function (b) {
-                return b ? _ps.Prelude.pure(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Data_Maybe.Nothing) : _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Maybe.Just)(arb(__dict_Arb_95));
-            });
+            return function __do() {
+                var b = arb(arbBoolean({}))();
+                return (b ? _ps.Prelude.pure(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Data_Maybe.Nothing) : _ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Data_Maybe.Just)(arb(__dict_Arb_95)))();
+            };
         };
         var arbMaybe = function (_1) {
             return {
@@ -2464,23 +2467,25 @@
             };
         };
         var arbArray_arb = function (__dict_Arb_98) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(arbBoolean({})))(function (b) {
-                return b ? _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))([  ]) : _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(__dict_Arb_98))(function (a) {
-    return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(arbArray(__dict_Arb_98)))(function (as) {
-        return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Data_Array[":"](a)(as));
-    });
-});
-            });
+            return function __do() {
+                var b = arb(arbBoolean({}))();
+                return (b ? _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))([  ]) : function __do() {
+    var a = arb(__dict_Arb_98)();
+    var as = arb(arbArray(__dict_Arb_98))();
+    return _ps.Data_Array[":"](a)(as);
+})();
+            };
         };
-        var arbString_arb = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(arb(arbArray(arbNat({}))))(function (codes) {
+        var arbString_arb = function __do() {
+            var codes = arb(arbArray(arbNat({})))();
             return (function (_4) {
                 return _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Data_Array.joinWith(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Data_Array.monadArray({}))))(_ps.Prelude["<<<"](_ps.Prelude.categoryArr({}))(fromCharCode)(unNat))(_4))(""));
                 throw "Failed pattern match";
             })(_ps.Data_Array.filter(function (_1) {
                 return 32 <= _1.values[0] && _1.values[0] <= 127;
                 throw "Failed pattern match";
-            })(codes));
-        });
+            })(codes))();
+        };
         var arbString = function (_1) {
             return {
                 arb: arbString_arb
@@ -4864,17 +4869,50 @@
                 });
             };
         };
-        var boolLikeInquire_not = function (p) {
-            return Wrap(NOT)(p);
+        var boolLikeInquire_not = function (_1) {
+            if (_1.ctor === "Network.Inquire.True") {
+                return False;
+            };
+            if (_1.ctor === "Network.Inquire.False") {
+                return True;
+            };
+            return Wrap(NOT)(_1);
+            throw "Failed pattern match";
         };
-        var boolLikeInquire_$bar$bar = function (p) {
-            return function (q) {
-                return Junc(p)(OR)(q);
+        var boolLikeInquire_$bar$bar = function (_1) {
+            return function (_2) {
+                if (_1.ctor === "Network.Inquire.True") {
+                    return True;
+                };
+                if (_2.ctor === "Network.Inquire.True") {
+                    return True;
+                };
+                if (_2.ctor === "Network.Inquire.False") {
+                    return _1;
+                };
+                if (_1.ctor === "Network.Inquire.False") {
+                    return _2;
+                };
+                return Junc(_1)(OR)(_2);
+                throw "Failed pattern match";
             };
         };
-        var boolLikeInquire_$amp$amp = function (p) {
-            return function (q) {
-                return Junc(p)(AND)(q);
+        var boolLikeInquire_$amp$amp = function (_1) {
+            return function (_2) {
+                if (_1.ctor === "Network.Inquire.False") {
+                    return False;
+                };
+                if (_2.ctor === "Network.Inquire.False") {
+                    return False;
+                };
+                if (_2.ctor === "Network.Inquire.True") {
+                    return _1;
+                };
+                if (_1.ctor === "Network.Inquire.True") {
+                    return _2;
+                };
+                return Junc(_1)(AND)(_2);
+                throw "Failed pattern match";
             };
         };
         var boolLikeInquire = function (_1) {
@@ -5080,25 +5118,7 @@
         function unsafeReplaceValByVal(v1) {  return function(v2) {    return function(i) {      /* We use String's eq typeclass because it uses `unsafeRefEq`*/      return replaceValByVal(_ps.Prelude.eqString({}))(v1)(v2)(i);    }  }};
         function unsafeFromObj(rawObj) {  var arr = [];  for (var k in rawObj) {    if (rawObj.hasOwnProperty(k)) {      arr.push({key: k, val: rawObj[k]});    }  }  return fromArrayObj(arr);};
         var toObj = function (i) {
-            return (function (updateVals) {
-                return (function (updateKeys) {
-                    return _ps.Data_BiFoldable.bifoldr(_ps.Network_Inquire.biFoldableInquire({}))(updateKeys)(updateVals)({
-                        keys: [  ], 
-                        vals: [  ]
-                    })(i);
-                })(function (k) {
-                    return function (o) {
-                        var _1 = {};
-                        for (var _2 in o) {
-                            if (o.hasOwnProperty(_2)) {
-                                _1[_2] = o[_2];
-                            };
-                        };
-                        _1.keys = _ps.Data_Array[":"](k)(o.keys);
-                        return _1;
-                    };
-                });
-            })(function (v) {
+            var updateVals = function (v) {
                 return function (o) {
                     var _1 = {};
                     for (var _2 in o) {
@@ -5109,7 +5129,25 @@
                     _1.vals = _ps.Data_Array[":"](v)(o.vals);
                     return _1;
                 };
-            });
+            };
+            return (function () {
+                var updateKeys = function (k) {
+                    return function (o) {
+                        var _1 = {};
+                        for (var _2 in o) {
+                            if (o.hasOwnProperty(_2)) {
+                                _1[_2] = o[_2];
+                            };
+                        };
+                        _1.keys = _ps.Data_Array[":"](k)(o.keys);
+                        return _1;
+                    };
+                };
+                return _ps.Data_BiFoldable.bifoldr(_ps.Network_Inquire.biFoldableInquire({}))(updateKeys)(updateVals)({
+                    keys: [  ], 
+                    vals: [  ]
+                })(i);
+            })();
         };
         var vals = function (i) {
             return (toObj(i)).vals;
@@ -5162,9 +5200,8 @@
                     return function (_2) {
                         return function (_3) {
                             if (_3.ctor === "Network.Inquire.Junc") {
-                                return (function (r$prime) {
-                                    return _1(_3.values[2])(r$prime) ? _ps.Network_Inquire.Junc(remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[0]))(_3.values[1])(_3.values[2]) : _ps.Network_Inquire.Junc(_3.values[0])(_3.values[1])(r$prime);
-                                })(remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[2]));
+                                var r$prime = remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[2]);
+                                return _1(_3.values[2])(r$prime) ? _ps.Network_Inquire.Junc(remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[0]))(_3.values[1])(_3.values[2]) : _ps.Network_Inquire.Junc(_3.values[0])(_3.values[1])(r$prime);
                             };
                             if (_3.ctor === "Network.Inquire.Wrap") {
                                 return _ps.Network_Inquire.Wrap(_3.values[0])(remove$prime(__dict_Eq_336)(__dict_Eq_337)(_1)(_2)(_3.values[1]));
@@ -5360,6 +5397,7 @@
                     };
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var commute = function (_1) {
@@ -5373,6 +5411,7 @@
                     return _ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_1.values[2])(_1.values[0]);
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var codistribute = function (_1) {
@@ -5441,6 +5480,7 @@
                     };
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var assocRight = function (_1) {
@@ -5462,6 +5502,7 @@
                     };
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var assocLeft = function (_1) {
@@ -5483,6 +5524,7 @@
                     };
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var absorb = function (__dict_Eq_346) {
@@ -5556,23 +5598,70 @@
         var law_functor_id = function (i) {
             return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["<$>"](_ps.Network_Inquire.functorInquire({}))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))(i))(i);
         };
-        var law_bool_distribute = function (p) {
+        var law_bool_or_identity = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(i)(_ps.Network_Inquire.False))(i) && _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Network_Inquire.False)(i))(i);
+        };
+        var law_bool_or_idempotence = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(i)(_ps.Network_Inquire_Combinators.idempotent(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(i)(i)));
+        };
+        var law_bool_or_annihilator = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(i)(_ps.Network_Inquire.True))(_ps.Network_Inquire.True) && _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Network_Inquire.True)(i))(_ps.Network_Inquire.True);
+        };
+        var law_bool_or_absorbtion = function (p) {
+            return function (q) {
+                return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(p)(_ps.Network_Inquire_Combinators.absorb(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))));
+            };
+        };
+        var law_bool_distribute_or = function (p) {
+            return function (q) {
+                return function (r) {
+                    return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(r)))(_ps.Network_Inquire_Combinators.distribute(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r))));
+                };
+            };
+        };
+        var law_bool_distribute_and = function (p) {
             return function (q) {
                 return function (r) {
                     return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(r)))(_ps.Network_Inquire_Combinators.distribute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r))));
                 };
             };
         };
-        var law_bool_commute = function (p) {
+        var law_bool_commute_or = function (p) {
+            return function (q) {
+                return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Network_Inquire_Combinators.commute(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(q)(p)));
+            };
+        };
+        var law_bool_commute_and = function (p) {
             return function (q) {
                 return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(_ps.Network_Inquire_Combinators.commute(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(p)));
             };
         };
-        var law_bool_assoc = function (p) {
+        var law_bool_assoc_or = function (p) {
+            return function (q) {
+                return function (r) {
+                    return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r)))(_ps.Network_Inquire_Combinators.associate(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(r)));
+                };
+            };
+        };
+        var law_bool_assoc_and = function (p) {
             return function (q) {
                 return function (r) {
                     return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(q)(r)))(_ps.Network_Inquire_Combinators.associate(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))(r)));
                 };
+            };
+        };
+        var law_bool_and_identity = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(i)(_ps.Network_Inquire.True))(i) && _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Network_Inquire.True)(i))(i);
+        };
+        var law_bool_and_idempotence = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(i)(_ps.Network_Inquire_Combinators.idempotent(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(i)(i)));
+        };
+        var law_bool_and_annihilator = function (i) {
+            return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(i)(_ps.Network_Inquire.False))(_ps.Network_Inquire.False) && _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(_ps.Network_Inquire.False)(i))(_ps.Network_Inquire.False);
+        };
+        var law_bool_and_absorbtion = function (p) {
+            return function (q) {
+                return _ps.Prelude["=="](_ps.Network_Inquire.eqInquire(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({})))(p)(_ps.Network_Inquire_Combinators.absorb(_ps.Prelude.eqString({}))(_ps.Prelude.eqString({}))(_ps.Prelude["&&"](_ps.Network_Inquire.boolLikeInquire({}))(p)(_ps.Prelude["||"](_ps.Network_Inquire.boolLikeInquire({}))(p)(q))));
             };
         };
         var jop = _ps.Test_QuickCheck.elements([ _ps.Network_Inquire.AND, _ps.Network_Inquire.OR ]);
@@ -5590,7 +5679,7 @@
                     if (_1 === 1) {
                         return _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349));
                     };
-                    return _ps.Test_QuickCheck.oneof([ _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.True), _ps.Prelude["return"](_ps.Control_Monad_Eff.monadEff({}))(_ps.Network_Inquire.False), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349)), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Junc)(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))))(jop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Wrap)(wop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))) ]);
+                    return _ps.Test_QuickCheck.oneof([ _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Pred)(_ps.Test_QuickCheck.arb(__dict_Arb_348)))(rel))(_ps.Test_QuickCheck.arb(__dict_Arb_349)), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Junc)(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))))(jop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))), _ps.Prelude["<*>"](_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({})))(_ps.Prelude["<$>"](_ps.Prelude.functorFromApplicative(_ps.Prelude.applicativeFromMonad(_ps.Control_Monad_Eff.monadEff({}))))(_ps.Network_Inquire.Wrap)(wop))(inq$prime(__dict_Arb_348)(__dict_Arb_349)(div(_1)(2))) ]);
                     throw "Failed pattern match";
                 };
             };
@@ -5612,26 +5701,56 @@
                 };
             };
         };
-        var main = _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking associativity"))(function (_) {
-            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck$prime(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(1000)(law_bool_assoc))(function (_) {
-                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking commutativity"))(function (_) {
-                    return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute))(function (_) {
-                        return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking distributativity"))(function (_) {
-                            return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_distribute))(function (_) {
-                                return _ps.Prelude[">>="](_ps.Control_Monad_Eff.monadEff({}))(_ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking functor identity"))(function (_) {
-                                    return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id);
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
+        var main = function __do() {
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("Boolean laws\n")();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and associativity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_assoc_and)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or associativity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_assoc_or)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and commutativity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute_and)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or commutativity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_commute_or)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking distributativity and over or")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_distribute_and)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking distributativity or over and")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))))(law_bool_distribute_or)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and identity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_and_identity)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or identity")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_or_identity)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and annihilator")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_and_annihilator)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or annihilator")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_or_annihilator)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and idempotence")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_and_idempotence)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or idempotence")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_bool_or_idempotence)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking and absorbtion")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_and_absorbtion)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or absorbtion")();
+            _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_or_absorbtion)();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("Functor laws\n")();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking functor identity")();
+            return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id)();
+        };
         module.main = main;
         module.law_functor_id = law_functor_id;
-        module.law_bool_distribute = law_bool_distribute;
-        module.law_bool_commute = law_bool_commute;
-        module.law_bool_assoc = law_bool_assoc;
+        module.law_bool_or_absorbtion = law_bool_or_absorbtion;
+        module.law_bool_and_absorbtion = law_bool_and_absorbtion;
+        module.law_bool_or_idempotence = law_bool_or_idempotence;
+        module.law_bool_and_idempotence = law_bool_and_idempotence;
+        module.law_bool_or_annihilator = law_bool_or_annihilator;
+        module.law_bool_and_annihilator = law_bool_and_annihilator;
+        module.law_bool_or_identity = law_bool_or_identity;
+        module.law_bool_and_identity = law_bool_and_identity;
+        module.law_bool_distribute_or = law_bool_distribute_or;
+        module.law_bool_distribute_and = law_bool_distribute_and;
+        module.law_bool_commute_or = law_bool_commute_or;
+        module.law_bool_commute_and = law_bool_commute_and;
+        module.law_bool_assoc_or = law_bool_assoc_or;
+        module.law_bool_assoc_and = law_bool_assoc_and;
         module.div = div;
         module.wop = wop;
         module.jop = jop;
@@ -5984,37 +6103,42 @@
         var buildExprParser = function (__dict_Monad_360) {
             return function (operators) {
                 return function (simpleExpr) {
-                    return (function (makeParser) {
-                        return _ps.Data_Foldable.foldl(_ps.Data_Foldable.foldableArray({}))(makeParser)(simpleExpr)(operators);
-                    })(function (term) {
+                    var makeParser = function (term) {
                         return function (ops) {
-                            return (function (accum) {
-                                return (function (rassocOp) {
-                                    return (function (lassocOp) {
-                                        return (function (nassocOp) {
-                                            return (function (prefixOp) {
-                                                return (function (postfixOp) {
-                                                    return (function (postfixP) {
-                                                        return (function (prefixP) {
-                                                            return _ps.Prelude[">>="](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(termP(__dict_Monad_360)(prefixP)(term)(postfixP))(function (x) {
-                                                                return _ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(rassocP(__dict_Monad_360)(x)(rassocOp)(prefixP)(term)(postfixP))(lassocP(__dict_Monad_360)(x)(lassocOp)(prefixP)(term)(postfixP)))(nassocP(__dict_Monad_360)(x)(nassocOp)(prefixP)(term)(postfixP)))(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(x)))("operator");
-                                                            });
-                                                        })(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(prefixOp)(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))));
-                                                    })(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(postfixOp)(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(_ps.Prelude.id(_ps.Prelude.categoryArr({})))));
-                                                })(_ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.postfix))(""));
-                                            })(_ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.prefix))(""));
-                                        })(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.nassoc));
-                                    })(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.lassoc));
-                                })(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.rassoc));
-                            })(_ps.Data_Foldable.foldr(_ps.Data_Foldable.foldableArray({}))(splitOp)({
+                            var accum = _ps.Data_Foldable.foldr(_ps.Data_Foldable.foldableArray({}))(splitOp)({
                                 rassoc: [  ], 
                                 lassoc: [  ], 
                                 nassoc: [  ], 
                                 prefix: [  ], 
                                 postfix: [  ]
-                            })(ops));
+                            })(ops);
+                            return (function () {
+                                var rassocOp = _ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.rassoc);
+                                return (function () {
+                                    var lassocOp = _ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.lassoc);
+                                    return (function () {
+                                        var nassocOp = _ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.nassoc);
+                                        return (function () {
+                                            var prefixOp = _ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.prefix))("");
+                                            return (function () {
+                                                var postfixOp = _ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Text_Parsing_Parser_Combinators.choice(__dict_Monad_360)(accum.postfix))("");
+                                                return (function () {
+                                                    var postfixP = _ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(postfixOp)(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(_ps.Prelude.id(_ps.Prelude.categoryArr({}))));
+                                                    return (function () {
+                                                        var prefixP = _ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(prefixOp)(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(_ps.Prelude.id(_ps.Prelude.categoryArr({}))));
+                                                        return _ps.Prelude[">>="](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(termP(__dict_Monad_360)(prefixP)(term)(postfixP))(function (x) {
+                                                            return _ps.Text_Parsing_Parser_Combinators["<?>"](__dict_Monad_360)(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(_ps.Prelude["<|>"](_ps.Text_Parsing_Parser.alternativeParserT(__dict_Monad_360))(rassocP(__dict_Monad_360)(x)(rassocOp)(prefixP)(term)(postfixP))(lassocP(__dict_Monad_360)(x)(lassocOp)(prefixP)(term)(postfixP)))(nassocP(__dict_Monad_360)(x)(nassocOp)(prefixP)(term)(postfixP)))(_ps.Prelude["return"](_ps.Text_Parsing_Parser.monadParserT(__dict_Monad_360))(x)))("operator");
+                                                        });
+                                                    })();
+                                                })();
+                                            })();
+                                        })();
+                                    })();
+                                })();
+                            })();
                         };
-                    });
+                    };
+                    return _ps.Data_Foldable.foldl(_ps.Data_Foldable.foldableArray({}))(makeParser)(simpleExpr)(operators);
                 };
             };
         };

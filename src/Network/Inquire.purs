@@ -197,20 +197,20 @@ module Network.Inquire
     bisequence = bitraverse id id
 
   instance boolLikeInquire :: BoolLike (Inquire k v) where
-    -- (||) True p        = True
-    -- (||) p        True = True
-    -- (||) p        False  = p
-    -- (||) False  p        = p
+    (||) True p        = True
+    (||) p        True = True
+    (||) p        False  = p
+    (||) False  p        = p
     (||) p        q        = Junc p OR q
 
-    -- (&&) False  p        = False
-    -- (&&) p        False  = False
-    -- (&&) p        True = p
-    -- (&&) True p        = p
+    (&&) False  p        = False
+    (&&) p        False  = False
+    (&&) p        True = p
+    (&&) True p        = p
     (&&) p        q        = Junc p AND q
 
-    -- not True = False
-    -- not False  = True
+    not True = False
+    not False  = True
     not p        = Wrap NOT p
 
   -- FIXME

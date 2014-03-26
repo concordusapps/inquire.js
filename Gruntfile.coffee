@@ -17,7 +17,6 @@ module.exports = (grunt) ->
             'Network.Inquire.Zipper'
           ]
           runtimeTypeChecks: true
-          tco: true
       test:
         files:
           'test/inquire.js': [

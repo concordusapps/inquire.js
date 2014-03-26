@@ -1,14 +1,3 @@
-module Math where
-import Prelude ()
-module Global where
-import Prelude ()
-foreign import encodeURIComponent :: Prim.String -> Prim.String
-module Data.String.Regex where
-import Prelude ()
-module Data.String where
-import Prelude ()
-module Data.Eq.Unsafe where
-import Prelude ()
 module Prelude where
 import Prelude ()
 infixr 9 >>>
@@ -24,8 +13,8 @@ infixl 7 /
 infixl 7 %
 infixl 6 -
 infixl 6 +
-infixl 4 ==
-infixl 4 /=
+infix 4 ==
+infix 4 /=
 infixl 4 <
 infixl 4 >
 infixl 4 <=
@@ -46,6 +35,15 @@ foreign import flip :: forall a b c. (a -> b -> c) -> b -> a -> c
 foreign import instance categoryArr :: Prelude.Category Prim.Function
 foreign import instance functorFromApplicative :: (Prelude.Applicative f) => Prelude.Functor f
 foreign import instance boolLikeBoolean :: Prelude.BoolLike Prim.Boolean
+module Math where
+import Prelude ()
+module Global where
+import Prelude ()
+foreign import encodeURIComponent :: Prim.String -> Prim.String
+module Data.String.Regex where
+import Prelude ()
+module Data.String where
+import Prelude ()
 module Data.Maybe where
 import Prelude ()
 data Maybe a = Nothing  | Just a
@@ -205,9 +203,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Network.Inquire.I
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Network.Inquire.Inquire k v
-foreign import fromArrayPair :: forall t11523. [[t11523]] -> Network.Inquire.Inquire t11523 t11523
+foreign import fromArrayPair :: forall t11603. [[t11603]] -> Network.Inquire.Inquire t11603 t11603
 foreign import toArrayObj :: forall k v. Network.Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t11482. Network.Inquire.Inquire t11482 t11482 -> [[t11482]]
+foreign import toArrayPair :: forall t11562. Network.Inquire.Inquire t11562 t11562 -> [[t11562]]
 foreign import toTuple :: forall k v. Network.Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Network.Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Network.Inquire.Inquire k v -> [k]
