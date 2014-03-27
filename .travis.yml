@@ -2,12 +2,16 @@ language: haskell
 ghc:
   - 7.6
 
+notifications:
+  email: false
+
 branches:
   only:
     - master
 
 before_install:
   - npm install
+  - npm install -g bower
   - bower install
 
 install:
