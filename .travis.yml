@@ -6,3 +6,9 @@ node_js:
 branches:
   only:
     - master
+
+before_install:
+  - cabal update
+  - cabal install purescript
+
+script: grunt
