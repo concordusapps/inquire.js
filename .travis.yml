@@ -1,13 +1,16 @@
-language: node_js
-node_js:
-  - "0.10"
-  - "0.8"
+language: haskell
+ghc:
+  - 7.6
 
 branches:
   only:
     - master
 
 before_install:
+  - npm install
+  - bower install
+
+install:
   - cabal update
   - cabal install purescript
 
