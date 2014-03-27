@@ -5270,6 +5270,7 @@
                             };
                         };
                     };
+                    return _1;
                     throw "Failed pattern match";
                 };
             };
@@ -5441,6 +5442,7 @@
                     };
                 };
             };
+            return _1;
             throw "Failed pattern match";
         };
         var associate = function (_1) {
@@ -5731,7 +5733,7 @@
             _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_and_absorbtion)();
             _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking or absorbtion")();
             _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({}))))(law_bool_or_absorbtion)();
-            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("Functor laws\n")();
+            _ps.Debug_Trace.print(_ps.Prelude.showString({}))("\nFunctor laws\n")();
             _ps.Debug_Trace.print(_ps.Prelude.showString({}))("checking functor identity")();
             return _ps.Test_QuickCheck.quickCheck(_ps.Test_QuickCheck.testableFunction(_ps.Network_Inquire.showInquire(_ps.Prelude.showString({}))(_ps.Prelude.showString({})))(arbInquire(_ps.Test_QuickCheck.arbString({}))(_ps.Test_QuickCheck.arbString({})))(_ps.Test_QuickCheck.testableBoolean({})))(law_functor_id)();
         };

@@ -82,10 +82,12 @@ module Network.Inquire.Combinators
   codistribute :: forall k v. Inquire k v -> Inquire k v
   codistribute (Junc (Junc p OR  q) AND (Junc p OR  r)) = p && (q || r)
   codistribute (Junc (Junc p AND q) OR  (Junc p AND r)) = p || (q && r)
+  codistribute i = i
 
   idempotent :: forall k v. (Eq k, Eq v) => Inquire k v -> Inquire k v
   idempotent (Junc p AND p') | p == p' = p
   idempotent (Junc p OR  p') | p == p' = p
+  idempotent i = i
 
   -- Utilities for working with Inquire.
   toObj :: forall k v. Inquire k v -> {keys :: [k], vals :: [v]}
