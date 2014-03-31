@@ -27,7 +27,7 @@
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-purescript": "~0.2.0",
-    "grunt-execute": "^0.1.5"
+    "grunt-execute": "~0.1.5"
   },
   "engines": {
     "node": ">=0.8.22"

@@ -107,36 +107,19 @@ module Network.Inquire
     show NOT    = "!"
 
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
-    show True = "True"
-    show False = "False"
-    show (Pred k r v) = "Pred " ++ show k ++ " " ++ show r ++ " " ++ show v
-    show (Junc l o r) = "Junc (" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
-    show (Wrap o i) = "Wrap (" ++ show o ++ " " ++ show i ++ ")"
-
-  -- instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
-  --   show True = "True"
-  --   show False = "False"
-  --   show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
-  --   -- show (Junc True _ True) = "AA"
-  --   -- show (Junc True _ False)  = "AO"
-  --   -- show (Junc True _ False)  = "OA"
-  --   -- show (Junc False _ False)   = "OO"
-  --   -- show (Junc l _ False)         = show l
-  --   -- show (Junc l _ True)        = show l
-  --   -- show (Junc True _ r)        = show r
-  --   -- show (Junc False _ r)         = show r
-  --   show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
-  --   show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
-  --   show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
-  --   show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
-  --   show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
-  --   show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
-  --   show (Junc l@(Junc _ o _) o' r) | o == o'   = show l ++ show o ++ "(" ++ show r ++ ")"
-  --   show (Junc l o r@(Junc _ o' _)) | o == o'   = "(" ++ show l ++ ")" ++ show o ++ show r
-  --   show (Junc l o r)                           = "(" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
-  --   show (Wrap NOBOOL i@(Wrap _ _)) = show i
-  --   show (Wrap o i@(Wrap NOBOOL _))   = show i
-  --   show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
+    show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
+    show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
+    show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
+    show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r
+    show (Junc l@(Pred _ _ _) o r)              = show l ++ show o ++ "(" ++ show r ++ ")"
+    show (Junc l o r@(Pred _ _ _))              = "(" ++ show l ++ ")" ++ show o ++ show r
+    show (Junc l@(Junc _ o _) o' r@(Junc _ o'' _)) | o == o' && o' == o'' = show l ++ show o ++ show r
+    show (Junc l@(Junc _ o _) o' r) | o == o'   = show l ++ show o ++ "(" ++ show r ++ ")"
+    show (Junc l o r@(Junc _ o' _)) | o == o'   = "(" ++ show l ++ ")" ++ show o ++ show r
+    show (Junc l o r)                           = "(" ++ show l ++ ")" ++ show o ++ "(" ++ show r ++ ")"
+    show (Wrap NOBOOL i@(Wrap _ _)) = show i
+    show (Wrap o i@(Wrap NOBOOL _))   = show i
+    show (Wrap o i)                   = show o ++ "(" ++ show i ++ ")"
 
   instance functorInquire :: Functor (Inquire k) where
     (<$>) _ True        = True

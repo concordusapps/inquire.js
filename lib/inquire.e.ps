@@ -64,11 +64,13 @@ module Data.Array where
 import Prelude ()
 infixr 6 :
 foreign import zipWith :: forall a b c. (a -> b -> c) -> [a] -> [b] -> [c]
-foreign import (:) :: forall a. a -> [a] -> [a]
 foreign import concat :: forall a. [a] -> [a] -> [a]
+foreign import (:) :: forall a. a -> [a] -> [a]
 module Data.Monoid where
 import Prelude ()
 infixr 6 <>
+module Data.Monoid.First where
+import Prelude ()
 module Data.Tuple where
 import Prelude ()
 data Tuple a b = Tuple a b
@@ -94,6 +96,8 @@ import Prelude ()
 module Control.Monad.Error.Trans where
 import Prelude ()
 module Control.Monad.Eff where
+import Prelude ()
+module Control.Monad.Eff.Exception where
 import Prelude ()
 module Control.Monad.Eff.Random where
 import Prelude ()
@@ -203,9 +207,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Network.Inquire.I
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Network.Inquire.Inquire k v
-foreign import fromArrayPair :: forall t11603. [[t11603]] -> Network.Inquire.Inquire t11603 t11603
+foreign import fromArrayPair :: forall t11665. [[t11665]] -> Network.Inquire.Inquire t11665 t11665
 foreign import toArrayObj :: forall k v. Network.Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t11562. Network.Inquire.Inquire t11562 t11562 -> [[t11562]]
+foreign import toArrayPair :: forall t11624. Network.Inquire.Inquire t11624 t11624 -> [[t11624]]
 foreign import toTuple :: forall k v. Network.Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Network.Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Network.Inquire.Inquire k v -> [k]
