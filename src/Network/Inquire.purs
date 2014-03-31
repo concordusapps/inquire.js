@@ -26,7 +26,6 @@ module Network.Inquire
   ) where
 
   import Prelude
-  import Global
   import Data.Array
   import Data.BiFoldable
   import Data.BiFunctor
@@ -229,8 +228,10 @@ module Network.Inquire
     \  }\
     \}" :: forall a. a -> String
 
+  foreign import encodeURIComponent :: String -> String
+
   generate :: forall k v. (Show k, Show v) => Inquire k v -> String
-  generate i = encodeURIComponent (show i)
+  generate i = show i
 
   pred :: forall k v. {key :: k, val :: v, rel :: Rel} -> Inquire k v
   pred o = Pred o.key o.rel o.val

@@ -39,7 +39,6 @@ module Math where
 import Prelude ()
 module Global where
 import Prelude ()
-foreign import encodeURIComponent :: Prim.String -> Prim.String
 module Data.String.Regex where
 import Prelude ()
 module Data.String where
@@ -207,9 +206,9 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Network.Inquire.I
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Network.Inquire.Inquire k v
-foreign import fromArrayPair :: forall t11665. [[t11665]] -> Network.Inquire.Inquire t11665 t11665
+foreign import fromArrayPair :: forall t11667. [[t11667]] -> Network.Inquire.Inquire t11667 t11667
 foreign import toArrayObj :: forall k v. Network.Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t11624. Network.Inquire.Inquire t11624 t11624 -> [[t11624]]
+foreign import toArrayPair :: forall t11626. Network.Inquire.Inquire t11626 t11626 -> [[t11626]]
 foreign import toTuple :: forall k v. Network.Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Network.Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Network.Inquire.Inquire k v -> [k]
