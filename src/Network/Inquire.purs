@@ -106,7 +106,17 @@ module Network.Inquire
     show NOT    = "!"
 
   instance showInquire :: (Show k, Show v) => Show (Inquire k v) where
+    show True  = ""
+    show False = ""
     show (Pred k r v) = unsafeEncode k ++ show r ++ unsafeEncode v
+    show (Junc True _ True)   = ""
+    show (Junc True _ False)  = ""
+    show (Junc True _ False)  = ""
+    show (Junc False _ False) = ""
+    show (Junc l _ False)     = show l
+    show (Junc l _ True)      = show l
+    show (Junc True _ r)      = show r
+    show (Junc False _ r)     = show r
     show (Junc l@(Pred _ _ _) o r@(Pred _ _ _)) = show l ++ show o ++ show r
     show (Junc l@(Pred _ _ _) o r@(Junc _ o' _)) | o == o' = show l ++ show o ++ show r
     show (Junc l@(Junc _ o _) o' r@(Pred _ _ _)) | o == o' = show l ++ show o ++ show r

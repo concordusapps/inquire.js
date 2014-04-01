@@ -5,6 +5,7 @@ module Network.Inquire.Combinators
   , toTuple
   , toArrayPair
   , toArrayObj
+  , fromArray
   , fromArrayPair
   , fromArrayObj
   , filterByVal
@@ -27,6 +28,7 @@ module Network.Inquire.Combinators
   , idempotent
   , unsafeFindByKey
   , unsafeFindByVal
+  , unsafeIsInquire
   , unsafeRemove
   , unsafeRemoveAll
   , unsafeReplaceValByKey
@@ -40,6 +42,7 @@ module Network.Inquire.Combinators
   import Data.Array ((:), zipWith)
   import Data.BiFoldable (bifoldr)
   import Data.BiFunctor (BiFunctor)
+  import Data.Foldable (foldr)
   import Data.Maybe
   import Data.Monoid
   import Data.Tuple
@@ -111,6 +114,9 @@ module Network.Inquire.Combinators
 
   toArrayObj :: forall k v. Inquire k v -> [{key :: k, val :: v}]
   toArrayObj i = zipWith (\x y -> {key: x, val: y}) (keys i) (vals i)
+
+  fromArray :: forall k v. [Inquire k v] -> Inquire k v
+  fromArray = foldr and True
 
   -- The ideal type would be
   -- fromArrayPair :: forall k v. [[k, v]] -> Inquire k v
@@ -256,3 +262,18 @@ module Network.Inquire.Combinators
     \  }\
     \  return fromArrayObj(arr);\
     \}" :: forall a k v. { | a } -> Inquire k v
+
+  foreign import unsafeIsInquire
+    "function unsafeIsInquire(x) {\
+    \  if (toString.call(x).slice(8, -1) === 'Object') {\
+    \    if (x.ctor === 'Network.Inquire.True'  ||\
+    \        x.ctor === 'Network.Inquire.False' ||\
+    \        x.ctor === 'Network.Inquire.Pred'  ||\
+    \        x.ctor === 'Network.Inquire.Junc'  ||\
+    \        x.ctor === 'Network.Inquire.Wrap') {\
+    \      return true;\
+    \    }\
+    \  } else {\
+    \    return false;\
+    \  }\
+    \}" :: forall a. a -> Boolean

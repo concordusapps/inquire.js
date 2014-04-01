@@ -134,6 +134,7 @@ infixl 4 <*
 infixl 4 *>
 module Data.Foldable where
 import Prelude ()
+foreign import instance foldableArray :: Data.Foldable.Foldable Prim.Array
 module Data.Traversable where
 import Prelude ()
 module Network.Inquire where
@@ -178,6 +179,22 @@ foreign import instance biFoldableInquire :: Data.BiFoldable.BiFoldable Network.
 foreign import instance traversableInquire :: Data.Traversable.Traversable (Network.Inquire.Inquire k)
 foreign import instance bitraversableInquire :: Data.BiTraversable.BiTraversable Network.Inquire.Inquire
 foreign import instance boolLikeInquire :: Prelude.BoolLike (Network.Inquire.Inquire k v)
+module Network.Inquire.Zipper where
+import Prelude ()
+data InquireZ k v = Zip { context :: [Network.Inquire.Zipper.Context k v], hole :: Network.Inquire.Inquire k v }
+foreign import modify :: forall k v. (Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v) -> Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
+foreign import query :: forall a k v. (Network.Inquire.Inquire k v -> a) -> Network.Inquire.Zipper.InquireZ k v -> a
+foreign import getHole :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Inquire k v
+foreign import zipRightmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
+foreign import zipLeftmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
+foreign import zipUpmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
+foreign import zipMost :: forall k v. Network.Inquire.Zipper.Movement k v -> Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
+foreign import zipUp :: forall k v. Network.Inquire.Zipper.Movement k v
+foreign import zipDown :: forall k v. Network.Inquire.Zipper.Movement k v
+foreign import zipRight :: forall k v. Network.Inquire.Zipper.Movement k v
+foreign import zipLeft :: forall k v. Network.Inquire.Zipper.Movement k v
+foreign import fromInquireZ :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Inquire k v
+foreign import toInquireZ :: forall k v. Network.Inquire.Inquire k v -> Network.Inquire.Zipper.InquireZ k v
 module Network.Inquire.Combinators where
 import Prelude ()
 foreign import unsafeFromObj :: forall a k v. {  | a } -> Network.Inquire.Inquire k v
@@ -185,6 +202,7 @@ foreign import unsafeReplaceValByVal :: forall k v. v -> v -> Network.Inquire.In
 foreign import unsafeReplaceValByKey :: forall k v. v -> k -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import unsafeRemoveAll :: forall k v. v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import unsafeRemove :: forall k v. v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
+foreign import unsafeIsInquire :: forall a. a -> Prim.Boolean
 foreign import unsafeFindByVal :: forall k v. v -> Network.Inquire.Inquire k v -> Data.Maybe.Maybe (Network.Inquire.Inquire k v)
 foreign import unsafeFindByKey :: forall k v. v -> Network.Inquire.Inquire k v -> Data.Maybe.Maybe (Network.Inquire.Inquire k v)
 foreign import idempotent :: forall k v. (Prelude.Eq k, Prelude.Eq v) => Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
@@ -206,29 +224,14 @@ foreign import findByVal :: forall k v. (Prelude.Eq v) => v -> Network.Inquire.I
 foreign import filterByKey :: forall k v. (k -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import filterByVal :: forall k v. (v -> Prim.Boolean) -> Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v
 foreign import fromArrayObj :: forall k v. [{ val :: v, key :: k }] -> Network.Inquire.Inquire k v
-foreign import fromArrayPair :: forall t11667. [[t11667]] -> Network.Inquire.Inquire t11667 t11667
+foreign import fromArrayPair :: forall t12046. [[t12046]] -> Network.Inquire.Inquire t12046 t12046
+foreign import fromArray :: forall k v. [Network.Inquire.Inquire k v] -> Network.Inquire.Inquire k v
 foreign import toArrayObj :: forall k v. Network.Inquire.Inquire k v -> [{ val :: v, key :: k }]
-foreign import toArrayPair :: forall t11626. Network.Inquire.Inquire t11626 t11626 -> [[t11626]]
+foreign import toArrayPair :: forall t12005. Network.Inquire.Inquire t12005 t12005 -> [[t12005]]
 foreign import toTuple :: forall k v. Network.Inquire.Inquire k v -> [Data.Tuple.Tuple k v]
 foreign import vals :: forall k v. Network.Inquire.Inquire k v -> [v]
 foreign import keys :: forall k v. Network.Inquire.Inquire k v -> [k]
 foreign import toObj :: forall k v. Network.Inquire.Inquire k v -> { vals :: [v], keys :: [k] }
-module Network.Inquire.Zipper where
-import Prelude ()
-data InquireZ k v = Zip { context :: [Network.Inquire.Zipper.Context k v], hole :: Network.Inquire.Inquire k v }
-foreign import modify :: forall k v. (Network.Inquire.Inquire k v -> Network.Inquire.Inquire k v) -> Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
-foreign import query :: forall a k v. (Network.Inquire.Inquire k v -> a) -> Network.Inquire.Zipper.InquireZ k v -> a
-foreign import getHole :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Inquire k v
-foreign import zipRightmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
-foreign import zipLeftmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
-foreign import zipUpmost :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
-foreign import zipMost :: forall k v. Network.Inquire.Zipper.Movement k v -> Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Zipper.InquireZ k v
-foreign import zipUp :: forall k v. Network.Inquire.Zipper.Movement k v
-foreign import zipDown :: forall k v. Network.Inquire.Zipper.Movement k v
-foreign import zipRight :: forall k v. Network.Inquire.Zipper.Movement k v
-foreign import zipLeft :: forall k v. Network.Inquire.Zipper.Movement k v
-foreign import fromInquireZ :: forall k v. Network.Inquire.Zipper.InquireZ k v -> Network.Inquire.Inquire k v
-foreign import toInquireZ :: forall k v. Network.Inquire.Inquire k v -> Network.Inquire.Zipper.InquireZ k v
 module Text.Parsing.Parser.Expr where
 import Prelude ()
 module Network.Inquire.Parser where
