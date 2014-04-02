@@ -1,5 +1,38 @@
 # Changelog
 
+### 0.4.8
+#### 93/31/14
+- Publishing problems.
+
+### 0.4.7
+#### 03/31/14
+- Don't ask...
+
+### 0.4.6
+#### 03/31/14
+- Update show instance.
+- Added unsafeIsInquire.
+
+### 0.4.5
+#### 03/31/14
+- Started using QuickCheck.
+- Fixed a whole mess of bugs dealing with monotone laws.
+- Added monotone laws.
+- Fixed Travis to run the tests again.
+
+### 0.4.4
+#### 03/18/14
+- Updated README
+- Ignore EmptyAnd and EmptyOr in BoolLike.
+- Fix cases with fromArrayPairs and fromArrayObj.
+- Fix type for unsafeFromObj.
+
+### 0.4.3
+#### 03/18/14
+- Cleaned up Data stuff.
+- Renamed Rel data constructors to avoid conflicts with Prelude.
+- Handle escaping properly.
+
 ### 0.4.2
 #### 03/09/14
 - Encode predicates.
