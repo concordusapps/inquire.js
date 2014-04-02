@@ -43,6 +43,7 @@ Currently supports [armet][armet] syntax query strings.
         * [codistribute](#codistribute)
         * [idempotent](#idempotent)
     * [Construction](#construction)
+        * [fromArray](#fromarray)
         * [fromArrayPair](#fromarraypair)
         * [fromArrayObj](#fromarrayobj)
     * [Modification](#modification)
@@ -65,6 +66,8 @@ Currently supports [armet][armet] syntax query strings.
         * [unsafeRemoveAll](#unsaferemoveall)
         * [unsafeReplaceValByKey](#unsafereplacevalbykey)
         * [unsafeReplaceValByVal](#unsafereplacevalbyval)
+    * [Miscellaneous](#miscellaneous)
+        * [unsafeIsInquire](#unsafeisinquire)
 * [Examples](#examples)
 
 ## Installation
@@ -362,11 +365,17 @@ Simplifies the Inquire with the Idempotency rule.
 
 #### Construction
 
+
 Creating new Inquires is done with either single `key` `val` arguments,
 an array of `[key, val]` pairs,
 or an array of `{key: k, val: v}` objects.
 
 The [predicate combinators](#predicate-combinators) above correspond to the single `key`, `val` option.
+
+###### fromArray
+###### [Inquire k v] -> Inquire k v
+
+This constructs a single Inquire from the conjunction of all the Inquires in the array.
 
 ###### fromArrayPair
 ###### [[k, v]] -> Inquire k v
@@ -570,6 +579,13 @@ Use with caution!
 
 However, it provides a nice wrapper around the safe version.
 i.e. you don't have to pass a two typeclass dictionary references to the safe version.
+
+###### unsafeIsInquire
+###### a -> Boolean
+
+This is unsafe in many senses.
+Primarily it relies on the current implementation of the compiler to check if any js value is an Inquire.
+Use with caution as it can generate false positives.
 
 #### Zipper
 
